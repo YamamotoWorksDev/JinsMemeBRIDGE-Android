@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.jins_jp.meme.MemeConnectListener;
 import com.jins_jp.meme.MemeLib;
 import com.jins_jp.meme.MemeScanListener;
 import com.jins_jp.meme.MemeStatus;
@@ -40,6 +41,34 @@ public class MainActivity extends AppCompatActivity {
   private ToggleButton btnScan;
   private ToggleButton btnConnect;
   private Spinner spnrScanResult;
+
+  private MemeConnectListener memeConnectListener = new MemeConnectListener() {
+    @Override
+    public void memeConnectCallback(boolean b) {
+      Log.d("CONNECT", "meme connected.");
+
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          btnScan.setEnabled(false);
+          spnrScanResult.setEnabled(false);
+        }
+      });
+    }
+
+    @Override
+    public void memeDisconnectCallback() {
+      Log.d("CONNECT", "meme disconnected.");
+
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          btnScan.setEnabled(true);
+          spnrScanResult.setEnabled(true);
+        }
+      });
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -119,14 +148,11 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if(memeLib.isConnected()) {
-          //memeLib.disconnect();
+          memeLib.disconnect();
         }
         else {
           Log.d("CONNECT", "meme ADDRESS: " + spnrScanResult.getSelectedItem().toString());
           memeLib.connect(spnrScanResult.getSelectedItem().toString());
-
-          btnScan.setEnabled(false);
-          spnrScanResult.setEnabled(false);
         }
       }
     });
@@ -138,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
 
   private void startScan() {
     Log.d("SCAN", "start scannig...");
+
+    memeLib.setMemeConnectListener(memeConnectListener);
 
     MemeStatus status = memeLib.startScan(new MemeScanListener() {
       @Override
