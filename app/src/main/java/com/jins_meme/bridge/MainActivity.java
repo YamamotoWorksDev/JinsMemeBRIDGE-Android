@@ -28,13 +28,14 @@ import java.util.HashSet;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-  private static final String VERSION = "0.2";
+  private static final String VERSION = "0.3";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
 
   private Handler handler;
   private MemeLib memeLib;
+  private MemeOSC memeOSC;
 
   private List<String> scannedMemeList = new ArrayList<>();
   private ArrayAdapter<String> memeAdapter;
@@ -84,8 +85,15 @@ public class MainActivity extends AppCompatActivity {
       int eyeLeft  = memeRealtimeData.getEyeMoveLeft();
       int eyeRight = memeRealtimeData.getEyeMoveRight();
 
-      if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0 || eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0)
+      if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0 || eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0) {
         Log.d("EYE", String.format("meme: BLINK = %d/%d, UP = %d, DOWN = %d, LEFT = %d, RIGHT = %d", eyeBlinkStrength, eyeBlinkSpeed, eyeUp, eyeDown, eyeLeft, eyeRight));
+
+        memeOSC.setAddress(MemeOSC.PREFIX, MemeOSC.EYE_BLINK);
+        memeOSC.setTypeTag("ii");
+        memeOSC.addArgument(eyeBlinkStrength);
+        memeOSC.addArgument(eyeBlinkSpeed);
+        memeOSC.flushMessage();
+      }
     }
   };
 
@@ -128,8 +136,13 @@ public class MainActivity extends AppCompatActivity {
   private void init() {
     MemeLib.setAppClientID(getApplicationContext(), APP_ID, APP_SECRET);
     memeLib = MemeLib.getInstance();
-
     memeLib.setAutoConnect(false);
+
+    memeOSC = new MemeOSC();
+    memeOSC.setRemoteIP("192.168.1.255");
+    memeOSC.setRemotePort(10316);
+    memeOSC.setHostPort(11316);
+    memeOSC.initSocket();
 
     handler = new Handler();
 
