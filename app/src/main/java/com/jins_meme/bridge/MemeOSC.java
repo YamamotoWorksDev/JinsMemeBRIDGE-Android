@@ -6,7 +6,8 @@
  * MemeOSC.java, v.0.1.0 2017/01/23
  */
 
-package net.tkrworks.memebridge;
+//package net.tkrworks.memebridge;
+package com.jins_meme.bridge;
 
 /*
 import android.bluetooth.BluetoothAdapter;

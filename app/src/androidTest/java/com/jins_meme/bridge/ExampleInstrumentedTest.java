@@ -1,4 +1,4 @@
-package net.tkrworks.memebridge;
+package com.jins_meme.bridge;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

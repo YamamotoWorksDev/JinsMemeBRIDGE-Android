@@ -1,4 +1,4 @@
-package net.tkrworks.memebridge;
+package com.jins_meme.bridge;
 
 import org.junit.Test;
 
