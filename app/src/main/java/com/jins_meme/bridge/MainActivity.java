@@ -18,6 +18,8 @@ import android.widget.ToggleButton;
 
 import com.jins_jp.meme.MemeConnectListener;
 import com.jins_jp.meme.MemeLib;
+import com.jins_jp.meme.MemeRealtimeData;
+import com.jins_jp.meme.MemeRealtimeListener;
 import com.jins_jp.meme.MemeScanListener;
 import com.jins_jp.meme.MemeStatus;
 
@@ -26,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-  private static final String VERSION = "0.1";
+  private static final String VERSION = "0.2";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
           spnrScanResult.setEnabled(false);
         }
       });
+
+      memeLib.startDataReport(memeRealtimeListener);
     }
 
     @Override
@@ -67,6 +71,21 @@ public class MainActivity extends AppCompatActivity {
           spnrScanResult.setEnabled(true);
         }
       });
+    }
+  };
+
+  private MemeRealtimeListener memeRealtimeListener = new MemeRealtimeListener() {
+    @Override
+    public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
+      int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
+      int eyeBlinkSpeed    = memeRealtimeData.getBlinkSpeed();
+      int eyeUp    = memeRealtimeData.getEyeMoveUp();
+      int eyeDown  = memeRealtimeData.getEyeMoveDown();
+      int eyeLeft  = memeRealtimeData.getEyeMoveLeft();
+      int eyeRight = memeRealtimeData.getEyeMoveRight();
+
+      if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0 || eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0)
+        Log.d("EYE", String.format("meme: BLINK = %d/%d, UP = %d, DOWN = %d, LEFT = %d, RIGHT = %d", eyeBlinkStrength, eyeBlinkSpeed, eyeUp, eyeDown, eyeLeft, eyeRight));
     }
   };
 
