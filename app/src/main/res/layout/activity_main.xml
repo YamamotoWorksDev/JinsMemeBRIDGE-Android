@@ -14,5 +14,24 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:text="Hello World!"
+        android:id="@+id/textView"/>
+
+    <Button
+        android:text="connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="54dp"
+        android:id="@+id/connect"/>
+
+    <Button
+        android:text="Scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/connect"
+        android:layout_toStartOf="@+id/connect"
+        android:layout_marginEnd="14dp"
+        android:id="@+id/scan"/>
 </RelativeLayout>
