@@ -4,26 +4,42 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.jins_jp.meme.MemeLib;
 import com.jins_jp.meme.MemeScanListener;
 import com.jins_jp.meme.MemeStatus;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+  private static final String VERSION = "0.1";
+
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
 
+  private Handler handler;
   private MemeLib memeLib;
 
+  private List<String> scannedMemeList = new ArrayList<>();
+  private ArrayAdapter<String> memeAdapter;
+
   // Test UI
-  private Button btnScan;
-  private Button btnConnect;
+  private ToggleButton btnScan;
+  private ToggleButton btnConnect;
+  private Spinner spnrScanResult;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -67,35 +83,57 @@ public class MainActivity extends AppCompatActivity {
 
     memeLib.setAutoConnect(false);
 
-    btnScan = (Button)findViewById(R.id.scan);
-    btnScan.setOnClickListener(new View.OnClickListener() {
+    handler = new Handler();
+
+    btnScan = (ToggleButton)findViewById(R.id.scan);
+    btnScan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
-      public void onClick(View view) {
-        if(btnScan.getText().toString().equals("Scan")) {
-          btnScan.setText("Stop");
+      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        if(btnScan.isChecked()) {
+          if(memeAdapter != null)
+            memeAdapter.clear();
+
+          if(scannedMemeList != null)
+            scannedMemeList.clear();
 
           startScan();
+
+          handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              btnScan.setChecked(false);
+            }
+          }, 5000);
         }
-        else if(btnScan.getText().toString().equals("Stop")) {
-          btnScan.setText("Scan");
+        else {
+          handler.removeCallbacks(null);
 
           stopScan();
         }
       }
     });
 
-    btnConnect = (Button)findViewById(R.id.connect);
-    btnConnect.setOnClickListener(new View.OnClickListener() {
+    btnConnect = (ToggleButton)findViewById(R.id.connect);
+    btnConnect.setEnabled(false);
+    btnConnect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
-      public void onClick(View view) {
+      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if(memeLib.isConnected()) {
-          memeLib.disconnect();
+          //memeLib.disconnect();
         }
         else {
-          //Intent intent = new Intent(MainActivity.this, )
+          Log.d("CONNECT", "meme ADDRESS: " + spnrScanResult.getSelectedItem().toString());
+          memeLib.connect(spnrScanResult.getSelectedItem().toString());
+
+          btnScan.setEnabled(false);
+          spnrScanResult.setEnabled(false);
         }
       }
     });
+
+    spnrScanResult = (Spinner)findViewById(R.id.scan_result);
+    spnrScanResult.setEnabled(false);
+
   }
 
   private void startScan() {
@@ -105,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void memeFoundCallback(String s) {
         Log.d("SCAN", "found: " + s);
+
+        scannedMemeList.add(s);
       }
     });
   }
@@ -116,6 +156,16 @@ public class MainActivity extends AppCompatActivity {
       memeLib.stopScan();
 
       Log.d("SCAN", "scan stopped.");
+
+      List<String> list = new ArrayList<>(new HashSet<>(scannedMemeList));
+      memeAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, list);
+      memeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+      spnrScanResult.setAdapter(memeAdapter);
+
+      if(scannedMemeList.size() > 0) {
+        spnrScanResult.setEnabled(true);
+        btnConnect.setEnabled(true);
+      }
     }
   }
 }
