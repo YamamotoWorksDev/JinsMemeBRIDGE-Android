@@ -33,6 +33,14 @@ public class MemeOSC {
   private static final int MAX_ADDRESS_LEN = 64;
   private static final int MAX_ARGS_LEN    = 48;// 40
 
+  public static final String PREFIX = "/meme/bridge";
+  public static final String EYE_BLINK = "/blink";
+  public static final String EYE_MOVE  = "/move";
+  public static final String EYE_UP    = "/up";
+  public static final String EYE_DOWN  = "/down";
+  public static final String EYE_LEFT  = "/left";
+  public static final String EYE_RIGHT = "/right";
+
   public static final String SYSTEM_PREFIX   = "/sys";
   public static final String REMOTE_IP       = "/remote/ip";
   public static final String GET_REMOTE_IP   = "/sys/remote/ip/get";
@@ -133,7 +141,7 @@ public class MemeOSC {
     */
   }
 
-  public void initOSCSocket() {
+  public void initSocket() {
     /*
     new Thread(new Runnable() {
       @Override
@@ -158,11 +166,11 @@ public class MemeOSC {
     */
   }
 
-  public boolean initializedOSCSocket() {
+  public boolean initializedSocket() {
     return oscInitFlag;
   }
 
-  public void closeOSCSocket() {
+  public void closeSocket() {
     if(sndSocket != null) {
       sndSocket.close();
       sndSocket = null;
@@ -174,7 +182,7 @@ public class MemeOSC {
     }
   }
 
-  public void releaseOSCPacket() {
+  public void releasePacket() {
     sndPacket = null;
     rcvPacket = null;
   }
@@ -183,35 +191,35 @@ public class MemeOSC {
   //  mBluetoothAdapter.enable();
   //}
 
-  public void setOSCRemoteIP(String ip) {
+  public void setRemoteIP(String ip) {
     remoteIP = ip;
   }
 
-  public String getOSCRemoteIP() {
+  public String getRemoteIP() {
     return remoteIP;
   }
 
-  public void setOSCRemotePort(int port) {
+  public void setRemotePort(int port) {
     remotePort = port;
   }
 
-  public int getOSCRemotePort() {
+  public int getRemotePort() {
     return remotePort;
   }
 
-  public String getOSCHostIP() {
+  public String getHostIP() {
     return hostIP;
   }
 
-  public void setOSCHostPort(int port) {
+  public void setHostPort(int port) {
     hostPort = port;
   }
 
-  public int getOSCHostPort() {
+  public int getHostPort() {
     return hostPort;
   }
 
-  public boolean isHasOSCHostIP() {
+  public boolean isHasHostIP() {
     return hasHostIP;
   }
 
@@ -228,14 +236,14 @@ public class MemeOSC {
     oscBundleTotalSize += 8; // timetag
   }
 
-  public synchronized void setOSCMessageSizeToBundle() {
+  public synchronized void setMessageSizeToBundle() {
     sndOSCBundleData[oscBundleTotalSize++] = (byte)((oscTotalSize >> 24) & 0xFF);
     sndOSCBundleData[oscBundleTotalSize++] = (byte)((oscTotalSize >> 16) & 0xFF);
     sndOSCBundleData[oscBundleTotalSize++] = (byte)((oscTotalSize >> 8) & 0xFF);
     sndOSCBundleData[oscBundleTotalSize++] = (byte)((oscTotalSize >> 0) & 0xFF);
   }
 
-  public synchronized void addOSCMessageToBundle() {
+  public synchronized void addMessageToBundle() {
     for(int i = 0; i < oscTotalSize; i++) {
       sndOSCBundleData[oscBundleTotalSize++] = sndOSCData[i];
     }
@@ -360,7 +368,7 @@ public class MemeOSC {
     }).start();
   }
 
-  public void receiveOSCMessage() {
+  public void receiveMessage() {
     //rcvPacket = new DatagramPacket(rcvOSCData, rcvOSCData.length);
 
     try {
@@ -380,7 +388,7 @@ public class MemeOSC {
     }
   }
 
-  public boolean extractAddressFromOSCPacket() {
+  public boolean extractAddressFromPacket() {
     indexA = 3;
 
     while(rcvOSCData[indexA] != 0) {
@@ -406,7 +414,7 @@ public class MemeOSC {
     return true;
   }
 
-  public boolean extractTypeTagFromOSCPacket() {
+  public boolean extractTypeTagFromPacket() {
     rcvTypesStartIndex = indexA0 + 1;
     indexA = indexA0 + 2;
 
@@ -422,7 +430,7 @@ public class MemeOSC {
     return true;
   }
 
-  public boolean extractArgumentsFromOSCPacket() {
+  public boolean extractArgumentsFromPacket() {
     int u, length = 0;
 
     if(indexA == 0 || indexA >= MAX_PACKET_SIZE)
@@ -461,7 +469,7 @@ public class MemeOSC {
     return true;
   }
 
-  public String getOSCAddress() {
+  public String getAddress() {
     return rcvAddressStrings;
   }
 
