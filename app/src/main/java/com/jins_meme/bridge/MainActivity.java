@@ -22,15 +22,24 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto, tkrworks.net
+ *
+ * This file is part of MemeBRIDGE.
+ *
+ **/
+
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.4";
+  private static final String VERSION = "0.5";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
 
   private Handler handler;
   private MemeLib memeLib;
-  private BridgeOSCListener bridgeOSCListener = new BridgeOSCListener();
+  //private BridgeOSCListener bridgeOSCListener;
+  private BridgeMIDIListener bridgeMIDIListener;
 
   private List<String> scannedMemeList = new ArrayList<>();
   private ArrayAdapter<String> memeAdapter;
@@ -52,8 +61,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     });
 
-    bridgeOSCListener.init();
-    memeLib.startDataReport(bridgeOSCListener);
+    //if(bridgeOSCListener != null) {
+    //  bridgeOSCListener.init();
+    //  memeLib.startDataReport(bridgeOSCListener);
+    //}
+
+    if(bridgeMIDIListener != null) {
+      bridgeMIDIListener.init(this);
+      memeLib.startDataReport(bridgeMIDIListener);
+    }
   }
 
   @Override
@@ -79,6 +95,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     init();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+    Log.d("DEBUG", "onResume...");
   }
 
   @TargetApi(23)
@@ -158,6 +181,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     spnrScanResult = (Spinner)findViewById(R.id.scan_result);
     spnrScanResult.setEnabled(false);
 
+    //bridgeOSCListener = new BridgeOSCListener();
+    bridgeMIDIListener = new BridgeMIDIListener();
   }
 
   private void startScan() {
