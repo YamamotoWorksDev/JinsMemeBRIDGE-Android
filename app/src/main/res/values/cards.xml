@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">back</string>
+    <string name="midi">midi</string>
+    <string name="osc">osc</string>
+    <string name="midi_on">midi on</string>
+    <string name="midi_off">midi off</string>
+    <string name="osc_on">osc on</string>
+    <string name="osc_off">osc off</string>
+</resources>
