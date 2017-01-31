@@ -6,8 +6,12 @@ import com.jins_jp.meme.MemeRealtimeData;
 import com.jins_jp.meme.MemeRealtimeListener;
 
 /**
- * Created by shun on 2017/01/31.
- */
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto, tkrworks.net
+ *
+ * This file is part of MemeBRIDGE.
+ *
+ **/
 
 public class BridgeOSCListener implements MemeRealtimeListener {
   private MemeOSC memeOSC;

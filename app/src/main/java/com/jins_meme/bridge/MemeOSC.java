@@ -1,12 +1,3 @@
-/**
- * Copylight (C) 2017, Shunichi Yamamoto, tkrworks.net
- *
- * This file is part of MemeBRIDGE.
- *
- * MemeOSC.java, v.0.1.0 2017/01/23
- */
-
-//package net.tkrworks.memebridge;
 package com.jins_meme.bridge;
 
 /*
@@ -24,6 +15,14 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+
+/**
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto, tkrworks.net
+ *
+ * This file is part of MemeBRIDGE.
+ *
+ **/
 
 public class MemeOSC {
   private static final int MAX_BUF_SIZE    = 96;//64
