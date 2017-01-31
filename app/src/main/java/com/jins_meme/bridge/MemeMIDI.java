@@ -41,6 +41,15 @@ public class MemeMIDI {
     return initializedMidi;
   }
 
+  public static boolean checkUsbMidi(Context context) {
+    MidiManager midiManager = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
+    final MidiDeviceInfo[] infos = midiManager.getDevices();
+    if(infos.length > 0)
+      return true;
+    else
+      return false;
+  }
+
   public void initPort() {
     midiManager = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
     final MidiDeviceInfo[] infos = midiManager.getDevices();

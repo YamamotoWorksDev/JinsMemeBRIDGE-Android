@@ -1,9 +1,11 @@
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +33,7 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5";
+  private static final String VERSION = "0.5.1";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
@@ -92,6 +94,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if(Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
+    }
+
+
+    Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(this));
+    if(!MemeMIDI.checkUsbMidi(this)) {
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
+      alert.setTitle("Warning");
+      alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
+      alert.setNeutralButton("Exit", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          System.exit(0);
+        }
+      });
+
+      alert.create().show();
     }
 
     init();
