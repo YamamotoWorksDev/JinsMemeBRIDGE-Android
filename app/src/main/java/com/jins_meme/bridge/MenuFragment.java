@@ -37,7 +37,7 @@ public class MenuFragment extends Fragment implements IResultListener {
         mView.reset();
     }
 
-    public class MyAdapter extends Adapter<MyAdapter.MyCardHolder> {
+    public class MyAdapter extends BridgeUIView.Adapter<MyAdapter.MyCardHolder> {
         Context mContext;
         LayoutInflater mInflater;
         MyAdapter(Context context, IResultListener listener) {
