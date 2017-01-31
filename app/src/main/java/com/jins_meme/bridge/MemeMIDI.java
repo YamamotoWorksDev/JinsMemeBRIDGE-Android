@@ -21,9 +21,9 @@ import java.io.IOException;
 public class MemeMIDI {
   public static final int EYE_BLINK = 30;
   public static final int EYE_UP    = 31;
-  public static final int EYE_DOWN  = 31;
-  public static final int EYE_LEFT  = 31;
-  public static final int EYE_RIGHT = 31;
+  public static final int EYE_DOWN  = 32;
+  public static final int EYE_LEFT  = 33;
+  public static final int EYE_RIGHT = 34;
 
   private Context context;
 
