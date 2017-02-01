@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="SCAN"
+          android:id="@+id/menu_scan"
+          android:checkable="true"/>
+    <item android:title="EXIT"
+          android:id="@+id/menu_exit"/>
+</menu>
