@@ -42,6 +42,8 @@ public class BridgeUIView extends RecyclerView {
     }
 
     public interface IResultListener {
+        public void onEnterCard(int id);
+        public void onExitCard(int id);
         public void onBridgeMenuFinished(int id);
     }
 
@@ -95,11 +97,13 @@ public class BridgeUIView extends RecyclerView {
                                 mListener.onBridgeMenuFinished(NO_ID);
                             }
                             else {
+                                mListener.onExitCard(getSelectedCardId());
                                 mHistory.pop();
                                 notifyDataSetChanged();
                             }
                             break;
                         case ENTER_MENU:
+                            mListener.onEnterCard(id);
                             mHistory.push(id);
                             notifyDataSetChanged();
                             break;
