@@ -13,6 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.jins_jp.meme.MemeConnectListener;
+import com.jins_jp.meme.MemeLib;
+import com.jins_jp.meme.MemeScanListener;
+import com.jins_jp.meme.MemeStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * Copylight (C) 2017, Shunichi Yamamoto, tkrworks.net
@@ -21,19 +29,24 @@ import android.widget.Toast;
  *
  **/
 
-public class MainActivity extends AppCompatActivity {
-  private static final String VERSION = "0.5.2";
+public class MainActivity extends AppCompatActivity implements MemeConnectListener {
+  private static final String VERSION = "0.5.3";
+
+  private static final String APP_ID = "907977722622109";
+  private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
 
   private static final int MENU_SCAN = 0;
   private static final int MENU_EXIT = 10;
 
+  private MemeLib memeLib;
   private MenuFragment menuFragment;
   private Handler handler;
+
+  private List<String> scannedMemeList = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    //setContentView(R.layout.activity_main);
     setContentView(R.layout.activity_bridge_menu);
 
     handler = new Handler();
@@ -58,18 +71,18 @@ public class MainActivity extends AppCompatActivity {
       alert.create().show();
     }
 
-    menuFragment.init();
+    init();
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    Log.d("DEBUG", "test..." + menuFragment.getFoundMemeNum());
+    Log.d("DEBUG", "test..." + scannedMemeList.size());
 
     menu.add(0, MENU_SCAN, 0, "SCAN").setCheckable(true);
 
     int index = 1;
-    if(menuFragment.getFoundMemeNum() > 0) {
-      for(String memeId : menuFragment.getScannedMemeList()) {
+    if(scannedMemeList.size() > 0) {
+      for(String memeId : scannedMemeList) {
         menu.add(0, MENU_SCAN + index, 0, memeId).setCheckable(true);
       }
     }
@@ -88,17 +101,17 @@ public class MainActivity extends AppCompatActivity {
         if(!item.isChecked()) {
           item.setChecked(true);
 
-          menuFragment.clearMemeList();
+          if(scannedMemeList != null)
+            scannedMemeList.clear();
 
-          menuFragment.startScan();
+          startScan();
 
           handler.postDelayed(new Runnable() {
             @Override
             public void run() {
               item.setChecked(false);
 
-              menuFragment.stopScan();
-              invalidateOptionsMenu();
+              stopScan();
             }
           }, 5000);
         }
@@ -107,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
           handler.removeCallbacks(null);
 
-          menuFragment.stopScan();
+          stopScan();
         }
         return true;
       case MENU_EXIT:
@@ -116,14 +129,14 @@ public class MainActivity extends AppCompatActivity {
       default:
         Log.d("DEBUG", "check = " + item.isChecked());
 
-        if(item.isChecked() && menuFragment.isMemeConnected()) {
-          menuFragment.memeDisconnect();
+        if(item.isChecked() && memeLib.isConnected()) {
+          memeLib.disconnect();
           item.setChecked(false);
         }
-        else if(!item.isChecked() && !menuFragment.isMemeConnected()) {
+        else if(!item.isChecked() && !memeLib.isConnected()) {
           Log.d("CONNECT", "meme ADDRESS: " + item.getTitle().toString());
 
-          menuFragment.memeConnect(item.getTitle().toString());
+          memeLib.connect(item.getTitle().toString());
           item.setChecked(true);
         }
         return true;
@@ -136,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
 
-    Log.d("DEBUG", "onResume..." + menuFragment.getFoundMemeNum());
+    Log.d("DEBUG", "onResume..." + scannedMemeList.size());
   }
 
   @TargetApi(23)
@@ -160,6 +173,53 @@ public class MainActivity extends AppCompatActivity {
     }
     else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+  }
+
+  @Override
+  public void memeConnectCallback(boolean b) {
+    Log.d("CONNECT", "meme connected.");
+
+    memeLib.startDataReport(menuFragment);
+  }
+
+  @Override
+  public void memeDisconnectCallback() {
+    Log.d("CONNECT", "meme disconnected.");
+  }
+
+  public void init() {
+    MemeLib.setAppClientID(this, APP_ID, APP_SECRET);
+    memeLib = MemeLib.getInstance();
+    memeLib.setAutoConnect(false);
+
+    handler = new Handler();
+  }
+
+  public void startScan() {
+    Log.d("SCAN", "start scannig...");
+
+    memeLib.setMemeConnectListener(this);
+
+    MemeStatus status = memeLib.startScan(new MemeScanListener() {
+      @Override
+      public void memeFoundCallback(String s) {
+        Log.d("SCAN", "found: " + s);
+
+        scannedMemeList.add(s);
+      }
+    });
+  }
+
+  public void stopScan() {
+    Log.d("SCAN", "stop scannig...");
+
+    if(memeLib.isScanning()) {
+      memeLib.stopScan();
+
+      Log.d("SCAN", "scan stopped.");
+
+      invalidateOptionsMenu();
     }
   }
 }
