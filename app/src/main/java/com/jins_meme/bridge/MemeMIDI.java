@@ -116,12 +116,12 @@ public class MemeMIDI {
     byte[] buffer = new byte[32];
     int numBytes = 0;
     if(velocity > 0) {
-      buffer[numBytes++] = (byte)(0x80 + (channel - 1)); // Control Change
+      buffer[numBytes++] = (byte)(0x90 + (channel - 1)); // Note On
       buffer[numBytes++] = (byte)pitch;
-      buffer[numBytes++] = (byte)(velocity >> 4);
+      buffer[numBytes++] = (byte)velocity;
     }
     else if(velocity == 0) {
-      buffer[numBytes++] = (byte)(0x90 + (channel - 1)); // Control Change
+      buffer[numBytes++] = (byte)(0x80 + (channel - 1)); // Note Off
       buffer[numBytes++] = (byte)pitch;
       buffer[numBytes++] = (byte)0;
     }
@@ -154,7 +154,7 @@ public class MemeMIDI {
     int numBytes = 0;
     buffer[numBytes++] = (byte)(0xB0 + (channel - 1)); // Control Change
     buffer[numBytes++] = (byte)number;
-    buffer[numBytes++] = (byte)(value >> 4);
+    buffer[numBytes++] = (byte)value;
     int offset = 0;
 
     try {
