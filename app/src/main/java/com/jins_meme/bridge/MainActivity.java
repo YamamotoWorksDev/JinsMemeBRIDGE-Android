@@ -9,20 +9,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
-import android.widget.Spinner;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import com.jins_jp.meme.MemeConnectListener;
-import com.jins_jp.meme.MemeLib;
-import com.jins_jp.meme.MemeScanListener;
-import com.jins_jp.meme.MemeStatus;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  *
@@ -32,70 +21,27 @@ import java.util.List;
  *
  **/
 
-public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.1";
+public class MainActivity extends AppCompatActivity {
+  private static final String VERSION = "0.5.2";
 
-  private static final String APP_ID = "907977722622109";
-  private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
+  private static final int MENU_SCAN = 0;
+  private static final int MENU_EXIT = 10;
 
+  private MenuFragment menuFragment;
   private Handler handler;
-  private MemeLib memeLib;
-  //private BridgeOSCListener bridgeOSCListener;
-  private BridgeMIDIListener bridgeMIDIListener;
-
-  private List<String> scannedMemeList = new ArrayList<>();
-  private ArrayAdapter<String> memeAdapter;
-
-  // Test UI
-  private ToggleButton btnScan;
-  private ToggleButton btnConnect;
-  private Spinner spnrScanResult;
-
-  @Override
-  public void memeConnectCallback(boolean b) {
-    Log.d("CONNECT", "meme connected.");
-
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        btnScan.setEnabled(false);
-        spnrScanResult.setEnabled(false);
-      }
-    });
-
-    //if(bridgeOSCListener != null) {
-    //  bridgeOSCListener.init();
-    //  memeLib.startDataReport(bridgeOSCListener);
-    //}
-
-    if(bridgeMIDIListener != null) {
-      bridgeMIDIListener.init(this);
-      memeLib.startDataReport(bridgeMIDIListener);
-    }
-  }
-
-  @Override
-  public void memeDisconnectCallback() {
-    Log.d("CONNECT", "meme disconnected.");
-
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        btnScan.setEnabled(true);
-        spnrScanResult.setEnabled(true);
-      }
-    });
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    //setContentView(R.layout.activity_main);
+    setContentView(R.layout.activity_bridge_menu);
+
+    handler = new Handler();
+    menuFragment = (MenuFragment)getFragmentManager().findFragmentById(R.id.fragment);
 
     if(Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
     }
-
 
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(this));
     if(!MemeMIDI.checkUsbMidi(this)) {
@@ -105,21 +51,92 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       alert.setNeutralButton("Exit", new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
-          System.exit(0);
+          finish();
         }
       });
 
       alert.create().show();
     }
 
-    init();
+    menuFragment.init();
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    Log.d("DEBUG", "test..." + menuFragment.getFoundMemeNum());
+
+    menu.add(0, MENU_SCAN, 0, "SCAN").setCheckable(true);
+
+    int index = 1;
+    if(menuFragment.getFoundMemeNum() > 0) {
+      for(String memeId : menuFragment.getScannedMemeList()) {
+        menu.add(0, MENU_SCAN + index, 0, memeId).setCheckable(true);
+      }
+    }
+
+    menu.add(0, MENU_EXIT, 0, "EXIT");
+
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    Log.d("DEBUG", "item id = " + item.getItemId());
+
+    switch(item.getItemId()) {
+      case MENU_SCAN:
+        if(!item.isChecked()) {
+          item.setChecked(true);
+
+          menuFragment.clearMemeList();
+
+          menuFragment.startScan();
+
+          handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              item.setChecked(false);
+
+              menuFragment.stopScan();
+              invalidateOptionsMenu();
+            }
+          }, 5000);
+        }
+        else {
+          item.setChecked(false);
+
+          handler.removeCallbacks(null);
+
+          menuFragment.stopScan();
+        }
+        return true;
+      case MENU_EXIT:
+        finish();
+        break;
+      default:
+        Log.d("DEBUG", "check = " + item.isChecked());
+
+        if(item.isChecked() && menuFragment.isMemeConnected()) {
+          menuFragment.memeDisconnect();
+          item.setChecked(false);
+        }
+        else if(!item.isChecked() && !menuFragment.isMemeConnected()) {
+          Log.d("CONNECT", "meme ADDRESS: " + item.getTitle().toString());
+
+          menuFragment.memeConnect(item.getTitle().toString());
+          item.setChecked(true);
+        }
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+
   }
 
   @Override
   protected void onResume() {
     super.onResume();
 
-    Log.d("DEBUG", "onResume...");
+    Log.d("DEBUG", "onResume..." + menuFragment.getFoundMemeNum());
   }
 
   @TargetApi(23)
@@ -143,98 +160,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
     else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-  }
-
-  private void init() {
-    MemeLib.setAppClientID(getApplicationContext(), APP_ID, APP_SECRET);
-    memeLib = MemeLib.getInstance();
-    memeLib.setAutoConnect(false);
-
-    handler = new Handler();
-
-    btnScan = (ToggleButton)findViewById(R.id.scan);
-    btnScan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if(btnScan.isChecked()) {
-          if(memeAdapter != null)
-            memeAdapter.clear();
-
-          if(scannedMemeList != null)
-            scannedMemeList.clear();
-
-          startScan();
-
-          handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              btnScan.setChecked(false);
-            }
-          }, 5000);
-        }
-        else {
-          handler.removeCallbacks(null);
-
-          stopScan();
-        }
-      }
-    });
-
-    btnConnect = (ToggleButton)findViewById(R.id.connect);
-    btnConnect.setEnabled(false);
-    btnConnect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if(memeLib.isConnected()) {
-          memeLib.disconnect();
-        }
-        else {
-          Log.d("CONNECT", "meme ADDRESS: " + spnrScanResult.getSelectedItem().toString());
-          memeLib.connect(spnrScanResult.getSelectedItem().toString());
-        }
-      }
-    });
-
-    spnrScanResult = (Spinner)findViewById(R.id.scan_result);
-    spnrScanResult.setEnabled(false);
-
-    //bridgeOSCListener = new BridgeOSCListener();
-    bridgeMIDIListener = new BridgeMIDIListener();
-  }
-
-  private void startScan() {
-    Log.d("SCAN", "start scannig...");
-
-    memeLib.setMemeConnectListener(this);
-
-    MemeStatus status = memeLib.startScan(new MemeScanListener() {
-      @Override
-      public void memeFoundCallback(String s) {
-        Log.d("SCAN", "found: " + s);
-
-        scannedMemeList.add(s);
-      }
-    });
-  }
-
-  private void stopScan() {
-    Log.d("SCAN", "stop scannig...");
-
-    if(memeLib.isScanning()) {
-      memeLib.stopScan();
-
-      Log.d("SCAN", "scan stopped.");
-
-      List<String> list = new ArrayList<>(new HashSet<>(scannedMemeList));
-      memeAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, list);
-      memeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-      spnrScanResult.setAdapter(memeAdapter);
-
-      if(scannedMemeList.size() > 0) {
-        spnrScanResult.setEnabled(true);
-        btnConnect.setEnabled(true);
-      }
     }
   }
 }
