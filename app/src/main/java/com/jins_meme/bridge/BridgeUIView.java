@@ -23,7 +23,15 @@ public class BridgeUIView extends RecyclerView {
     }
 
     public void move(int amount) {
-        smoothScrollToPosition(getCurrentCenteredItemPosition()+amount);
+        int toIndex = getCurrentCenteredItemPosition()+amount;
+        View target = mLayoutManager.findViewByPosition(toIndex);
+        if(target != null) {
+            int dx = target.getLeft() - (getWidth() - target.getWidth()) / 2;
+            smoothScrollBy(dx, 0);
+        }
+        else {
+            smoothScrollToPosition(toIndex);
+        }
     }
     public void enter() {
         mLayoutManager.findViewByPosition(getCurrentCenteredItemPosition()).callOnClick();
@@ -138,10 +146,8 @@ public class BridgeUIView extends RecyclerView {
         @Override
         public LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
             LayoutParams ret = super.generateLayoutParams(lp);
-            int w = getWidth(), h = getHeight();
-            if(w > h) w = h*h/w;
-            ret.width = w - CARD_MARGIN*2;
-            ret.height = h - CARD_MARGIN*2;
+            ret.width = getItemWidth() - CARD_MARGIN*2;
+            ret.height = getItemHeight() - CARD_MARGIN*2;
             ret.setMargins(CARD_MARGIN,CARD_MARGIN,CARD_MARGIN,CARD_MARGIN);
             return ret;
         }
@@ -149,7 +155,19 @@ public class BridgeUIView extends RecyclerView {
         @Override
         public void onLayoutCompleted(State state) {
             super.onLayoutCompleted(state);
-            scrollToPosition(getAdapter().getItemCount()/2);
+            Adapter adapter = (Adapter)getAdapter();
+            int near = adapter.getItemCount()/2;
+            int dx = (getWidth()-getItemWidth())/2;
+            scrollToPositionWithOffset(near - near%adapter.getChildCardCount(adapter.getSelectedCardId())+1, dx);
+        }
+
+        private int getItemWidth() {
+            int w = getWidth(), h = getHeight();
+            if(w > h) w = h*h/w;
+            return w;
+        }
+        private int getItemHeight() {
+            return getHeight();
         }
     }
 }
