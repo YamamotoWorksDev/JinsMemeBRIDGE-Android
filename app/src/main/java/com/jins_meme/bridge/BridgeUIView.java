@@ -33,12 +33,15 @@ public class BridgeUIView extends RecyclerView {
     }
 
     private int getCurrentCenteredItemPosition() {
-        int first = mLayoutManager.findFirstVisibleItemPosition();
-        View firstView = mLayoutManager.findViewByPosition(first);
-        if(firstView.getLeft()+firstView.getWidth()/2.f < 0) {
-            return first+1;
+        int last = mLayoutManager.findLastVisibleItemPosition();
+        int center = getWidth()/2;
+        for(int i = mLayoutManager.findFirstVisibleItemPosition(); i <= last; ++i) {
+            View view = mLayoutManager.findViewByPosition(i);
+            if(view.getRight() > center) {
+                return i;
+            }
         }
-        return first;
+        return last;
     }
 
     public interface IResultListener {
