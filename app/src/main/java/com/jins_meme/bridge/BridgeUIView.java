@@ -1,7 +1,8 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -50,6 +51,17 @@ public class BridgeUIView extends RecyclerView {
             }
         }
         return last;
+    }
+    private View getCurrentCenteredItem() {
+        int last = mLayoutManager.findLastVisibleItemPosition();
+        int center = getWidth()/2;
+        for(int i = mLayoutManager.findFirstVisibleItemPosition(); i <= last; ++i) {
+            View view = mLayoutManager.findViewByPosition(i);
+            if(view.getRight() > center) {
+                return view;
+            }
+        }
+        return null;
     }
 
     public interface IResultListener {
@@ -136,6 +148,23 @@ public class BridgeUIView extends RecyclerView {
         }
     }
     private class CardDecoration extends RecyclerView.ItemDecoration {
+        private final int FOCUS_FRAME_WIDTH = 1;
+        private final int FOCUS_FRAME_COLOR = 0xFFFFFF00;
+        @Override
+        public void onDrawOver(Canvas c, RecyclerView parent, State state) {
+            super.onDrawOver(c, parent, state);
+            View view = ((BridgeUIView)(parent)).getCurrentCenteredItem();
+            if(view != null) {
+                Paint p = new Paint();
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(FOCUS_FRAME_WIDTH);
+                p.setColor(FOCUS_FRAME_COLOR);
+                c.drawRect(view.getLeft()-FOCUS_FRAME_WIDTH,
+                        view.getTop()-FOCUS_FRAME_WIDTH,
+                        view.getRight()+FOCUS_FRAME_WIDTH,
+                        view.getBottom()+FOCUS_FRAME_WIDTH, p);
+            }
+        }
     }
     private class CardLayoutManager extends LinearLayoutManager {
         private final int CARD_MARGIN = 10;
