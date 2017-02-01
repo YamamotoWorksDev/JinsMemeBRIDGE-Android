@@ -46,6 +46,14 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     }
 
     @Override
+    public void onEnterCard(int id) {
+        Log.d("ENTER", getResources().getString(id));
+    }
+    @Override
+    public void onExitCard(int id) {
+        Log.d("EXIT", getResources().getString(id));
+    }
+    @Override
     public void onBridgeMenuFinished(int id) {
         Log.d("RESULT", getResources().getString(id));
         mView.reset();

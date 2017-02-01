@@ -1,7 +1,8 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -23,7 +24,15 @@ public class BridgeUIView extends RecyclerView {
     }
 
     public void move(int amount) {
-        smoothScrollToPosition(getCurrentCenteredItemPosition()+amount);
+        int toIndex = getCurrentCenteredItemPosition()+amount;
+        View target = mLayoutManager.findViewByPosition(toIndex);
+        if(target != null) {
+            int dx = target.getLeft() - (getWidth() - target.getWidth()) / 2;
+            smoothScrollBy(dx, 0);
+        }
+        else {
+            smoothScrollToPosition(toIndex);
+        }
     }
     public void enter() {
         mLayoutManager.findViewByPosition(getCurrentCenteredItemPosition()).callOnClick();
@@ -33,15 +42,31 @@ public class BridgeUIView extends RecyclerView {
     }
 
     private int getCurrentCenteredItemPosition() {
-        int first = mLayoutManager.findFirstVisibleItemPosition();
-        View firstView = mLayoutManager.findViewByPosition(first);
-        if(firstView.getLeft()+firstView.getWidth()/2.f < 0) {
-            return first+1;
+        int last = mLayoutManager.findLastVisibleItemPosition();
+        int center = getWidth()/2;
+        for(int i = mLayoutManager.findFirstVisibleItemPosition(); i <= last; ++i) {
+            View view = mLayoutManager.findViewByPosition(i);
+            if(view.getRight() > center) {
+                return i;
+            }
         }
-        return first;
+        return last;
+    }
+    private View getCurrentCenteredItem() {
+        int last = mLayoutManager.findLastVisibleItemPosition();
+        int center = getWidth()/2;
+        for(int i = mLayoutManager.findFirstVisibleItemPosition(); i <= last; ++i) {
+            View view = mLayoutManager.findViewByPosition(i);
+            if(view.getRight() > center) {
+                return view;
+            }
+        }
+        return null;
     }
 
     public interface IResultListener {
+        public void onEnterCard(int id);
+        public void onExitCard(int id);
         public void onBridgeMenuFinished(int id);
     }
 
@@ -95,11 +120,13 @@ public class BridgeUIView extends RecyclerView {
                                 mListener.onBridgeMenuFinished(NO_ID);
                             }
                             else {
+                                mListener.onExitCard(getSelectedCardId());
                                 mHistory.pop();
                                 notifyDataSetChanged();
                             }
                             break;
                         case ENTER_MENU:
+                            mListener.onEnterCard(id);
                             mHistory.push(id);
                             notifyDataSetChanged();
                             break;
@@ -117,23 +144,59 @@ public class BridgeUIView extends RecyclerView {
 
         public CardHolder(View itemView) {
             super(itemView);
+            itemView.setLayoutParams(new ViewGroup.LayoutParams(-1,-1));    // LayoutManagerでLayoutParamsを再計算させるためのdirty hack
         }
     }
     private class CardDecoration extends RecyclerView.ItemDecoration {
+        private final int FOCUS_FRAME_WIDTH = 1;
+        private final int FOCUS_FRAME_COLOR = 0xFFFFFF00;
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
-            outRect.set(30,30,30,30);
+        public void onDrawOver(Canvas c, RecyclerView parent, State state) {
+            super.onDrawOver(c, parent, state);
+            View view = ((BridgeUIView)(parent)).getCurrentCenteredItem();
+            if(view != null) {
+                Paint p = new Paint();
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(FOCUS_FRAME_WIDTH);
+                p.setColor(FOCUS_FRAME_COLOR);
+                c.drawRect(view.getLeft()-FOCUS_FRAME_WIDTH,
+                        view.getTop()-FOCUS_FRAME_WIDTH,
+                        view.getRight()+FOCUS_FRAME_WIDTH,
+                        view.getBottom()+FOCUS_FRAME_WIDTH, p);
+            }
         }
     }
     private class CardLayoutManager extends LinearLayoutManager {
+        private final int CARD_MARGIN = 10;
         public CardLayoutManager(Context context) {
             super(context, LinearLayoutManager.HORIZONTAL, false);
         }
 
         @Override
+        public LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+            LayoutParams ret = super.generateLayoutParams(lp);
+            ret.width = getItemWidth() - CARD_MARGIN*2;
+            ret.height = getItemHeight() - CARD_MARGIN*2;
+            ret.setMargins(CARD_MARGIN,CARD_MARGIN,CARD_MARGIN,CARD_MARGIN);
+            return ret;
+        }
+
+        @Override
         public void onLayoutCompleted(State state) {
             super.onLayoutCompleted(state);
-            scrollToPosition(getAdapter().getItemCount()/2);
+            Adapter adapter = (Adapter)getAdapter();
+            int near = adapter.getItemCount()/2;
+            int dx = (getWidth()-getItemWidth())/2;
+            scrollToPositionWithOffset(near - near%adapter.getChildCardCount(adapter.getSelectedCardId())+1, dx);
+        }
+
+        private int getItemWidth() {
+            int w = getWidth(), h = getHeight();
+            if(w > h) w = h*h/w;
+            return w;
+        }
+        private int getItemHeight() {
+            return getHeight();
         }
     }
 }
