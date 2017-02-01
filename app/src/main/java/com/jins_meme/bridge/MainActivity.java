@@ -23,9 +23,12 @@ import java.util.List;
 
 /**
  *
- * Copylight (C) 2017, Shunichi Yamamoto, tkrworks.net
+ * MainActivity.java
  *
- * This file is part of MemeBRIDGE.
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
  *
  **/
 
