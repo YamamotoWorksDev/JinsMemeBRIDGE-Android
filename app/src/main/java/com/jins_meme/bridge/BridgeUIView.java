@@ -124,17 +124,26 @@ public class BridgeUIView extends RecyclerView {
 
         public CardHolder(View itemView) {
             super(itemView);
+            itemView.setLayoutParams(new ViewGroup.LayoutParams(-1,-1));    // LayoutManagerでLayoutParamsを再計算させるためのdirty hack
         }
     }
     private class CardDecoration extends RecyclerView.ItemDecoration {
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
-            outRect.set(30,30,30,30);
-        }
     }
     private class CardLayoutManager extends LinearLayoutManager {
+        private final int CARD_MARGIN = 10;
         public CardLayoutManager(Context context) {
             super(context, LinearLayoutManager.HORIZONTAL, false);
+        }
+
+        @Override
+        public LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+            LayoutParams ret = super.generateLayoutParams(lp);
+            int w = getWidth(), h = getHeight();
+            if(w > h) w = h*h/w;
+            ret.width = w - CARD_MARGIN*2;
+            ret.height = h - CARD_MARGIN*2;
+            ret.setMargins(CARD_MARGIN,CARD_MARGIN,CARD_MARGIN,CARD_MARGIN);
+            return ret;
         }
 
         @Override
