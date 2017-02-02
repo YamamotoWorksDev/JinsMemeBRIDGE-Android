@@ -54,6 +54,26 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        Log.d("FRAGMENT", "onStop...");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        memeMIDI.closePort();
+        memeMIDI = null;
+
+        memeOSC.closeSocket();
+        memeOSC = null;
+
+        Log.d("FRAGMENT", "onDestroy...");
+    }
+
+    @Override
     public void onEnterCard(int id) {
         Log.d("ENTER", getResources().getString(id));
     }
