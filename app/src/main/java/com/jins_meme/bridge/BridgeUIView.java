@@ -74,7 +74,7 @@ public class BridgeUIView extends RecyclerView {
     public interface IResultListener {
         void onEnterCard(int id);
         void onExitCard(int id);
-        void onBridgeMenuFinished(int id);
+        void onEndCardSelected(int id);
     }
 
     public static abstract class Adapter<CH extends CardHolder> extends RecyclerView.Adapter<CH> {
@@ -123,7 +123,7 @@ public class BridgeUIView extends RecyclerView {
                     switch(result) {
                         case BACK:
                             if(mHistory.empty()) {
-                                mListener.onBridgeMenuFinished(NO_ID);
+                                mListener.onEndCardSelected(NO_ID);
                             }
                             else {
                                 mListener.onExitCard(getSelectedCardId());
@@ -137,7 +137,7 @@ public class BridgeUIView extends RecyclerView {
                             notifyDataSetChanged();
                             break;
                         case END:
-                            mListener.onBridgeMenuFinished(id);
+                            mListener.onEndCardSelected(id);
                             break;
                     }
                 }
