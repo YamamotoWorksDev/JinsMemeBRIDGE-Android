@@ -35,6 +35,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     private MemeMIDI memeMIDI;
     private MemeOSC memeOSC;
+    private MemeRealtimeDataFilter memeFilter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,6 +60,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         memeOSC.setRemotePort(10316);
         memeOSC.setHostPort(11316);
         memeOSC.initSocket();
+
+        memeFilter = new MemeRealtimeDataFilter();
+//        memeFilter.setMoveType(MemeRealtimeDataFilter.MoveType.HEAD);
     }
 
     @Override
@@ -129,7 +133,6 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         }
         {
             // OSC?
-            int freq;
             switch(id) {
                 case R.string.osc_220hz:
                     Log.d("DEBUG", "set freq 220");
@@ -219,33 +222,58 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         else
             memeMIDI.sendControlChange(1, 35, -iroll);
 
+        memeFilter.update(memeRealtimeData);
+        if(memeFilter.isBlink()) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mView.enter();
+                }
+            });
+        }
+        if(memeFilter.isLeft()) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mView.move(-1);
+                }
+            });
+        }
+        if(memeFilter.isRight()) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mView.move(1);
+                }
+            });
+        }
         if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0 || eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0) {
             Log.d("EYE", String.format("meme: BLINK = %d/%d, UP = %d, DOWN = %d, LEFT = %d, RIGHT = %d", eyeBlinkStrength, eyeBlinkSpeed, eyeUp, eyeDown, eyeLeft, eyeRight));
 
-            if(eyeBlinkStrength > 10 || eyeUp == 3) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mView.enter();
-                    }
-                });
-            }
-            else if(eyeLeft > 0) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mView.move(-1);
-                    }
-                });
-            }
-            else if(eyeRight > 0) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mView.move(1);
-                    }
-                });
-            }
+//            if(eyeBlinkStrength > 10 || eyeUp == 3) {
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mView.enter();
+//                    }
+//                });
+//            }
+//            else if(eyeLeft > 0) {
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mView.move(-1);
+//                    }
+//                });
+//            }
+//            else if(eyeRight > 0) {
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mView.move(1);
+//                    }
+//                });
+//            }
 
             /*
             if(memeMIDI.isInitializedMidi()) {
