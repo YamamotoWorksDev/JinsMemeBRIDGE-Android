@@ -9,6 +9,11 @@
     <TextView
         android:id="@+id/card_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:textAppearance="@android:style/TextAppearance.Material.Widget.Button"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="64sp"
+        android:textStyle="normal|bold"
+        android:gravity="center" />
 
 </LinearLayout>

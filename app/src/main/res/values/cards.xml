@@ -3,8 +3,14 @@
     <string name="back">back</string>
     <string name="midi">midi</string>
     <string name="osc">osc</string>
-    <string name="midi_on">midi on</string>
-    <string name="midi_off">midi off</string>
+    <string name="noteon_60">C4</string>
+    <string name="noteon_61">D4</string>
+    <string name="noteon_62">E4</string>
+    <string name="noteon_63">F4</string>
+    <string name="noteon_64">G4</string>
+    <string name="noteon_65">A4</string>
+    <string name="noteon_66">B4</string>
+    <string name="noteon_67">C5</string>
     <string name="osc_on">osc on</string>
     <string name="osc_off">osc off</string>
 </resources>

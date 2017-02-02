@@ -95,18 +95,40 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     }
     @Override
     public void onEndCardSelected(int id) {
+        {
+            // MIDI?
+            int note = 60;
+            switch (id) {
+                case R.string.noteon_67: ++note;
+                case R.string.noteon_66: ++note;
+                case R.string.noteon_65: ++note;
+                case R.string.noteon_64: ++note;
+                case R.string.noteon_63: ++note;
+                case R.string.noteon_62: ++note;
+                case R.string.noteon_61: ++note;
+                case R.string.noteon_60:
+                    final int finalNote = note;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("DEBUG", "note on " + finalNote);
+                            memeMIDI.sendNote(1, finalNote, 127);
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } finally {
+                                Log.d("DEBUG", "note off " + finalNote);
+                                memeMIDI.sendNote(1, finalNote, 0);
+                            }
+                        }
+                    }).start();
+                    break;
+            }
+        }
         Log.d("RESULT", getResources().getString(id));
-        mView.reset();
 
         switch(getResources().getString(id)) {
-            case "midi on":
-                Log.d("DEBUG", "note on 30");
-                memeMIDI.sendNote(1, 30, 127);
-                break;
-            case "midi off":
-                Log.d("DEBUG", "note off 30");
-                memeMIDI.sendNote(1, 30, 0);
-                break;
             case "osc on":
                 Log.d("DEBUG", "note on 31");
                 memeMIDI.sendNote(1, 31, 127);
@@ -241,10 +263,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     }
                     break;
                 case R.string.midi:
-                    switch (position) {
-                        case 0: id = R.string.back; break;
-                        case 1: id = R.string.midi_on; break;
-                        case 2: id = R.string.midi_off; break;
+                    if(position < 8) {
+                        id = getResources().getIdentifier("noteon_6"+position, "string", mContext.getPackageName());
+                    }
+                    else {
+                        id = R.string.back;
                     }
                     break;
                 case R.string.osc:
@@ -260,7 +283,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         @Override
         public int getChildCardCount(int parent_id) {
             switch(parent_id) {
-                case R.string.midi: return 3;
+                case R.string.midi: return 9;
                 case R.string.osc: return 3;
                 case NO_ID: return 2;
             }
