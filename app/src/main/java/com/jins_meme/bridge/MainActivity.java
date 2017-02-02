@@ -33,7 +33,7 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.4";
+  private static final String VERSION = "0.5.5";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
@@ -64,10 +64,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
       alert.setTitle("Warning");
       alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
-      alert.setNeutralButton("Exit", new DialogInterface.OnClickListener() {
+      alert.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d("DEBUG", "Quit App...");
+
           finish();
+        }
+      });
+      alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d("DEBUG", "Close Alert Dialog...");
         }
       });
 

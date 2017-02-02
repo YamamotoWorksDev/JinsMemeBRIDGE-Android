@@ -58,51 +58,55 @@ public class MemeMIDI {
   }
 
   public void initPort() {
+    Log.d("DEBUG", "initPort...");
+
     midiManager = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
-    final MidiDeviceInfo[] infos = midiManager.getDevices();
-    if(infos.length > 0) {
-      final int numInputs = infos[0].getInputPortCount();
-      final int numOutputs = infos[0].getOutputPortCount();
-      MidiDeviceInfo.PortInfo[] portInfos = infos[0].getPorts();
-      String portName = portInfos[0].getName();
-      midiManager.openDevice(infos[0], new MidiManager.OnDeviceOpenedListener() {
-        @Override
-        public void onDeviceOpened(MidiDevice device) {
-          if(device == null) {
-            Log.d("DEBUG", "could not open device " + infos[0]);
+    if(midiManager != null) {
+      final MidiDeviceInfo[] infos = midiManager.getDevices();
+      if(infos.length > 0) {
+        final int numInputs = infos[0].getInputPortCount();
+        final int numOutputs = infos[0].getOutputPortCount();
+        MidiDeviceInfo.PortInfo[] portInfos = infos[0].getPorts();
+        String portName = portInfos[0].getName();
+        midiManager.openDevice(infos[0], new MidiManager.OnDeviceOpenedListener() {
+          @Override
+          public void onDeviceOpened(MidiDevice device) {
+            if(device == null) {
+              Log.d("DEBUG", "could not open device " + infos[0]);
+            }
+            else {
+              Log.d("DEBUG", "a onDeviceOpend...");
+
+              midiInputPort = device.openInputPort(numInputs - 1);
+              midiOutputPort = device.openOutputPort(numOutputs - 1);
+
+              if(midiInputPort == null)
+                Log.d("DEBUG", "midi input port is null...");
+
+              if(midiOutputPort == null)
+                Log.d("DEBUG", "midi output port is null...");
+
+              initializedMidi = true;
+            }
           }
-          else {
-            Log.d("DEBUG", "a onDeviceOpend...");
+        }, null);
 
-            midiInputPort = device.openInputPort(numInputs - 1);
-            midiOutputPort = device.openOutputPort(numOutputs - 1);
+        Log.d("DEBUG", "MIDI: " + numInputs + " " + numOutputs + " " + portName);
 
-            if(midiInputPort == null)
-              Log.d("DEBUG", "midi input port is null...");
+        /*
+        midiManager.registerDeviceCallback(new MidiManager.DeviceCallback() {
+            public void onDeviceAdded(MidiDeviceInfo info) {
 
-            if(midiOutputPort == null)
-              Log.d("DEBUG", "midi output port is null...");
+            }
 
-            initializedMidi = true;
-          }
-        }
-      }, null);
+            public void onDeviceRemoved(MidiDeviceInfo info) {
 
-      Log.d("DEBUG", "MIDI: " + numInputs + " " + numOutputs + " " + portName);
-
-      /*
-      midiManager.registerDeviceCallback(new MidiManager.DeviceCallback() {
-        public void onDeviceAdded(MidiDeviceInfo info) {
-
-        }
-
-        public void onDeviceRemoved(MidiDeviceInfo info) {
-
-        }
-      });
-      */
+            }
+        });
+        */
+      }
+      Log.d("DEBUG", "midi:" + infos.length);
     }
-    Log.d("DEBUG", "midi:" + infos.length);
   }
 
   public void closePort() {
@@ -154,7 +158,8 @@ public class MemeMIDI {
     int offset = 0;
 
     try {
-      midiInputPort.send(buffer, offset, numBytes);
+      if(midiInputPort != null)
+        midiInputPort.send(buffer, offset, numBytes);
     }
     catch(IOException ioe) {
       ioe.printStackTrace();
@@ -184,7 +189,8 @@ public class MemeMIDI {
     int offset = 0;
 
     try {
-      midiInputPort.send(buffer, offset, numBytes);
+      if(midiInputPort != null)
+        midiInputPort.send(buffer, offset, numBytes);
     }
     catch(IOException ioe) {
       ioe.printStackTrace();
