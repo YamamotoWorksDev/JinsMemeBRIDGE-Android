@@ -13,11 +13,19 @@ import android.widget.TextView;
 import com.jins_jp.meme.MemeRealtimeData;
 import com.jins_jp.meme.MemeRealtimeListener;
 
-import static com.jins_meme.bridge.BridgeUIView.*;
+import static com.jins_meme.bridge.BridgeUIView.CardHolder;
+import static com.jins_meme.bridge.BridgeUIView.IResultListener;
 
 /**
- * Created by nariakiiwatani on 2017/01/27.
- */
+ *
+ * MenuFragment.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ *
+ **/
 
 public class MenuFragment extends Fragment implements IResultListener, MemeRealtimeListener {
     private BridgeUIView mView = null;
@@ -237,7 +245,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
         class MyCardHolder extends CardHolder {
             TextView mTextView;
-            public MyCardHolder(View itemView) {
+            MyCardHolder(View itemView) {
                 super(itemView);
                 mTextView = (TextView) itemView.findViewById(R.id.card_text);
             }

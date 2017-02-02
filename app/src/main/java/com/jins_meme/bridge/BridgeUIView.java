@@ -11,8 +11,15 @@ import android.view.ViewGroup;
 import java.util.Stack;
 
 /**
- * Created by nariakiiwatani on 2017/01/30.
- */
+ *
+ * MenuFragment.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ *
+ **/
 
 public class BridgeUIView extends RecyclerView {
     private CardLayoutManager mLayoutManager;
@@ -65,17 +72,17 @@ public class BridgeUIView extends RecyclerView {
     }
 
     public interface IResultListener {
-        public void onEnterCard(int id);
-        public void onExitCard(int id);
-        public void onBridgeMenuFinished(int id);
+        void onEnterCard(int id);
+        void onExitCard(int id);
+        void onBridgeMenuFinished(int id);
     }
 
     public static abstract class Adapter<CH extends CardHolder> extends RecyclerView.Adapter<CH> {
-        public static final int NO_ID = (int) RecyclerView.NO_ID;
+        static final int NO_ID = (int) RecyclerView.NO_ID;
         enum CardFunction {
             BACK, ENTER_MENU, END,
         }
-        private Stack<Integer> mHistory = new Stack<Integer>();
+        private Stack<Integer> mHistory = new Stack<>();
         private IResultListener mListener;
         Adapter(IResultListener listener) {
             mListener = listener;
@@ -88,15 +95,14 @@ public class BridgeUIView extends RecyclerView {
         public abstract int getChildCardCount(int parent_id);
         public int getCardType(int id) { return 0; }
 
-        public void reset() {
+        void reset() {
             mHistory.clear();
             notifyDataSetChanged();
         }
 
         @Override
         public final CH onCreateViewHolder(ViewGroup parent, int viewType) {
-            CH ch = onCreateCardHolder(parent, viewType);
-            return ch;
+            return onCreateCardHolder(parent, viewType);
         }
         @Override
         public final int getItemCount() {
@@ -142,7 +148,7 @@ public class BridgeUIView extends RecyclerView {
     }
     public static class CardHolder extends RecyclerView.ViewHolder {
 
-        public CardHolder(View itemView) {
+        CardHolder(View itemView) {
             super(itemView);
             itemView.setLayoutParams(new ViewGroup.LayoutParams(-1,-1));    // LayoutManagerでLayoutParamsを再計算させるためのdirty hack
         }
@@ -168,7 +174,7 @@ public class BridgeUIView extends RecyclerView {
     }
     private class CardLayoutManager extends LinearLayoutManager {
         private final int CARD_MARGIN = 10;
-        public CardLayoutManager(Context context) {
+        CardLayoutManager(Context context) {
             super(context, LinearLayoutManager.HORIZONTAL, false);
         }
 
