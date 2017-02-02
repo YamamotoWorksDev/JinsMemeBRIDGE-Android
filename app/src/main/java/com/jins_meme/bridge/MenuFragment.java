@@ -41,8 +41,16 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         myAdapter = new MyAdapter(getContext(), this);
         mView.setAdapter(myAdapter);
 
+        // Initialize MIDI
         memeMIDI = new MemeMIDI(getContext());
         memeMIDI.initPort();
+
+        // Initialize OSC
+        memeOSC = new MemeOSC();
+        memeOSC.setRemoteIP("192.168.1.255");
+        memeOSC.setRemotePort(10316);
+        memeOSC.setHostPort(11316);
+        memeOSC.initSocket();
     }
 
     @Override
@@ -93,9 +101,18 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
         Log.d("DEBUG", "rotation  = " + yaw + ", " + pitch + ", " + roll);
 
-        int iyaw   = (int)((yaw / 360.0) * 127.0);
-        int ipitch = (int)((pitch / 360.0) * 127.0);
-        int iroll  = (int)((roll / 360.0) * 127.0);
+        if(memeOSC.initializedSocket()) {
+            memeOSC.setAddress(MemeOSC.PREFIX, MemeOSC.ANGLE);
+            memeOSC.setTypeTag("fff");
+            memeOSC.addArgument(yaw);
+            memeOSC.addArgument(pitch);
+            memeOSC.addArgument(roll);
+            memeOSC.flushMessage();
+        }
+
+        int iyaw   = (int)((yaw / 90.0) * 127.0);
+        int ipitch = (int)((pitch / 90.0) * 127.0);
+        int iroll  = (int)((roll / 90.0) * 127.0);
 
         Log.d("DEBUG", "irotation = " + iyaw + ", " + ipitch + ", " + iroll);
 
