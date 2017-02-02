@@ -95,6 +95,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     }
     @Override
     public void onEndCardSelected(int id) {
+        Log.d("RESULT", getResources().getString(id));
         {
             // MIDI?
             int note = 60;
@@ -126,7 +127,40 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     break;
             }
         }
-        Log.d("RESULT", getResources().getString(id));
+        {
+            // OSC?
+            int freq;
+            switch(id) {
+                case R.string.osc_220hz:
+                    Log.d("DEBUG", "set freq 220");
+                    memeOSC.setAddress(MemeOSC.PREFIX,"/frequency");
+                    memeOSC.setTypeTag("i");
+                    memeOSC.addArgument(220);
+                    memeOSC.flushMessage();
+                    break;
+                case R.string.osc_440hz:
+                    Log.d("DEBUG", "set freq 440");
+                    memeOSC.setAddress(MemeOSC.PREFIX,"/frequency");
+                    memeOSC.setTypeTag("i");
+                    memeOSC.addArgument(440);
+                    memeOSC.flushMessage();
+                    break;
+                case R.string.osc_mute_on:
+                    Log.d("DEBUG", "mute on");
+                    memeOSC.setAddress(MemeOSC.PREFIX,"/volume");
+                    memeOSC.setTypeTag("f");
+                    memeOSC.addArgument(0);
+                    memeOSC.flushMessage();
+                    break;
+                case R.string.osc_mute_off:
+                    Log.d("DEBUG", "mute off");
+                    memeOSC.setAddress(MemeOSC.PREFIX,"/volume");
+                    memeOSC.setTypeTag("f");
+                    memeOSC.addArgument(1);
+                    memeOSC.flushMessage();
+                    break;
+            }
+        }
 
         switch(getResources().getString(id)) {
             case "osc on":
@@ -272,9 +306,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     break;
                 case R.string.osc:
                     switch (position) {
-                        case 0: id = R.string.back; break;
-                        case 1: id = R.string.osc_on; break;
-                        case 2: id = R.string.osc_off; break;
+                        case 0: id = R.string.osc_220hz; break;
+                        case 1: id = R.string.osc_440hz; break;
+                        case 2: id = R.string.osc_mute_on; break;
+                        case 3: id = R.string.osc_mute_off; break;
+                        case 4: id = R.string.back; break;
                     }
                     break;
             }
@@ -284,7 +320,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         public int getChildCardCount(int parent_id) {
             switch(parent_id) {
                 case R.string.midi: return 9;
-                case R.string.osc: return 3;
+                case R.string.osc: return 5;
                 case NO_ID: return 2;
             }
             return 0;

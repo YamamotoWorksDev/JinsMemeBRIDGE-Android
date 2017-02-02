@@ -11,6 +11,8 @@
     <string name="noteon_65">A4</string>
     <string name="noteon_66">B4</string>
     <string name="noteon_67">C5</string>
-    <string name="osc_on">osc on</string>
-    <string name="osc_off">osc off</string>
+    <string name="osc_220hz">220Hz</string>
+    <string name="osc_440hz">440Hz</string>
+    <string name="osc_mute_on">mute on</string>
+    <string name="osc_mute_off">mute off</string>
 </resources>
