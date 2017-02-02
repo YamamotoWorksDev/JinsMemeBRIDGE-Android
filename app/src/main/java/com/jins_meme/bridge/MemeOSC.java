@@ -1,13 +1,5 @@
 package com.jins_meme.bridge;
 
-/*
-import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.util.Log;
-*/
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -42,6 +34,7 @@ public class MemeOSC {
   public static final String EYE_DOWN  = "/down";
   public static final String EYE_LEFT  = "/left";
   public static final String EYE_RIGHT = "/right";
+  public static final String ANGLE     = "/angle";
 
   public static final String SYSTEM_PREFIX   = "/sys";
   public static final String REMOTE_IP       = "/remote/ip";
@@ -55,8 +48,6 @@ public class MemeOSC {
   public static final String SET_HOST_PORT   = "/sys/host/port/set";
   public static final String HOST_IP         = "/remote/port";
   public static final String GET_HOST_IP     = "/sys/host/ip/get";
-
-  //private BluetoothAdapter mBluetoothAdapter;
 
   private DatagramSocket sndSocket;
   private DatagramSocket rcvSocket;
@@ -85,87 +76,24 @@ public class MemeOSC {
   private int[] rcvArgumentsIndexLength = new int[MAX_ARGS_LEN];
 
   public MemeOSC() {
-    /*
-    mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    Log.d("DEBUG", "bluetooth enabled = " + mBluetoothAdapter.isEnabled());
-    mBluetoothAdapter.disable();
-    Thread checkThread = new Thread() {
-      public void run() {
-        while(mBluetoothAdapter.isEnabled()) {
-          try {
-            Log.d("DEBUG", "waiting until bluetooth is disabled...");
-            Thread.sleep(500);
-          } catch(InterruptedException ie) {
-            Log.e("EXCEPTION", "message", ie);
-          }
-        }
-      }
-    };
-    checkThread.start();
-    Log.d("DEBUG", "android wear's bluetooth is disabled!");
-    */
-
     hostIP = "0.0.0.0";
-
-    /*
-    Thread wifiCheckerThread = new Thread() {
-      public void run() {
-        int timeoutCount = 100;
-
-        while(timeoutCount > 0 && hostIP.equals("0.0.0.0")) {
-          try {
-            //Log.d("DEBUG", "waiting until ip address is gotten... " + timeoutCount);
-            System.out.println("DEBUG: " + "waiting until ip address is gotten... " + timeoutCount);
-
-            int ipAddress = 0;
-            InetAddress addr = InetAddress.getLocalHost();
-            hostIP = addr.getHostAddress();
-            System.out.println("host ip = " + hostIP);
-            remoteIP = ((ipAddress >> 0) & 0xFF) + "." + ((ipAddress >> 8) & 0xFF) + "." + ((ipAddress >> 16) & 0xFF) + ".255";
-
-            Thread.sleep(1000);
-            timeoutCount--;
-          }
-          catch (InterruptedException ie) {
-            //Log.e("EXCEPTION", "message", ie);
-            ie.printStackTrace();
-          }
-          catch(UnknownHostException uhe) {
-            uhe.printStackTrace();
-          }
-        }
-        //Log.d("DEBUG", "HOST IP = " + hostIP + " remoteIP =  " + remoteIP);
-        System.out.println("DEBUG: " + "HOST IP = " + hostIP + " remoteIP =  " + remoteIP);
-        hasHostIP = true;
-      }
-    };
-    wifiCheckerThread.start();
-    */
   }
 
   public void initSocket() {
-    /*
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        */
-        try {
-          //Log.d("DEBUG", "init osc socket...");
-          System.out.println("DEBUG: " + "init osc socket...");
+    try {
+      //Log.d("DEBUG", "init osc socket...");
+      System.out.println("DEBUG: " + "init osc socket...");
 
-          sndSocket = new DatagramSocket();
-          rcvSocket = new DatagramSocket(hostPort);
-          rcvPacket = new DatagramPacket(rcvOSCData, rcvOSCData.length);
+      sndSocket = new DatagramSocket();
+      rcvSocket = new DatagramSocket(hostPort);
+      rcvPacket = new DatagramPacket(rcvOSCData, rcvOSCData.length);
 
-          oscInitFlag = true;
-        } catch(SocketException se) {
-          //Log.d("DEBUG", "failed socket...");
-          System.out.println("DEBUG: " + "failed socket...");
-        }
-    /*
-      }
-    }).start();
-    */
+      oscInitFlag = true;
+    }
+    catch(SocketException se) {
+      //Log.d("DEBUG", "failed socket...");
+      System.out.println("DEBUG: " + "failed socket...");
+    }
   }
 
   public boolean initializedSocket() {
@@ -189,38 +117,27 @@ public class MemeOSC {
     rcvPacket = null;
   }
 
-  //public void enableBluetoothAdapter() {
-  //  mBluetoothAdapter.enable();
-  //}
-
   public void setRemoteIP(String ip) {
     remoteIP = ip;
   }
-
   public String getRemoteIP() {
     return remoteIP;
   }
-
   public void setRemotePort(int port) {
     remotePort = port;
   }
-
   public int getRemotePort() {
     return remotePort;
   }
-
   public String getHostIP() {
     return hostIP;
   }
-
   public void setHostPort(int port) {
     hostPort = port;
   }
-
   public int getHostPort() {
     return hostPort;
   }
-
   public boolean isHasHostIP() {
     return hasHostIP;
   }
@@ -246,9 +163,8 @@ public class MemeOSC {
   }
 
   public synchronized void addMessageToBundle() {
-    for(int i = 0; i < oscTotalSize; i++) {
+    for(int i = 0; i < oscTotalSize; i++)
       sndOSCBundleData[oscBundleTotalSize++] = sndOSCData[i];
-    }
   }
 
   public synchronized void setAddress(String prefix, String command) {
@@ -327,47 +243,41 @@ public class MemeOSC {
   }
 
   public synchronized void flushMessage() {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          //Log.d("DEBUG", "flush osc message...");
+    try {
+      //Log.d("DEBUG", "flush osc message...");
 
-          InetAddress remoteAddr = InetAddress.getByName(remoteIP);
+      InetAddress remoteAddr = InetAddress.getByName(remoteIP);
 
-          sndPacket = new DatagramPacket(sndOSCData, oscTotalSize, remoteAddr, remotePort);
-          sndSocket.send(sndPacket);
-        } catch(UnknownHostException uhe) {
-          //Log.d("DEBUG", "failed sending... 0");
-          System.out.println("DEBUG: " + "failed sending... 0");
-        } catch(IOException ioe) {
-          //Log.d("DEBUG", "failed sending... 1");
-          System.out.println("DEBUG: " + "failed sending... 1");
-        }
-      }
-    }).start();
+      sndPacket = new DatagramPacket(sndOSCData, oscTotalSize, remoteAddr, remotePort);
+      sndSocket.send(sndPacket);
+    }
+    catch(UnknownHostException uhe) {
+      //Log.d("DEBUG", "failed sending... 0");
+      System.out.println("DEBUG: " + "failed sending... 0");
+    }
+    catch(IOException ioe) {
+      //Log.d("DEBUG", "failed sending... 1");
+      System.out.println("DEBUG: " + "failed sending... 1");
+    }
   }
 
   public synchronized void flushBundle() {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          //Log.d("DEBUG", "flush osc message...");
+    try {
+      //Log.d("DEBUG", "flush osc message...");
 
-          InetAddress remoteAddr = InetAddress.getByName(remoteIP);
+      InetAddress remoteAddr = InetAddress.getByName(remoteIP);
 
-          sndPacket = new DatagramPacket(sndOSCBundleData, oscBundleTotalSize, remoteAddr, remotePort);
-          sndSocket.send(sndPacket);
-        } catch(UnknownHostException uhe) {
-          //Log.d("DEBUG", "failed sending... 0");
-          System.out.println("DEBUG: " + "failed sending... 0");
-        } catch(IOException ioe) {
-          //Log.d("DEBUG", "failed sending... 1");
-          System.out.println("DEBUG: " + "failed sending... 1");
-        }
-      }
-    }).start();
+      sndPacket = new DatagramPacket(sndOSCBundleData, oscBundleTotalSize, remoteAddr, remotePort);
+      sndSocket.send(sndPacket);
+    }
+    catch(UnknownHostException uhe) {
+      //Log.d("DEBUG", "failed sending... 0");
+      System.out.println("DEBUG: " + "failed sending... 0");
+    }
+    catch(IOException ioe) {
+      //Log.d("DEBUG", "failed sending... 1");
+      System.out.println("DEBUG: " + "failed sending... 1");
+    }
   }
 
   public void receiveMessage() {
@@ -377,14 +287,17 @@ public class MemeOSC {
       rcvSocket.receive(rcvPacket);
 
       //System.out.println(Arrays.toString(rcvOSCData));
-    } catch(NullPointerException npe) {
+    }
+    catch(NullPointerException npe) {
       //Log.d("DEBUG", "socket closed... 0");
       System.out.println("DEBUG: " + "socket closed... 0");
-    } catch(SocketException se) {
+    }
+    catch(SocketException se) {
       //Log.d("EXCEPTION", "message", se);
       //Log.d("DEBUG", "socket closed... 1");
       System.out.println("DEBUG: " + "socket closed... 1");
-    } catch(IOException ioe) {
+    }
+    catch(IOException ioe) {
       //Log.e("EXCEPTION", "message", ioe);
       ioe.printStackTrace();
     }
@@ -524,11 +437,8 @@ public class MemeOSC {
   }
 
   public float getFloatArgumentAtIndex(int index) {
-    int s = 0;
-    int sign = 0, exponent = 0, mantissa = 0;
     int lvalue = 0;
     float fvalue = 0.0f;
-    float sum = 0.0f;
 
     if(index >= rcvArgumentsLength - 1)
       return 0.0f;
@@ -536,23 +446,24 @@ public class MemeOSC {
     switch(rcvArgsTypeArray.substring(index, index + 1)) {
       case "i":
         lvalue = (rcvOSCData[rcvArgumentsStartIndex[index]] << 24) |
-            (rcvOSCData[rcvArgumentsStartIndex[index] + 1] << 16) |
-            (rcvOSCData[rcvArgumentsStartIndex[index] + 2] << 8) |
-            rcvOSCData[rcvArgumentsStartIndex[index] + 3];
+                 (rcvOSCData[rcvArgumentsStartIndex[index] + 1] << 16) |
+                 (rcvOSCData[rcvArgumentsStartIndex[index] + 2] << 8) |
+                  rcvOSCData[rcvArgumentsStartIndex[index] + 3];
         fvalue = (float)lvalue;
         break;
       case "f":
         lvalue = ((rcvOSCData[rcvArgumentsStartIndex[index]] & 0xFF) << 24) |
-            ((rcvOSCData[rcvArgumentsStartIndex[index] + 1] & 0xFF) << 16) |
-            ((rcvOSCData[rcvArgumentsStartIndex[index] + 2] & 0xFF) << 8) |
-            (rcvOSCData[rcvArgumentsStartIndex[index] + 3] & 0xFF);
+                 ((rcvOSCData[rcvArgumentsStartIndex[index] + 1] & 0xFF) << 16) |
+                 ((rcvOSCData[rcvArgumentsStartIndex[index] + 2] & 0xFF) << 8) |
+                  (rcvOSCData[rcvArgumentsStartIndex[index] + 3] & 0xFF);
         lvalue &= 0xffffffff;
 
-        sign = (((lvalue >> 31) & 0x01) == 0x01) ? -1 : 1;
-        exponent = ((lvalue >> 23) & 0xFF) - 127;
-        mantissa = lvalue & 0x7FFFFF;
+        int sign = (((lvalue >> 31) & 0x01) == 0x01) ? -1 : 1;
+        int exponent = ((lvalue >> 23) & 0xFF) - 127;
+        int mantissa = lvalue & 0x7FFFFF;
 
-        for(s = 0; s < 23; s++) {
+        float sum = 0.0f;
+        for(int s = 0; s < 23; s++) {
           int onebit = (mantissa >> (22 - s)) & 0x1;
           sum += (float)onebit * (1.0 / (float)(1 << (s + 1)));
         }
