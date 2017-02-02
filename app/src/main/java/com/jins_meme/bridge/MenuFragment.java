@@ -72,11 +72,15 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     public void onDestroy() {
         super.onDestroy();
 
-        memeMIDI.closePort();
-        memeMIDI = null;
+        if(memeMIDI != null) {
+            memeMIDI.closePort();
+            memeMIDI = null;
+        }
 
-        memeOSC.closeSocket();
-        memeOSC = null;
+        if(memeOSC != null) {
+            memeOSC.closeSocket();
+            memeOSC = null;
+        }
 
         Log.d("FRAGMENT", "onDestroy...");
     }

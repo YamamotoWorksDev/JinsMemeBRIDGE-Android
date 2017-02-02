@@ -33,7 +33,7 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.3";
+  private static final String VERSION = "0.5.4";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
@@ -166,7 +166,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onDestroy() {
     super.onDestroy();
 
+    if(memeLib.isConnected()) {
+      memeLib.disconnect();
+      memeLib = null;
+    }
 
+    menuFragment = null;
+
+    handler = null;
 
     Log.d("DEBUG", "onDestroy...");
   }

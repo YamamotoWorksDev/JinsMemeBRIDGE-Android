@@ -107,11 +107,15 @@ public class MemeMIDI {
 
   public void closePort() {
     try {
-      midiInputPort.close();
-      midiOutputPort.close();
+      if(midiInputPort != null) {
+        midiInputPort.close();
+        midiInputPort = null;
+      }
 
-      midiInputPort = null;
-      midiOutputPort = null;
+      if(midiOutputPort != null) {
+        midiOutputPort.close();
+        midiOutputPort = null;
+      }
 
       midiManager = null;
     }
