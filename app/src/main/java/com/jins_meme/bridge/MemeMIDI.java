@@ -105,6 +105,21 @@ public class MemeMIDI {
     Log.d("DEBUG", "midi:" + infos.length);
   }
 
+  public void closePort() {
+    try {
+      midiInputPort.close();
+      midiOutputPort.close();
+
+      midiInputPort = null;
+      midiOutputPort = null;
+
+      midiManager = null;
+    }
+    catch(IOException ioe) {
+      ioe.printStackTrace();
+    }
+  }
+
   public void sendNote(int channel, int pitch, int velocity) {
     if(channel < 1 || channel > 16)
       return;
