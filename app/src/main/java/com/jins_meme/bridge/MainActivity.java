@@ -155,6 +155,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("DEBUG", "onResume..." + scannedMemeList.size());
   }
 
+  @Override
+  protected void onStop() {
+    super.onStop();
+
+    Log.d("DEBUG", "onStop...");
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+
+
+    Log.d("DEBUG", "onDestroy...");
+  }
+
   @TargetApi(23)
   private void requestGPSPermission() {
     if(checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
