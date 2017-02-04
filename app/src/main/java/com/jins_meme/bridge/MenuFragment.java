@@ -174,6 +174,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     @Override
     public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
+        float accelX = memeRealtimeData.getAccX();
+        float accelY = memeRealtimeData.getAccY();
+        float accelZ = memeRealtimeData.getAccZ();
         int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
         int eyeBlinkSpeed    = memeRealtimeData.getBlinkSpeed();
         int eyeUp    = memeRealtimeData.getEyeMoveUp();
@@ -187,22 +190,38 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
         memeBTSPP.sendAngle(yaw, pitch, roll);
 
-        Log.d("DEBUG", "rotation  = " + yaw + ", " + pitch + ", " + roll);
+        //debug Log.d("DEBUG", "accel  = " + accelX + ", " + accelY + ", " + accelZ);
+        //debug Log.d("DEBUG", "rotation  = " + yaw + ", " + pitch + ", " + roll);
 
         if(memeOSC.initializedSocket()) {
+            //debug Log.d("DEBUG", "osc bundle.");
+
+            memeOSC.createBundle();
+
+            memeOSC.setAddress(MemeOSC.PREFIX, MemeOSC.ACCEL);
+            memeOSC.setTypeTag("fff");
+            memeOSC.addArgument(accelX);
+            memeOSC.addArgument(accelY);
+            memeOSC.addArgument(accelZ);
+            memeOSC.setMessageSizeToBundle();
+            memeOSC.addMessageToBundle();
+
             memeOSC.setAddress(MemeOSC.PREFIX, MemeOSC.ANGLE);
             memeOSC.setTypeTag("fff");
             memeOSC.addArgument(yaw);
             memeOSC.addArgument(pitch);
             memeOSC.addArgument(roll);
-            memeOSC.flushMessage();
+            memeOSC.setMessageSizeToBundle();
+            memeOSC.addMessageToBundle();
+
+            memeOSC.flushBundle();
         }
 
         int iyaw   = (int)((yaw / 90.0) * 127.0);
         int ipitch = (int)((pitch / 90.0) * 127.0);
         int iroll  = (int)((roll / 90.0) * 127.0);
 
-        Log.d("DEBUG", "irotation = " + iyaw + ", " + ipitch + ", " + iroll);
+        //debug Log.d("DEBUG", "irotation = " + iyaw + ", " + ipitch + ", " + iroll);
 
         if(iyaw >= 0)
             memeMIDI.sendControlChange(1, 30, iyaw);

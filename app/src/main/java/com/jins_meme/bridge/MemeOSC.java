@@ -1,5 +1,7 @@
 package com.jins_meme.bridge;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -23,7 +25,7 @@ public class MemeOSC {
   private static final int MAX_BUF_SIZE    = 96;//64
   private static final int MAX_PACKET_SIZE = 1024;//192// 1024
   private static final int MAX_MESSAGE_LEN = 256;// 160
-  private static final int MAX_BUNDLE_LEN  = 1024;
+  private static final int MAX_BUNDLE_LEN  = 16384;
   private static final int MAX_ADDRESS_LEN = 64;
   private static final int MAX_ARGS_LEN    = 48;// 40
 
@@ -34,6 +36,7 @@ public class MemeOSC {
   public static final String EYE_DOWN  = "/down";
   public static final String EYE_LEFT  = "/left";
   public static final String EYE_RIGHT = "/right";
+  public static final String ACCEL     = "/accel";
   public static final String ANGLE     = "/angle";
 
   public static final String SYSTEM_PREFIX   = "/sys";
@@ -255,12 +258,10 @@ public class MemeOSC {
           sndSocket.send(sndPacket);
         }
         catch(UnknownHostException uhe) {
-          //Log.d("DEBUG", "failed sending... 0");
-          System.out.println("DEBUG: " + "failed sending... 0");
+          Log.d("DEBUG", "failed sending... 0");
         }
         catch(IOException ioe) {
-          //Log.d("DEBUG", "failed sending... 1");
-          System.out.println("DEBUG: " + "failed sending... 1");
+          Log.d("DEBUG", "failed sending... 1");
         }
       }
     }).start();
@@ -271,23 +272,22 @@ public class MemeOSC {
       @Override
       public void run() {
         try {
-          //Log.d("DEBUG", "flush osc message...");
+          //debug Log.d("DEBUG", "flush osc message...");
 
           InetAddress remoteAddr = InetAddress.getByName(remoteIP);
-
           sndPacket = new DatagramPacket(sndOSCBundleData, oscBundleTotalSize, remoteAddr, remotePort);
+
+          if(sndSocket != null)
           sndSocket.send(sndPacket);
         }
         catch(UnknownHostException uhe) {
-          //Log.d("DEBUG", "failed sending... 0");
-          System.out.println("DEBUG: " + "failed sending... 0");
+          Log.d("DEBUG", "failed sending... 0");
         }
         catch(IOException ioe) {
-          //Log.d("DEBUG", "failed sending... 1");
-          System.out.println("DEBUG: " + "failed sending... 1");
+          Log.d("DEBUG", "failed sending... 1");
         }
       }
-    });
+    }).start();
   }
 
   public void receiveMessage() {
