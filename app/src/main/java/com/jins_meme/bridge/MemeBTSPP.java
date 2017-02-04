@@ -164,19 +164,29 @@ public class MemeBTSPP {
   }
 
   public void sendEyeMove(int eyeUp, int eyeDown, int eyeLeft, int eyeRight) {
-    //int eyeMove = (eyeUp << 24) | (eyeDown << 16) | (eyeLeft << 8) | eyeRight;
+    try {
+      if(btDataOut != null && isConnectedMachine) {
+        //debug Log.d("DEBUG", "bluetooth write...");
+
+        byte[] allData = {(byte)2, (byte)eyeUp, (byte)eyeDown, (byte)eyeLeft, (byte)eyeRight};
+        btDataOut.write(allData);
+        btDataOut.flush();
+      }
+    }
+    catch(IOException ioe) {
+      ioe.printStackTrace();
+    }
   }
 
   public void sendAngle(float yaw, float pitch, float roll) {
     try {
       if(btDataOut != null && isConnectedMachine) {
-        Log.d("DEBUG", "bluetooth write...");
+        //debug Log.d("DEBUG", "bluetooth write...");
 
-        byte[] byteType  = ByteBuffer.allocate(2).putShort((short)3).array();
         byte[] byteYaw   = ByteBuffer.allocate(4).putFloat(yaw).array();
         byte[] bytePitch = ByteBuffer.allocate(4).putFloat(pitch).array();
         byte[] byteRoll  = ByteBuffer.allocate(4).putFloat(roll).array();;
-        byte[] allData = {byteType[0], byteType[1],
+        byte[] allData = {(byte)3,
                           byteYaw[0], byteYaw[1], byteYaw[2], byteYaw[3],
                           bytePitch[0], bytePitch[1], bytePitch[2], bytePitch[3],
                           byteRoll[0], byteRoll[1], byteRoll[2], byteRoll[3]};

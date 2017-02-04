@@ -170,17 +170,6 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     break;
             }
         }
-
-        switch(getResources().getString(id)) {
-            case "osc on":
-                Log.d("DEBUG", "note on 31");
-                memeMIDI.sendNote(1, 31, 127);
-                break;
-            case "osc off":
-                Log.d("DEBUG", "note off 31");
-                memeMIDI.sendNote(1, 31, 0);
-                break;
-        }
     }
 
     @Override
@@ -255,40 +244,14 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                 }
             });
         }
-        if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0 || eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0) {
-            Log.d("EYE", String.format("meme: BLINK = %d/%d, UP = %d, DOWN = %d, LEFT = %d, RIGHT = %d", eyeBlinkStrength, eyeBlinkSpeed, eyeUp, eyeDown, eyeLeft, eyeRight));
+        if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0) {
+            Log.d("EYE", String.format("meme: BLINK = %d/%d", eyeBlinkStrength, eyeBlinkSpeed));
+        }
 
-//            if(eyeBlinkStrength > 10 || eyeUp == 3) {
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mView.enter();
-//                    }
-//                });
-//            }
-//            else if(eyeLeft > 0) {
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mView.move(-1);
-//                    }
-//                });
-//            }
-//            else if(eyeRight > 0) {
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mView.move(1);
-//                    }
-//                });
-//            }
+        if(eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0) {
+            Log.d("EYE", String.format("meme: UP = %d, DOWN = %d, LEFT = %d, RIGHT = %d", eyeUp, eyeDown, eyeLeft, eyeRight));
 
-            /*
-            if(memeMIDI.isInitializedMidi()) {
-                memeMIDI.sendControlChange(1, MemeMIDI.EYE_UP, eyeUp);
-                memeMIDI.sendControlChange(1, MemeMIDI.EYE_DOWN, eyeDown);
-            }
-            */
+            memeBTSPP.sendEyeMove(eyeUp, eyeDown, eyeLeft, eyeRight);
         }
     }
 
