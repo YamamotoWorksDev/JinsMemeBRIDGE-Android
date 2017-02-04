@@ -33,14 +33,10 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.6";
+  private static final String VERSION = "0.5.7";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
-
-  private static final int MENU_SCAN = 0;
-  private static final int MENU_CONNECT_MACHINE = 9;
-  private static final int MENU_EXIT = 10;
 
   private MemeLib memeLib;
   private MenuFragment menuFragment;
@@ -90,86 +86,99 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    Log.d("DEBUG", "test..." + scannedMemeList.size());
+    //Log.d("DEBUG", "test..." + scannedMemeList.size() + " connectedDeviceName : " + memeBTSPP.getConnectedDeviceName());
 
-    menu.add(0, MENU_SCAN, 0, "SCAN").setCheckable(true);
+    int index = 0;
+    for(String pairedDeviceName : memeBTSPP.getPairedDeviceName()) {
+      if(pairedDeviceName.equals(memeBTSPP.getConnectedDeviceName())) {
+        menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(true);
+      }
+      else {
+        menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(false);
+      }
+      index++;
+    }
 
-    int index = 1;
+    menu.add(0, index, 0, "SCAN").setCheckable(true);
+    index++;
+
     if(scannedMemeList.size() > 0 && scannedMemeList.size() < 9) {
       for(String memeId : scannedMemeList) {
-        menu.add(0, MENU_SCAN + index, 0, memeId).setCheckable(true);
+        menu.add(0, index, 0, memeId).setCheckable(true);
+        index++;
       }
     }
 
-    menu.add(0, MENU_CONNECT_MACHINE, 0, "CONNECT TO PC/MAC").setCheckable(true);
-    menu.add(0, MENU_EXIT, 0, "EXIT");
+    menu.add(0, index, 0, "EXIT");
 
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(final MenuItem item) {
-    Log.d("DEBUG", "item id = " + item.getItemId());
+    String itemTitle = item.getTitle().toString();
 
-    switch(item.getItemId()) {
-      case MENU_SCAN:
-        if(!item.isChecked()) {
-          item.setChecked(true);
+    Log.d("DEBUG", "item id = " + item.getItemId() + " " + itemTitle);
 
-          if(scannedMemeList != null)
-            scannedMemeList.clear();
+    if(itemTitle.equals("SCAN")) {
+      if(!item.isChecked()) {
+        item.setChecked(true);
 
-          startScan();
+        if(scannedMemeList != null)
+          scannedMemeList.clear();
 
-          handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              item.setChecked(false);
+        startScan();
 
-              stopScan();
-            }
-          }, 5000);
-        }
-        else {
-          item.setChecked(false);
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            item.setChecked(false);
 
-          handler.removeCallbacks(null);
+            stopScan();
+          }
+        }, 5000);
+      }
+      else {
+        item.setChecked(false);
 
-          stopScan();
-        }
-        return true;
-      case MENU_CONNECT_MACHINE:
-        if(!item.isChecked()) {
-          item.setChecked(true);
+        handler.removeCallbacks(null);
 
-          memeBTSPP.connect();
-        }
-        else {
-          item.setChecked(false);
-
-          memeBTSPP.disconnect();
-        }
-        break;
-      case MENU_EXIT:
-        finish();
-        break;
-      default:
-        Log.d("DEBUG", "check = " + item.isChecked());
-
-        if(item.isChecked() && memeLib.isConnected()) {
-          memeLib.disconnect();
-          item.setChecked(false);
-        }
-        else if(!item.isChecked() && !memeLib.isConnected()) {
-          Log.d("CONNECT", "meme ADDRESS: " + item.getTitle().toString());
-
-          memeLib.connect(item.getTitle().toString());
-          item.setChecked(true);
-        }
-        return true;
+        stopScan();
+      }
+      return true;
     }
-    return super.onOptionsItemSelected(item);
+    else if(itemTitle.equals("EXIT")) {
+      finish();
+    }
+    else if(itemTitle.contains("28:A1:83:05")) { // scanned meme
+      Log.d("DEBUG", "check = " + item.isChecked());
 
+      if(item.isChecked() && memeLib.isConnected()) {
+        memeLib.disconnect();
+        item.setChecked(false);
+      }
+      else if(!item.isChecked() && !memeLib.isConnected()) {
+        Log.d("CONNECT", "meme ADDRESS: " + item.getTitle().toString());
+
+        memeLib.connect(item.getTitle().toString());
+        item.setChecked(true);
+      }
+      return true;
+    }
+    else {
+      if(item.isChecked()) {
+        Log.d("DEBUG", "disconnect....");
+        memeBTSPP.disconnect();
+        item.setChecked(false);
+      }
+      else {
+        Log.d("DEBUG", "connect....");
+        memeBTSPP.connect(itemTitle);
+        item.setChecked(true);
+      }
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -246,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler = new Handler();
 
     memeBTSPP = new MemeBTSPP();
+    //Log.d("DEBUG", "devs : " + memeBTSPP.getPairedDeviceName());
   }
 
   public void startScan() {

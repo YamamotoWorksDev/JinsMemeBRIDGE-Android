@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -25,85 +24,93 @@ public class MemeBTSPP {
   // for Android to PC/Mac
   private static final UUID[] APP_UUID = {UUID.fromString("2f96a155-0b98-4023-87e7-c6dd3b7a4e1d")};
 
-  private BluetoothAdapter bt_adapter;
-  private BluetoothSocket bt_socket;
-  private InputStream bt_in = null;
-  private PushbackInputStream bt_pb_in = null;
-  private OutputStream bt_out = null;
-  private BufferedOutputStream bt_data_out = null;
+  private BluetoothAdapter btAdapter;
+  private BluetoothSocket btSocket;
+  private InputStream btIn = null;
+  private PushbackInputStream btPbIn = null;
+  private OutputStream btOut = null;
+  private BufferedOutputStream btDataOut = null;
 
-  private String[] paired_machine_names;
-  private int paired_machine_index = 2;// pc/mac index
-  private int uuid_index = 0;
-  private boolean is_connected_machine = false;
+  private String[] pairedMachineNames;
+  private int uuidIndex = 0;
+  private boolean isConnectedMachine = false;
+  private String connectedDeviceName;
 
   MemeBTSPP() {
-    bt_adapter = BluetoothAdapter.getDefaultAdapter();
+    btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    if(bt_adapter == null) {
+    if(btAdapter == null) {
       Log.d("DEBUG", "This device is not implement Bluetooth.");
       return;
     }
 
-    if(!bt_adapter.isEnabled()) {
+    if(!btAdapter.isEnabled()) {
       Log.d("DEBUG", "This device is disabled Bluetooth.");
       return;
     }
 
-    Set<BluetoothDevice> paired_devices = bt_adapter.getBondedDevices();
+    Set<BluetoothDevice> paired_devices = btAdapter.getBondedDevices();
     final BluetoothDevice[] devices = paired_devices.toArray(new BluetoothDevice[0]);
     String[] items = new String[devices.length];
 
     for(int i = 0; i < devices.length; i++) {
       items[i] = devices[i].getName();
     }
-    paired_machine_names = items.clone();
+    pairedMachineNames = items.clone();
 
-    Log.d("DEBUG", "LIST: " + Arrays.toString(paired_machine_names));
+    Log.d("DEBUG", "LIST: " + Arrays.toString(pairedMachineNames));
   }
 
-  public void connect() {
-    if(is_connected_machine)
+  public String[] getPairedDeviceName() {
+    return pairedMachineNames;
+  }
+
+  public String getConnectedDeviceName() {
+    return connectedDeviceName;
+  }
+
+  public void connect(String connectDeviceName) {
+    if(isConnectedMachine)
       return;
 
-    Set<BluetoothDevice> paired_devices = bt_adapter.getBondedDevices();
+    Set<BluetoothDevice> paired_devices = btAdapter.getBondedDevices();
     final BluetoothDevice[] devices = paired_devices.toArray(new BluetoothDevice[0]);
     String[] items = new String[devices.length];
 
     for(int i = 0; i < devices.length; i++) {
       items[i] = devices[i].getName();
 
-      Log.d("DEBUG", "hoge0" + i + " : " + paired_machine_index + " " + items[i]);
-
-      if(paired_machine_names[paired_machine_index].equals(items[i])) {
+      if(connectDeviceName.equals(items[i])) {
         try {
-          Log.d("DEBUG", "hoge0... " + uuid_index + " " + APP_UUID[uuid_index < (MAX_UUID_NUM + 1) ? uuid_index : 0]);
+          Log.d("DEBUG", "hoge0... " + uuidIndex + " " + APP_UUID[uuidIndex < (MAX_UUID_NUM + 1) ? uuidIndex : 0]);
 
-          bt_socket = devices[i].createRfcommSocketToServiceRecord(APP_UUID[uuid_index]);
+          btSocket = devices[i].createRfcommSocketToServiceRecord(APP_UUID[uuidIndex]);
 
           try {
             //debug Log.d("BT CONNECTING...")
             //setDebugTextView("BT CONNECTING...");
 
-            bt_socket.connect();
+            btSocket.connect();
 
             Log.d("DEBUG", "hoge1...");
 
-            bt_in = bt_socket.getInputStream();
-            bt_pb_in = new PushbackInputStream(bt_in);
+            btIn = btSocket.getInputStream();
+            btPbIn = new PushbackInputStream(btIn);
 
-            bt_out = bt_socket.getOutputStream();
-            bt_data_out = new BufferedOutputStream(bt_out);
+            btOut = btSocket.getOutputStream();
+            btDataOut = new BufferedOutputStream(btOut);
 
-            is_connected_machine = true;
+            connectedDeviceName = connectDeviceName;
+
+            isConnectedMachine = true;
           }
           catch(Throwable t) {
-            Log.d("DEBUG", "hoge2...");
+            //Log.d("DEBUG", "hoge2...");
 
-            bt_socket.close();
-            bt_socket = null;
+            btSocket.close();
+            btSocket = null;
 
-            is_connected_machine = false;
+            isConnectedMachine = false;
           }
         }
         catch(IOException e) {
@@ -116,13 +123,13 @@ public class MemeBTSPP {
 
   public void disconnect() {
     try {
-      if(bt_data_out != null) {
+      if(btDataOut != null) {
         //debug Log.d("DEBUG", "bluetooth write...");
 
         //bt_data_out.writeInt(0xFE000000 | (device_id << 16));
         //bt_data_out.flush();
 
-        bt_data_out.flush();
+        btDataOut.flush();
       }
     }
     catch(IOException ioe) {
@@ -130,21 +137,21 @@ public class MemeBTSPP {
     }
 
     try {
-      if(bt_in != null)
-        bt_in.close();
+      if(btIn != null)
+        btIn.close();
 
-      if(bt_out != null)
-        bt_out.close();
+      if(btOut != null)
+        btOut.close();
 
-      if(bt_socket != null)
-        bt_socket.close();
+      if(btSocket != null)
+        btSocket.close();
 
-      is_connected_machine = false;
+      isConnectedMachine = false;
     }
     catch(IOException ioe) {
-      bt_in = null;
-      bt_out = null;
-      bt_socket = null;
+      btIn = null;
+      btOut = null;
+      btSocket = null;
 
       ioe.printStackTrace();
     }
