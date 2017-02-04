@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -32,13 +33,14 @@ public class BridgeUIView extends RecyclerView {
 
     public void move(int amount) {
         int toIndex = getCurrentCenteredItemPosition()+amount;
-        View target = mLayoutManager.findViewByPosition(toIndex);
-        if(target != null) {
-            int dx = target.getLeft() - (getWidth() - target.getWidth()) / 2;
-            smoothScrollBy(dx, 0);
-        }
-        else {
-            smoothScrollToPosition(toIndex);
+        if(0 <= toIndex && toIndex < getAdapter().getItemCount()) {
+            View target = mLayoutManager.findViewByPosition(toIndex);
+            if (target != null) {
+                int dx = target.getLeft() - (getWidth() - target.getWidth()) / 2;
+                smoothScrollBy(dx, 0);
+            } else {
+                smoothScrollToPosition(toIndex);
+            }
         }
     }
     public void enter() {
