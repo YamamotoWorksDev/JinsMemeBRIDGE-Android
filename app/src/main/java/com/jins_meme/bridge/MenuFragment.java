@@ -250,7 +250,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                 }
             });
         }
-        if(memeFilter.isLeft()) {
+        else if(memeFilter.isLeft()) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -258,7 +258,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                 }
             });
         }
-        if(memeFilter.isRight()) {
+        else if(memeFilter.isRight()) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
