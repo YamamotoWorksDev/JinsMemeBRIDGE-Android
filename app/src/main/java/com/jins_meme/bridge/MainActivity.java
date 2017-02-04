@@ -148,7 +148,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if(itemTitle.equals("EXIT")) {
       finish();
     }
-    else if(itemTitle.contains("28:A1:83:05")) { // scanned meme
+    //else if(itemTitle.contains("28:A1:83:05")) { // scanned meme
+    else {
       Log.d("DEBUG", "check = " + item.isChecked());
 
       if(item.isChecked() && memeLib.isConnected()) {
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
       return true;
     }
+    /*
     else {
       if(item.isChecked()) {
         Log.d("DEBUG", "disconnect....");
@@ -175,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         item.setChecked(true);
       }
     }
+    */
 
     return super.onOptionsItemSelected(item);
   }
