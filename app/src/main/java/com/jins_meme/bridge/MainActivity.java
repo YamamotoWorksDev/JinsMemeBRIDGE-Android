@@ -33,7 +33,7 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.7";
+  private static final String VERSION = "0.5.8";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MemeLib memeLib;
   private MenuFragment menuFragment;
   private Handler handler;
-
-  private MemeBTSPP memeBTSPP;
 
   private List<String> scannedMemeList = new ArrayList<>();
 
@@ -89,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //Log.d("DEBUG", "test..." + scannedMemeList.size() + " connectedDeviceName : " + memeBTSPP.getConnectedDeviceName());
 
     int index = 0;
-    for(String pairedDeviceName : memeBTSPP.getPairedDeviceName()) {
-      if(pairedDeviceName.equals(memeBTSPP.getConnectedDeviceName())) {
+    for(String pairedDeviceName : menuFragment.getBtPairedDeviceName()) {
+      if(pairedDeviceName.equals(menuFragment.getBtConnectedDeviceName())) {
         menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(true);
       }
       else {
@@ -168,12 +166,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else {
       if(item.isChecked()) {
         Log.d("DEBUG", "disconnect....");
-        memeBTSPP.disconnect();
+        menuFragment.btDisconnect();
         item.setChecked(false);
       }
       else {
         Log.d("DEBUG", "connect....");
-        memeBTSPP.connect(itemTitle);
+        menuFragment.btConnect(itemTitle);
         item.setChecked(true);
       }
     }
@@ -254,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     handler = new Handler();
 
-    memeBTSPP = new MemeBTSPP();
     //Log.d("DEBUG", "devs : " + memeBTSPP.getPairedDeviceName());
   }
 

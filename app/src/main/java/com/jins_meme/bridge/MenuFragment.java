@@ -35,6 +35,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     private MemeMIDI memeMIDI;
     private MemeOSC memeOSC;
+    private MemeBTSPP memeBTSPP;
+
     private MemeRealtimeDataFilter memeFilter;
 
     @Override
@@ -61,6 +63,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         memeOSC.setRemotePort(10316);
         memeOSC.setHostPort(11316);
         memeOSC.initSocket();
+
+        // Initialize BTSPP
+        memeBTSPP = new MemeBTSPP();
 
         memeFilter = new MemeRealtimeDataFilter();
 //        memeFilter.setMoveType(MemeRealtimeDataFilter.MoveType.HEAD);
@@ -191,6 +196,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         float pitch = memeRealtimeData.getPitch();
         float roll  = memeRealtimeData.getRoll();
 
+        memeBTSPP.sendAngle(yaw, pitch, roll);
+
         Log.d("DEBUG", "rotation  = " + yaw + ", " + pitch + ", " + roll);
 
         if(memeOSC.initializedSocket()) {
@@ -283,6 +290,22 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
             }
             */
         }
+    }
+
+    public void btConnect(String name) {
+        memeBTSPP.connect(name);
+    }
+
+    public void btDisconnect() {
+        memeBTSPP.disconnect();
+    }
+
+    public String[] getBtPairedDeviceName() {
+        return memeBTSPP.getPairedDeviceName();
+    }
+
+    public String getBtConnectedDeviceName() {
+        return memeBTSPP.getConnectedDeviceName();
     }
 
     public class MyAdapter extends BridgeUIView.Adapter<MyAdapter.MyCardHolder> {
