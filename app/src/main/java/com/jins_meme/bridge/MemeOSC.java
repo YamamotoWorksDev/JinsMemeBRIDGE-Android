@@ -243,41 +243,51 @@ public class MemeOSC {
   }
 
   public synchronized void flushMessage() {
-    try {
-      //Log.d("DEBUG", "flush osc message...");
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          //Log.d("DEBUG", "flush osc message...");
 
-      InetAddress remoteAddr = InetAddress.getByName(remoteIP);
+          InetAddress remoteAddr = InetAddress.getByName(remoteIP);
 
-      sndPacket = new DatagramPacket(sndOSCData, oscTotalSize, remoteAddr, remotePort);
-      sndSocket.send(sndPacket);
-    }
-    catch(UnknownHostException uhe) {
-      //Log.d("DEBUG", "failed sending... 0");
-      System.out.println("DEBUG: " + "failed sending... 0");
-    }
-    catch(IOException ioe) {
-      //Log.d("DEBUG", "failed sending... 1");
-      System.out.println("DEBUG: " + "failed sending... 1");
-    }
+          sndPacket = new DatagramPacket(sndOSCData, oscTotalSize, remoteAddr, remotePort);
+          sndSocket.send(sndPacket);
+        }
+        catch(UnknownHostException uhe) {
+          //Log.d("DEBUG", "failed sending... 0");
+          System.out.println("DEBUG: " + "failed sending... 0");
+        }
+        catch(IOException ioe) {
+          //Log.d("DEBUG", "failed sending... 1");
+          System.out.println("DEBUG: " + "failed sending... 1");
+        }
+      }
+    }).start();
   }
 
   public synchronized void flushBundle() {
-    try {
-      //Log.d("DEBUG", "flush osc message...");
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          //Log.d("DEBUG", "flush osc message...");
 
-      InetAddress remoteAddr = InetAddress.getByName(remoteIP);
+          InetAddress remoteAddr = InetAddress.getByName(remoteIP);
 
-      sndPacket = new DatagramPacket(sndOSCBundleData, oscBundleTotalSize, remoteAddr, remotePort);
-      sndSocket.send(sndPacket);
-    }
-    catch(UnknownHostException uhe) {
-      //Log.d("DEBUG", "failed sending... 0");
-      System.out.println("DEBUG: " + "failed sending... 0");
-    }
-    catch(IOException ioe) {
-      //Log.d("DEBUG", "failed sending... 1");
-      System.out.println("DEBUG: " + "failed sending... 1");
-    }
+          sndPacket = new DatagramPacket(sndOSCBundleData, oscBundleTotalSize, remoteAddr, remotePort);
+          sndSocket.send(sndPacket);
+        }
+        catch(UnknownHostException uhe) {
+          //Log.d("DEBUG", "failed sending... 0");
+          System.out.println("DEBUG: " + "failed sending... 0");
+        }
+        catch(IOException ioe) {
+          //Log.d("DEBUG", "failed sending... 1");
+          System.out.println("DEBUG: " + "failed sending... 1");
+        }
+      }
+    });
   }
 
   public void receiveMessage() {
