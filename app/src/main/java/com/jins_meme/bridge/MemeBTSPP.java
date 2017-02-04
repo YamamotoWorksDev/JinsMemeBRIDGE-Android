@@ -213,4 +213,26 @@ public class MemeBTSPP {
       ioe.printStackTrace();
     }
   }
+
+  public void sendAccel(float ax, float ay, float az) {
+    try {
+      if(btDataOut != null && isConnectedMachine) {
+        //debug Log.d("DEBUG", "bluetooth write...");
+
+        byte[] byteAx = ByteBuffer.allocate(4).putFloat(ax).array();
+        byte[] byteAy = ByteBuffer.allocate(4).putFloat(ay).array();
+        byte[] byteAz = ByteBuffer.allocate(4).putFloat(az).array();;
+        byte[] allData = {(byte)4,
+            byteAx[0], byteAx[1], byteAx[2], byteAx[3],
+            byteAy[0], byteAy[1], byteAy[2], byteAy[3],
+            byteAz[0], byteAz[1], byteAz[2], byteAz[3]};
+
+        btDataOut.write(allData);
+        btDataOut.flush();
+      }
+    }
+    catch(IOException ioe) {
+      ioe.printStackTrace();
+    }
+  }
 }

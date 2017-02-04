@@ -177,8 +177,10 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         float accelX = memeRealtimeData.getAccX();
         float accelY = memeRealtimeData.getAccY();
         float accelZ = memeRealtimeData.getAccZ();
+
         int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
         int eyeBlinkSpeed    = memeRealtimeData.getBlinkSpeed();
+
         int eyeUp    = memeRealtimeData.getEyeMoveUp();
         int eyeDown  = memeRealtimeData.getEyeMoveDown();
         int eyeLeft  = memeRealtimeData.getEyeMoveLeft();
@@ -188,6 +190,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         float pitch = memeRealtimeData.getPitch();
         float roll  = memeRealtimeData.getRoll();
 
+        memeBTSPP.sendAccel(accelX, accelY, accelZ);
         memeBTSPP.sendAngle(yaw, pitch, roll);
 
         //debug Log.d("DEBUG", "accel  = " + accelX + ", " + accelY + ", " + accelZ);
