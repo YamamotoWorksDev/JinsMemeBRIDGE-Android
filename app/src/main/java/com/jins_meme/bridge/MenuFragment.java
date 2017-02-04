@@ -246,6 +246,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         }
         if(eyeBlinkStrength > 0 || eyeBlinkSpeed > 0) {
             Log.d("EYE", String.format("meme: BLINK = %d/%d", eyeBlinkStrength, eyeBlinkSpeed));
+
+            memeBTSPP.sendEyeBlink(eyeBlinkStrength, eyeBlinkSpeed);
         }
 
         if(eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0) {

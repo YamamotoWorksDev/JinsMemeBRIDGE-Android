@@ -158,9 +158,23 @@ public class MemeBTSPP {
     }
   }
 
-  public void sendEyeBlink(int blinkStrength, int blinkSpeed) {
-    //byte[] byteEyeBlinkStrength = ByteBuffer.allocate(2).putShort((short)blinkStrength).array();
-    //byte[] byteEyeBlinkSpeed = ByteBuffer.allocate(2).putShort((short)blinkSpeed).array();
+  public void sendEyeBlink(int strength, int speed) {
+    try {
+      if(btDataOut != null && isConnectedMachine) {
+        //debug Log.d("DEBUG", "bluetooth write...");
+
+        byte[] byteStrength = ByteBuffer.allocate(4).putInt(strength).array();
+        byte[] byteSpeed    = ByteBuffer.allocate(4).putInt(speed).array();
+        byte[] allData = {(byte)1,
+                          byteStrength[0], byteStrength[1], byteStrength[2], byteStrength[3],
+                          byteSpeed[0], byteSpeed[1], byteSpeed[2], byteSpeed[3]};
+        btDataOut.write(allData);
+        btDataOut.flush();
+      }
+    }
+    catch(IOException ioe) {
+      ioe.printStackTrace();
+    }
   }
 
   public void sendEyeMove(int eyeUp, int eyeDown, int eyeLeft, int eyeRight) {
