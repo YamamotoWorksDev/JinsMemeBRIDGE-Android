@@ -33,17 +33,20 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.5";
+  private static final String VERSION = "0.5.6";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
 
   private static final int MENU_SCAN = 0;
+  private static final int MENU_CONNECT_MACHINE = 9;
   private static final int MENU_EXIT = 10;
 
   private MemeLib memeLib;
   private MenuFragment menuFragment;
   private Handler handler;
+
+  private MemeBTSPP memeBTSPP;
 
   private List<String> scannedMemeList = new ArrayList<>();
 
@@ -92,12 +95,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     menu.add(0, MENU_SCAN, 0, "SCAN").setCheckable(true);
 
     int index = 1;
-    if(scannedMemeList.size() > 0) {
+    if(scannedMemeList.size() > 0 && scannedMemeList.size() < 9) {
       for(String memeId : scannedMemeList) {
         menu.add(0, MENU_SCAN + index, 0, memeId).setCheckable(true);
       }
     }
 
+    menu.add(0, MENU_CONNECT_MACHINE, 0, "CONNECT TO PC/MAC").setCheckable(true);
     menu.add(0, MENU_EXIT, 0, "EXIT");
 
     return true;
@@ -134,6 +138,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           stopScan();
         }
         return true;
+      case MENU_CONNECT_MACHINE:
+        if(!item.isChecked()) {
+          item.setChecked(true);
+
+          memeBTSPP.connect();
+        }
+        else {
+          item.setChecked(false);
+
+          memeBTSPP.disconnect();
+        }
+        break;
       case MENU_EXIT:
         finish();
         break;
@@ -228,6 +244,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     memeLib.setAutoConnect(false);
 
     handler = new Handler();
+
+    memeBTSPP = new MemeBTSPP();
   }
 
   public void startScan() {
