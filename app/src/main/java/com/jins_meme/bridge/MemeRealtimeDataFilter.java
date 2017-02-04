@@ -16,16 +16,19 @@ import com.jins_jp.meme.MemeRealtimeData;
  **/
 
 public class MemeRealtimeDataFilter {
-    public enum Command {
-        LEFT,RIGHT,UP,DOWN,BLINK,NONE
-    }
+    private final static int COMMAND_NONE= 0x00;
+    private final static int COMMAND_LEFT = 0x01;
+    private final static int COMMAND_RIGHT = 0x02;
+    private final static int COMMAND_UP = 0x04;
+    private final static int COMMAND_DOWN = 0x08;
+    private final static int COMMAND_BLINK = 0x10;
     public enum MoveType {
         HEAD,EYE
     }
 
     private MoveType mMoveType;
     private long mLastTime;
-    private Command mLastCommand;
+    private int mLastCommand;
     private final int COMMAND_WAIT_TIME = 750;
     MemeRealtimeDataFilter() {
         mMoveType = MoveType.EYE;
@@ -36,67 +39,66 @@ public class MemeRealtimeDataFilter {
     }
     public void reset() {
         mLastTime = System.currentTimeMillis();
-        mLastCommand = Command.NONE;
+        mLastCommand = COMMAND_NONE;
     }
-    public boolean isLeft() { return isCommand(Command.LEFT); }
-    public boolean isRight() { return isCommand(Command.RIGHT); }
-    public boolean isUp() { return isCommand(Command.UP); }
-    public boolean isDown() { return isCommand(Command.DOWN); }
-    public boolean isBlink() { return isCommand(Command.BLINK); }
+    public boolean isLeft() { return isCommand(COMMAND_LEFT); }
+    public boolean isRight() { return isCommand(COMMAND_RIGHT); }
+    public boolean isUp() { return isCommand(COMMAND_UP); }
+    public boolean isDown() { return isCommand(COMMAND_DOWN); }
+    public boolean isBlink() { return isCommand(COMMAND_BLINK); }
     public void update(MemeRealtimeData memeRealtimeData) {
         if(isWaiting()) {
-            mLastCommand = Command.NONE;
+            mLastCommand = COMMAND_NONE;
             return;
         }
         int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
         if (eyeBlinkStrength > 30) {
-            setCommand(Command.BLINK);
-            return;
+            setCommand(COMMAND_BLINK);
         }
         switch (mMoveType) {
             case HEAD:
                 float accX = memeRealtimeData.getAccX();
                 float accY = memeRealtimeData.getAccY();
                 if (accX > 5) {
-                    setCommand(Command.LEFT);
+                    setCommand(COMMAND_LEFT);
                 }
-                else if (accX < -3) {
-                    setCommand(Command.RIGHT);
+                if (accX < -3) {
+                    setCommand(COMMAND_RIGHT);
                 }
                 else if(accY < 1) {
-                    setCommand(Command.UP);
+                    setCommand(COMMAND_UP);
                 }
                 else if(accY > 13) {
-                    setCommand(Command.DOWN);
+                    setCommand(COMMAND_DOWN);
                 }
                 break;
             case EYE:
                 if (memeRealtimeData.getEyeMoveLeft() > 0) {
-                    setCommand(Command.LEFT);
+                    setCommand(COMMAND_LEFT);
                 }
                 else if (memeRealtimeData.getEyeMoveRight() > 0) {
-                    setCommand(Command.RIGHT);
+                    setCommand(COMMAND_RIGHT);
                 }
-                else if (memeRealtimeData.getEyeMoveUp() > 0) {
-                    setCommand(Command.UP);
+                if (memeRealtimeData.getEyeMoveUp() > 0) {
+                    setCommand(COMMAND_UP);
                 }
                 else if (memeRealtimeData.getEyeMoveDown() > 0) {
-                    setCommand(Command.DOWN);
+                    setCommand(COMMAND_DOWN);
                 }
                 break;
         }
-        if(mLastCommand != Command.NONE) {
+        if(mLastCommand != COMMAND_NONE) {
             Log.d("COMMAND", mLastCommand+"");
         }
     }
     private boolean isWaiting() {
         return System.currentTimeMillis() - mLastTime < COMMAND_WAIT_TIME;
     }
-    private void setCommand(Command command) {
-        mLastCommand = command;
+    private void setCommand(int command) {
+        mLastCommand |= command;
         mLastTime = System.currentTimeMillis();
     }
-    private boolean isCommand(Command command) {
-        return mLastCommand == command;
+    private boolean isCommand(int command) {
+        return (mLastCommand & command) != 0;
     }
 }
