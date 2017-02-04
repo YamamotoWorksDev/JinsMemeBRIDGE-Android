@@ -33,7 +33,7 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.8";
+  private static final String VERSION = "0.5.9";
 
   private static final String APP_ID = "907977722622109";
   private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
@@ -107,7 +107,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
 
-    menu.add(0, index, 0, "EXIT");
+    menu.add(0, index++, 0, "EXIT");
+    menu.add(0, index++, 0, "Ver." + VERSION);
 
     return true;
   }
@@ -148,8 +149,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if(itemTitle.equals("EXIT")) {
       finish();
     }
-    //else if(itemTitle.contains("28:A1:83:05")) { // scanned meme
-    else {
+    else if(scannedMemeList.contains(itemTitle)) {
       Log.d("DEBUG", "check = " + item.isChecked());
 
       if(item.isChecked() && memeLib.isConnected()) {
@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
       return true;
     }
-    /*
     else {
       if(item.isChecked()) {
         Log.d("DEBUG", "disconnect....");
@@ -177,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         item.setChecked(true);
       }
     }
-    */
 
     return super.onOptionsItemSelected(item);
   }
