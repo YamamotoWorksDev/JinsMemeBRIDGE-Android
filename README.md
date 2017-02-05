@@ -7,6 +7,16 @@ This software is released under the MIT License, see LICENSE.txt.
 ### REQUIREMENTS
 To bulid this app, you need to have [JINS developer account](https://developers.jins.com/en/) and create an ID and SECRET for your app.  
 After that, please write them to "APP_ID" and "APP_SECRET" in MainActivity.java.
+```java:MainActivity.java
+public class MainActivity extends AppCompatActivity implements MemeConnectListener {
+  private static final String VERSION = "0.5.9";
+
+  // please write your APP_ID and APPSSECRET
+  private static final String APP_ID = "";
+  private static final String APP_SECRET = "";
+
+  private MemeLib memeLib;
+```
 
 ### OSC(Open Sound Control)
 The default OSC Setting is as follows.
@@ -15,7 +25,7 @@ The default OSC Setting is as follows.
 * Host Port: 11316
 
 These settings are in MenuFragment.java.
-```java
+```java:MenuFragment.java
   // Initialize OSC
   memeOSC = new MemeOSC();
   memeOSC.setRemoteIP("192.168.1.255");
