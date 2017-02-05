@@ -58,8 +58,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
         // Initialize OSC
         memeOSC = new MemeOSC();
-        //memeOSC.setRemoteIP("192.168.1.255");
-        memeOSC.setRemoteIP("172.24.133.255");// JINS Hackason Guest Wi-Fi Broadcast
+        memeOSC.setRemoteIP("192.168.1.255");
         memeOSC.setRemotePort(10316);
         memeOSC.setHostPort(11316);
         memeOSC.initSocket();
