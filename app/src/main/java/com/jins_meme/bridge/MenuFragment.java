@@ -170,6 +170,16 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     break;
             }
         }
+        {
+            // functions?
+            switch(id) {
+                case R.string.blink_count:
+                    CountCardHolder ch = (CountCardHolder)mView.findViewHolderForItemId(id);
+                    ch.countup();
+                    break;
+
+            }
+        }
     }
 
     @Override
@@ -295,7 +305,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         return memeBTSPP.getConnectedDeviceName();
     }
 
-    public class MyAdapter extends BridgeUIView.Adapter<MyAdapter.MyCardHolder> {
+    public class MyAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
         Context mContext;
         LayoutInflater mInflater;
         MyAdapter(Context context, IResultListener listener) {
@@ -304,9 +314,17 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
             mInflater = LayoutInflater.from(context);
         }
 
+        private final int CATD_TYPE_ONLY_TITLE = 0;
+        private final int CATD_TYPE_COUNTER = 1;
+
         @Override
-        public MyCardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-            return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
+        public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
+            switch(card_type) {
+                case CATD_TYPE_COUNTER:
+                    return new CountCardHolder(mInflater.inflate(R.layout.card_count, parent, false));
+                default:
+                    return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
+            }
         }
 
         @Override
@@ -316,14 +334,23 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     return CardFunction.BACK;
                 case R.string.midi:
                 case R.string.osc:
+                case R.string.functions:
                     return CardFunction.ENTER_MENU;
             }
             return CardFunction.END;
         }
 
         @Override
-        public void onBindCardHolder(MyCardHolder cardHolder, int id) {
-            cardHolder.mTextView.setText(getResources().getString(id));
+        public void onBindCardHolder(CardHolder cardHolder, int id) {
+            switch(id) {
+                case R.string.blink_count:
+                    ((CountCardHolder)(cardHolder)).mTitle.setText(getResources().getString(id));
+                    ((CountCardHolder)(cardHolder)).reset();
+                    break;
+                default:
+                    ((MyCardHolder)(cardHolder)).mTextView.setText(getResources().getString(id));
+                    break;
+            }
         }
         @Override
         public int getCardId(int parent_id, int position) {
@@ -333,6 +360,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     switch(position) {
                         case 0: id = R.string.midi; break;
                         case 1: id = R.string.osc; break;
+                        case 2: id = R.string.functions; break;
                     }
                     break;
                 case R.string.midi:
@@ -352,6 +380,13 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                         case 4: id = R.string.back; break;
                     }
                     break;
+                case R.string.functions:
+                    switch (position) {
+                        case 0: id = R.string.blink_count; break;
+                        case 1: id = R.string.back; break;
+                        case 2: id = R.string.back; break;
+                    }
+                    break;
             }
             return id;
         }
@@ -360,17 +395,43 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
             switch(parent_id) {
                 case R.string.midi: return 9;
                 case R.string.osc: return 5;
-                case NO_ID: return 2;
+                case R.string.functions: return 3;
+                case NO_ID: return 3;
             }
             return 0;
         }
-
-        class MyCardHolder extends CardHolder {
-            TextView mTextView;
-            MyCardHolder(View itemView) {
-                super(itemView);
-                mTextView = (TextView) itemView.findViewById(R.id.card_text);
+        @Override
+        public int getCardType(int id) {
+            switch(id) {
+                case R.string.blink_count:
+                    return CATD_TYPE_COUNTER;
+                default: return CATD_TYPE_ONLY_TITLE;
             }
+        }
+    }
+    class MyCardHolder extends CardHolder {
+        TextView mTextView;
+        MyCardHolder(View itemView) {
+            super(itemView);
+            mTextView = (TextView) itemView.findViewById(R.id.card_text);
+        }
+    }
+    class CountCardHolder extends CardHolder {
+        TextView mTitle;
+        TextView mValue;
+        int count = 0;
+        CountCardHolder(View itemView) {
+            super(itemView);
+            mTitle = (TextView) itemView.findViewById(R.id.count_title);
+            mValue = (TextView) itemView.findViewById(R.id.count);
+        }
+        public void reset() {
+            count = 0;
+            mValue.setText(count+"");
+        }
+        public void countup() {
+            ++count;
+            mValue.setText(count+"");
         }
     }
 }

@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -113,6 +112,10 @@ public class BridgeUIView extends RecyclerView {
         @Override
         public final long getItemId(int position) {
             return getCardId(getSelectedCardId(), calcCardPosition(position));
+        }
+        @Override
+        public final int getItemViewType(int position) {
+            return getCardType((int)getItemId(position));
         }
         @Override
         public final void onBindViewHolder(CH viewHolder, final int position) {
