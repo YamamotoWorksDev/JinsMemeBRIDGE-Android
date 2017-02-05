@@ -2,7 +2,7 @@
 The repositorty for meme BRIDGE.
 
 ### LICENSE
-This software is released under the MIT License, see LICENSE.txt.
+This software is released under the MIT License, see [LICENSE.txt](https://github.com/jins-meme/MemeBRIDGE_for_Android/blob/master/LICENSE.txt).
 
 ### REQUIREMENTS
 To bulid this app, you need to have [JINS developer account](https://developers.jins.com/en/) and create an ID and SECRET for your app.  
@@ -38,3 +38,6 @@ If you want to change the destination IP and port, please rewrite the above code
 ### Bluetooth SPP Test Program for Win/Mac
 The MemeBTSPPTester is developed on JetBrain IntelliJ and JDK 1.8.  
 [MemeBTSPPTester](https://github.com/tkrworks/MemeBTSPPTester)
+
+### MemeBRIDGE for AndroidWear
+The alpha version is released [here](https://github.com/tkrworks/MemeBRIDGE_for_AndroidWear).
