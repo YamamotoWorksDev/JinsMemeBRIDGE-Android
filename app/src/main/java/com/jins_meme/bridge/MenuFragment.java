@@ -158,14 +158,14 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                     Log.d("DEBUG", "mute on");
                     memeOSC.setAddress(MemeOSC.PREFIX,"/volume");
                     memeOSC.setTypeTag("f");
-                    memeOSC.addArgument(0);
+                    memeOSC.addArgument(0.);
                     memeOSC.flushMessage();
                     break;
                 case R.string.osc_mute_off:
                     Log.d("DEBUG", "mute off");
                     memeOSC.setAddress(MemeOSC.PREFIX,"/volume");
                     memeOSC.setTypeTag("f");
-                    memeOSC.addArgument(1);
+                    memeOSC.addArgument(1.);
                     memeOSC.flushMessage();
                     break;
             }

@@ -198,7 +198,7 @@ public class BridgeUIView extends RecyclerView {
             Adapter adapter = (Adapter)getAdapter();
             int near = adapter.getItemCount()/2;
             int dx = (getWidth()-getItemWidth())/2;
-            scrollToPositionWithOffset(near - near%adapter.getChildCardCount(adapter.getSelectedCardId())+1, dx);
+            scrollToPositionWithOffset(near - near%adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
         }
 
         private int getItemWidth() {
