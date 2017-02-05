@@ -35,8 +35,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
   private static final String VERSION = "0.5.9";
 
-  private static final String APP_ID = "907977722622109";
-  private static final String APP_SECRET = "ka53fgrcct043wq3d6tm9gi8a2hetrxz";
+  // please write your APP_ID and APPSSECRET
+  private static final String APP_ID = "";
+  private static final String APP_SECRET = "";
 
   private MemeLib memeLib;
   private MenuFragment menuFragment;
