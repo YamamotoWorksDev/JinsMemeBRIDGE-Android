@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -115,6 +114,10 @@ public class BridgeUIView extends RecyclerView {
             return getCardId(getSelectedCardId(), calcCardPosition(position));
         }
         @Override
+        public final int getItemViewType(int position) {
+            return getCardType((int)getItemId(position));
+        }
+        @Override
         public final void onBindViewHolder(CH viewHolder, final int position) {
             onBindCardHolder(viewHolder, (int)getItemId(position));
             final int id = (int)viewHolder.getItemId();
@@ -195,7 +198,7 @@ public class BridgeUIView extends RecyclerView {
             Adapter adapter = (Adapter)getAdapter();
             int near = adapter.getItemCount()/2;
             int dx = (getWidth()-getItemWidth())/2;
-            scrollToPositionWithOffset(near - near%adapter.getChildCardCount(adapter.getSelectedCardId())+1, dx);
+            scrollToPositionWithOffset(near - near%adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
         }
 
         private int getItemWidth() {

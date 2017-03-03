@@ -15,4 +15,6 @@
     <string name="osc_440hz">440Hz</string>
     <string name="osc_mute_on">mute on</string>
     <string name="osc_mute_off">mute off</string>
+    <string name="functions">functions</string>
+    <string name="blink_count">blink count</string>
 </resources>

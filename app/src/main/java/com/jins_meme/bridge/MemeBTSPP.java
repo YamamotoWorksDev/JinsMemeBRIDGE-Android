@@ -16,8 +16,15 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Created by shun on 2017/02/04.
- */
+ *
+ * MemeBTSPP.java
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ *
+ **/
 
 public class MemeBTSPP {
   static final int MAX_UUID_NUM = 2;
