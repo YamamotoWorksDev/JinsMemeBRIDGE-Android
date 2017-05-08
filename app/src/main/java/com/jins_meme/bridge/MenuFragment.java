@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,34 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     private MemeBTSPP memeBTSPP;
 
     private MemeRealtimeDataFilter memeFilter;
+
+    // MenuFragmentからactivityへの通知イベント関連
+    public enum MenuFragmentEvent {
+        LAUNCH_CAMERA {
+            @Override
+            public void apply(AppCompatActivity activity) {
+                activity.getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment, new CameraFragment(), "CameraFragment")
+                        .commit();
+
+            }
+        };
+        abstract public void apply(AppCompatActivity activity);
+    }
+    public interface MenuFragmentListener {
+        void onMenuFragmentEnd(MenuFragmentEvent event);
+    }
+    private MenuFragmentListener mListener;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MenuFragmentListener) {
+                mListener = (MenuFragmentListener)context;
+        }
+        else {
+            throw new RuntimeException(context.toString() + " must implement MenuFragmentListener");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -175,6 +204,15 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                 case R.string.blink_count:
                     CountCardHolder ch = (CountCardHolder)mView.findViewHolderForItemId(id);
                     ch.countup();
+                    break;
+
+            }
+        }
+        {
+            // camera?
+            switch(id) {
+                case R.string.camera:
+                    mListener.onMenuFragmentEnd(MenuFragmentEvent.LAUNCH_CAMERA);
                     break;
 
             }
@@ -360,6 +398,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                         case 0: id = R.string.midi; break;
                         case 1: id = R.string.osc; break;
                         case 2: id = R.string.functions; break;
+                        case 3: id = R.string.camera; break;
                     }
                     break;
                 case R.string.midi:
@@ -395,7 +434,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
                 case R.string.midi: return 9;
                 case R.string.osc: return 5;
                 case R.string.functions: return 3;
-                case NO_ID: return 3;
+                case NO_ID: return 4;
             }
             return 0;
         }
