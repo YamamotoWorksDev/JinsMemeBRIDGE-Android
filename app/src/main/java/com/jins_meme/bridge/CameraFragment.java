@@ -1,6 +1,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -24,13 +25,38 @@ import com.jins_jp.meme.MemeRealtimeListener;
  * Use the {@link CameraFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraFragment extends Fragment implements MemeRealtimeListener {
+public class CameraFragment extends Camera2BasicFragment implements MemeRealtimeListener {
 
-    private Camera2BasicFragment mCamera;
     private MemeRealtimeDataFilter mMemeFilter;
 
     public CameraFragment() {
         // Required empty public constructor
+    }
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isCameraProcessing()) {
+                    return;
+                }
+                switch(v.getId()) {
+                    case R.id.back:
+                        endFragment();
+                        break;
+                    case R.id.take:
+                        takePicture();
+                        break;
+                    case R.id.toggle:
+                        toggleCamera();
+                        break;
+                }
+            }
+        };
+        view.findViewById(R.id.back).setOnClickListener(listener);
+        view.findViewById(R.id.take).setOnClickListener(listener);
+        view.findViewById(R.id.toggle).setOnClickListener(listener);
     }
 
     /**
@@ -41,6 +67,7 @@ public class CameraFragment extends Fragment implements MemeRealtimeListener {
      */
     public static CameraFragment newInstance() {
         CameraFragment fragment = new CameraFragment();
+        fragment.mMemeFilter = new MemeRealtimeDataFilter();
         return fragment;
     }
 
@@ -48,51 +75,39 @@ public class CameraFragment extends Fragment implements MemeRealtimeListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mCamera = (Camera2BasicFragment)getFragmentManager().findFragmentById(R.id.fragment);
         return inflater.inflate(R.layout.fragment_camera, container, false);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     // JinsMemeからのデータ処理部
     @Override
     public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
         mMemeFilter.update(memeRealtimeData, 30, 0);
+        if(isCameraProcessing()) {
+            return;
+        }
         if(mMemeFilter.isBlink()) {
+            takePicture();
         }
         else if(mMemeFilter.isLeft()) {
+            endFragment();
         }
         else if(mMemeFilter.isRight()) {
+            toggleCamera();
         }
     }
 
-    // CameraFragmentListenerからactivityへの通知イベント関連
-    public enum CameraFragmentEvent {
-        EXIT_CAMERA {
-            @Override
-            public void apply(AppCompatActivity activity) {
-                activity.getFragmentManager().popBackStack();
-            }
-        };
-        abstract public void apply(AppCompatActivity activity);
-    }
-    public interface CameraFragmentListener {
-        void onCameraFragmentEnd(CameraFragmentEvent event);
-    }
-    private CameraFragmentListener mListener;
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof CameraFragmentListener) {
-            mListener = (CameraFragmentListener)context;
+    private void toggleCamera() {
+        Integer lens = getCurrentLensFacing();
+        switch(lens) {
+            case CameraCharacteristics.LENS_FACING_FRONT:
+                openCamera(CameraCharacteristics.LENS_FACING_BACK);
+                break;
+            case CameraCharacteristics.LENS_FACING_BACK:
+                openCamera(CameraCharacteristics.LENS_FACING_FRONT);
+                break;
         }
-        else {
-            throw new RuntimeException(context.toString() + " must implement CameraFragmentListener");
-        }
-        mMemeFilter = new MemeRealtimeDataFilter();
+    }
+    private void endFragment() {
+        getFragmentManager().popBackStack();
     }
 }

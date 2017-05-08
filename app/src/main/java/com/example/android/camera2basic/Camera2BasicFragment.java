@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+
+/*
+ * some changes by Nariaki Iwatani (Anno Lab. Inc.)
+ * +++ May 8, 2017
+ * - delete onCreateView
+ * - disable GUI interaction
+ * - enable to switch lens_facing
+ */
+
 package com.example.android.camera2basic;
 
 import android.Manifest;
@@ -59,6 +68,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.jins_meme.bridge.R;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -72,7 +83,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Camera2BasicFragment extends Fragment
-        implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+        implements FragmentCompat.OnRequestPermissionsResultCallback {
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -160,6 +171,12 @@ public class Camera2BasicFragment extends Fragment
      * ID of the current {@link CameraDevice}.
      */
     private String mCameraId;
+
+    /**
+     * lens facing to open next time {@link CameraCharacteristics#LENS_FACING}
+     */
+    private Integer mLensFacingRequest = CameraCharacteristics.LENS_FACING_BACK;
+    private Integer mCurrentLensFacing;
 
     /**
      * An {@link AutoFitTextureView} for camera preview.
@@ -419,15 +436,9 @@ public class Camera2BasicFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
-    }
-
-    @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
+//        view.findViewById(R.id.picture).setOnClickListener(this);
+//        view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
@@ -446,11 +457,7 @@ public class Camera2BasicFragment extends Fragment
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
-        if (mTextureView.isAvailable()) {
-            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
-        } else {
-            mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
-        }
+        openCamera(mLensFacingRequest);
     }
 
     @Override
@@ -496,11 +503,11 @@ public class Camera2BasicFragment extends Fragment
                 CameraCharacteristics characteristics
                         = manager.getCameraCharacteristics(cameraId);
 
-                // We don't use a front facing camera in this sample.
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                if (facing == null || facing != mLensFacingRequest) {
                     continue;
                 }
+                mCurrentLensFacing = facing;
 
                 StreamConfigurationMap map = characteristics.get(
                         CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -596,6 +603,24 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
+    /**
+     * Opens the camera specified by {@link CameraCharacteristics#LENS_FACING}.
+     */
+    protected void openCamera(Integer lensFacing) {
+        if(mCurrentLensFacing == lensFacing) {
+            return;
+        }
+        mLensFacingRequest = lensFacing;
+        if (mTextureView.isAvailable()) {
+            closeCamera();
+            stopBackgroundThread();
+            startBackgroundThread();
+            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+        } else {
+            mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+        }
+    }
+    protected Integer getCurrentLensFacing() { return mCurrentLensFacing; }
     /**
      * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
      */
@@ -763,9 +788,14 @@ public class Camera2BasicFragment extends Fragment
     }
 
     /**
+     * Check camera status.
+     */
+    protected boolean isCameraProcessing() { return mState != STATE_PREVIEW; }
+
+    /**
      * Initiate a still image capture.
      */
-    private void takePicture() {
+    protected void takePicture() {
         lockFocus();
     }
 
@@ -880,26 +910,6 @@ public class Camera2BasicFragment extends Fragment
                     mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.picture: {
-                takePicture();
-                break;
-            }
-            case R.id.info: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage(R.string.intro_message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
-                break;
-            }
         }
     }
 

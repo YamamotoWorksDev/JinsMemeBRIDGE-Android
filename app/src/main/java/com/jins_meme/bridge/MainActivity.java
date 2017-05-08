@@ -32,7 +32,7 @@ import java.util.List;
  *
  **/
 
-public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener, CameraFragment.CameraFragmentListener {
+public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
   private static final String VERSION = "0.5.9";
 
   // please write your APP_ID and APPSSECRET
@@ -317,8 +317,4 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     event.apply(this, menuFragment);
   }
 
-  @Override
-  public void onCameraFragmentEnd(CameraFragment.CameraFragmentEvent event) {
-    event.apply(this);
-  }
 }
