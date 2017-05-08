@@ -1,14 +1,17 @@
 package com.jins_meme.bridge;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jins_jp.meme.MemeRealtimeData;
@@ -44,14 +47,16 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     public enum MenuFragmentEvent {
         LAUNCH_CAMERA {
             @Override
-            public void apply(AppCompatActivity activity) {
+            public void apply(AppCompatActivity activity, Fragment parent) {
                 activity.getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment, new CameraFragment(), "CameraFragment")
+                        .addToBackStack(null)
+                        .hide(parent)
+                        .add(R.id.container, new CameraFragment())
                         .commit();
 
             }
         };
-        abstract public void apply(AppCompatActivity activity);
+        abstract public void apply(AppCompatActivity activity, Fragment parent);
     }
     public interface MenuFragmentListener {
         void onMenuFragmentEnd(MenuFragmentEvent event);
@@ -71,6 +76,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = new BridgeUIView(getContext());
+        mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
         return mView;
     }
 

@@ -32,7 +32,7 @@ import java.util.List;
  *
  **/
 
-public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
+public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener, CameraFragment.CameraFragmentListener {
   private static final String VERSION = "0.5.9";
 
   // please write your APP_ID and APPSSECRET
@@ -50,8 +50,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bridge_menu);
 
+    menuFragment = new MenuFragment();
+    getFragmentManager().beginTransaction()
+            .add(R.id.container, menuFragment)
+            .commit();
+
     handler = new Handler();
-    menuFragment = (MenuFragment)getFragmentManager().findFragmentById(R.id.fragment);
 
     if(Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
@@ -310,6 +314,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   // Fragmentからの通知イベント関連
   @Override
   public void onMenuFragmentEnd(MenuFragment.MenuFragmentEvent event) {
+    event.apply(this, menuFragment);
+  }
+
+  @Override
+  public void onCameraFragmentEnd(CameraFragment.CameraFragmentEvent event) {
     event.apply(this);
   }
 }
