@@ -5,10 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.android.camera2basic.Camera2BasicFragment;
+import com.jins_jp.meme.MemeRealtimeData;
+import com.jins_jp.meme.MemeRealtimeListener;
 
 
 /**
@@ -19,9 +24,10 @@ import android.widget.Button;
  * Use the {@link CameraFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraFragment extends Fragment {
+public class CameraFragment extends Fragment implements MemeRealtimeListener {
 
     private Camera2BasicFragment mCamera;
+    private MemeRealtimeDataFilter mMemeFilter;
 
     public CameraFragment() {
         // Required empty public constructor
@@ -52,6 +58,18 @@ public class CameraFragment extends Fragment {
         mListener = null;
     }
 
+    // JinsMemeからのデータ処理部
+    @Override
+    public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
+        mMemeFilter.update(memeRealtimeData, 30, 0);
+        if(mMemeFilter.isBlink()) {
+        }
+        else if(mMemeFilter.isLeft()) {
+        }
+        else if(mMemeFilter.isRight()) {
+        }
+    }
+
     // CameraFragmentListenerからactivityへの通知イベント関連
     public enum CameraFragmentEvent {
         EXIT_CAMERA {
@@ -75,5 +93,6 @@ public class CameraFragment extends Fragment {
         else {
             throw new RuntimeException(context.toString() + " must implement CameraFragmentListener");
         }
+        mMemeFilter = new MemeRealtimeDataFilter();
     }
 }

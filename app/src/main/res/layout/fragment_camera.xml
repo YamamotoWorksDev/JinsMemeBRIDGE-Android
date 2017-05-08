@@ -5,7 +5,7 @@
               tools:context="com.jins_meme.bridge.CameraFragment"
               android:orientation="vertical">
 
-    <fragment android:name="com.jins_meme.bridge.Camera2BasicFragment"
+    <fragment android:name="com.example.android.camera2basic.Camera2BasicFragment"
               android:id="@+id/fragment"
               android:layout_width="match_parent"
               android:layout_height="match_parent" />
