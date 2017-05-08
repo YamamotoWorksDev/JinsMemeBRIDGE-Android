@@ -5,17 +5,9 @@
               tools:context="com.jins_meme.bridge.CameraFragment"
               android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"/>
-
-    <Button
-        android:text="OK"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        />
+    <fragment android:name="com.jins_meme.bridge.Camera2BasicFragment"
+              android:id="@+id/fragment"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" />
 
 </LinearLayout>
