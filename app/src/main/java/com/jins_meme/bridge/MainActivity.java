@@ -80,7 +80,30 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       alert.create().show();
     }
 
-    init();
+    if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
+      alert.setTitle("Warning");
+      alert.setMessage("This device doesn't support BLE.");
+      alert.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d("DEBUG", "Quit App...");
+
+          finish();
+        }
+      });
+      alert.setNegativeButton("CONTINUE", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d("DEBUG", "Close Alert Dialog...");
+        }
+      });
+
+      alert.create().show();
+    }
+    else {
+      memeInit();
+    }
   }
 
   @Override
@@ -88,16 +111,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //Log.d("DEBUG", "test..." + scannedMemeList.size() + " connectedDeviceName : " + memeBTSPP.getConnectedDeviceName());
 
     int index = 0;
-    for(String pairedDeviceName : menuFragment.getBtPairedDeviceName()) {
-      if(pairedDeviceName.equals(menuFragment.getBtConnectedDeviceName())) {
-        menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(true);
+    if(menuFragment.isEnabledBLE()) {
+      for (String pairedDeviceName : menuFragment.getBtPairedDeviceName()) {
+        if (pairedDeviceName.equals(menuFragment.getBtConnectedDeviceName())) {
+          menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(true);
+        } else {
+          menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(false);
+        }
+        index++;
       }
-      else {
-        menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(false);
-      }
-      index++;
     }
-
     menu.add(0, index, 0, "SCAN").setCheckable(true);
     index++;
 
@@ -127,14 +150,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         if(scannedMemeList != null)
           scannedMemeList.clear();
 
-        startScan();
+        memeStartScan();
 
         handler.postDelayed(new Runnable() {
           @Override
           public void run() {
             item.setChecked(false);
 
-            stopScan();
+            memeStopScan();
           }
         }, 5000);
       }
@@ -143,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
         handler.removeCallbacks(null);
 
-        stopScan();
+        memeStopScan();
       }
       return true;
     }
@@ -247,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("CONNECT", "meme disconnected.");
   }
 
-  public void init() {
+  public void memeInit() {
     MemeLib.setAppClientID(this, APP_ID, APP_SECRET);
     memeLib = MemeLib.getInstance();
     memeLib.setAutoConnect(false);
@@ -257,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //Log.d("DEBUG", "devs : " + memeBTSPP.getPairedDeviceName());
   }
 
-  public void startScan() {
+  public void memeStartScan() {
     Log.d("SCAN", "start scannig...");
 
     memeLib.setMemeConnectListener(this);
@@ -272,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
   }
 
-  public void stopScan() {
+  public void memeStopScan() {
     Log.d("SCAN", "stop scannig...");
 
     if(memeLib.isScanning()) {

@@ -99,6 +99,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 //        memeFilter.setMoveType(MemeRealtimeDataFilter.MoveType.HEAD);
     }
 
+    public boolean isEnabledBLE() {
+        return memeBTSPP.isEnabled();
+    }
+
+
     @Override
     public void onStop() {
         super.onStop();
