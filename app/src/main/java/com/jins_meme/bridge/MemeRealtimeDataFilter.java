@@ -48,95 +48,11 @@ public class MemeRealtimeDataFilter {
     public boolean isBlink() { return isCommand(COMMAND_BLINK); }
 
     public void update(MemeRealtimeData memeRealtimeData, int thresholdBlink, int threshold) {
-        if(isWaiting()) {
-            mLastCommand = COMMAND_NONE;
-            return;
-        }
-        int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
-        if (eyeBlinkStrength > thresholdBlink) {
-            setCommand(COMMAND_BLINK);
-        }
-        switch (mMoveType) {
-            case HEAD:
-                float accX = memeRealtimeData.getAccX();
-                float accY = memeRealtimeData.getAccY();
-                if (accX > 5) {
-                    setCommand(COMMAND_LEFT);
-                }
-                if (accX < -3) {
-                    setCommand(COMMAND_RIGHT);
-                }
-                else if(accY < 1) {
-                    setCommand(COMMAND_UP);
-                }
-                else if(accY > 13) {
-                    setCommand(COMMAND_DOWN);
-                }
-                break;
-            case EYE:
-                if (memeRealtimeData.getEyeMoveLeft() > threshold) {
-                    setCommand(COMMAND_LEFT);
-                }
-                else if (memeRealtimeData.getEyeMoveRight() > threshold) {
-                    setCommand(COMMAND_RIGHT);
-                }
-                if (memeRealtimeData.getEyeMoveUp() > threshold) {
-                    setCommand(COMMAND_UP);
-                }
-                else if (memeRealtimeData.getEyeMoveDown() > threshold) {
-                    setCommand(COMMAND_DOWN);
-                }
-                break;
-        }
-        if(mLastCommand != COMMAND_NONE) {
-            Log.d("COMMAND", mLastCommand+"");
-        }
+        update(memeRealtimeData, thresholdBlink, threshold, threshold);
     }
 
     public void update(MemeRealtimeData memeRealtimeData, int thresholdBlink, int thresholdUD, int thresholdLR) {
-        if(isWaiting()) {
-            mLastCommand = COMMAND_NONE;
-            return;
-        }
-        int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
-        if (eyeBlinkStrength > thresholdBlink) {
-            setCommand(COMMAND_BLINK);
-        }
-        switch (mMoveType) {
-            case HEAD:
-                float accX = memeRealtimeData.getAccX();
-                float accY = memeRealtimeData.getAccY();
-                if (accX > 5) {
-                    setCommand(COMMAND_LEFT);
-                }
-                if (accX < -3) {
-                    setCommand(COMMAND_RIGHT);
-                }
-                else if(accY < 1) {
-                    setCommand(COMMAND_UP);
-                }
-                else if(accY > 13) {
-                    setCommand(COMMAND_DOWN);
-                }
-                break;
-            case EYE:
-                if (memeRealtimeData.getEyeMoveLeft() > thresholdLR) {
-                    setCommand(COMMAND_LEFT);
-                }
-                else if (memeRealtimeData.getEyeMoveRight() > thresholdLR) {
-                    setCommand(COMMAND_RIGHT);
-                }
-                if (memeRealtimeData.getEyeMoveUp() > thresholdUD) {
-                    setCommand(COMMAND_UP);
-                }
-                else if (memeRealtimeData.getEyeMoveDown() > thresholdUD) {
-                    setCommand(COMMAND_DOWN);
-                }
-                break;
-        }
-        if(mLastCommand != COMMAND_NONE) {
-            Log.d("COMMAND", mLastCommand+"");
-        }
+        update(memeRealtimeData, thresholdBlink, thresholdUD, thresholdUD, thresholdLR, thresholdLR);
     }
     public void update(MemeRealtimeData memeRealtimeData, int thresholdBlink, int thresholdUp, int thresholdDown, int thresholdLeft, int thresholdRight) {
         if(isWaiting()) {
