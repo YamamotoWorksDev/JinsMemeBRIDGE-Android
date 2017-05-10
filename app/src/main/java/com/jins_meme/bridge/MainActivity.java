@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,7 +35,7 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.9";
+  private static final String VERSION = "0.5.10";
 
   // please write your APP_ID and APPSSECRET
   private static final String APP_ID = "";
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private MemeLib memeLib;
   private MenuFragment menuFragment;
+  private SettingFragment settingFragment;
   private Handler handler;
 
   private List<String> scannedMemeList = new ArrayList<>();
@@ -51,7 +54,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setContentView(R.layout.activity_bridge_menu);
 
     handler = new Handler();
-    menuFragment = (MenuFragment)getFragmentManager().findFragmentById(R.id.fragment);
+    menuFragment = new MenuFragment();
+    settingFragment = new SettingFragment();
+
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+    transaction.replace(R.id.container, menuFragment);
+    transaction.commit();
 
     if(Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
@@ -108,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
 
+    menu.add(0, index++, 0, "SETTINGS");
     menu.add(0, index++, 0, "EXIT");
     menu.add(0, index++, 0, "Ver." + VERSION);
 
@@ -145,6 +155,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
         stopScan();
       }
+      return true;
+    }
+    else if(itemTitle.equals("SETTINGS")) {
+      Log.d("DEBUG", "tap setting");
+
+      FragmentManager manager = getSupportFragmentManager();
+      FragmentTransaction transaction = manager.beginTransaction();
+
+      transaction.replace(R.id.container, settingFragment);
+      transaction.addToBackStack(null);
+      transaction.commit();
+
       return true;
     }
     else if(itemTitle.equals("EXIT")) {
@@ -281,6 +303,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       Log.d("SCAN", "scan stopped.");
 
       invalidateOptionsMenu();
+    }
+  }
+
+  @Override
+  public void onBackPressed() {
+    Log.d("DEBUG", "press back!");
+
+    int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+    if(backStackCount != 0) {
+      getSupportFragmentManager().popBackStack();
     }
   }
 }
