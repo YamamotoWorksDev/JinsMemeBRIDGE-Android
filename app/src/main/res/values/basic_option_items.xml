@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan">SCAN</string>
+    <string name="settings">SETTINGS</string>
+    <string name="exit">EXIT</string>
+    <string name="version">VER: %1$s</string>
+</resources>
