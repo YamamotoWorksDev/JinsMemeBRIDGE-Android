@@ -40,15 +40,20 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private static final String APP_ID = "";
   private static final String APP_SECRET = "";
 
+  private Handler handler;
   private MemeLib memeLib;
+  private List<String> scannedMemeList = new ArrayList<>();
   private MenuFragment menuFragment;
   private BasicConfigFragment basicConfigFragment;
+  private AboutFragment aboutFragment;
+
+  /*
+   * MODIFY YOURSELF
+   * Add your implemented function's configuration
+   *
+   */
   private OSCConfigFragment oscConfigFragment;
   private MIDIConfigFragment midiConfigFragment;
-  private AboutFragment aboutFragment;
-  private Handler handler;
-
-  private List<String> scannedMemeList = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    //Log.d("DEBUG", "test..." + scannedMemeList.size() + " connectedDeviceName : " + memeBTSPP.getConnectedDeviceName());
-
     int index = 0;
     /*
     for(String pairedDeviceName : menuFragment.getBtPairedDeviceName()) {
@@ -126,11 +129,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     menu.add(0, index++, 0, R.string.basic_conf);
+
+    /*
+     * MODIFY YOURSELF
+     * Add your implemented function's configuration
+     *
+     */
     menu.add(0, index++, 0, R.string.osc_conf);
     menu.add(0, index++, 0, R.string.midi_conf);
+
     menu.add(0, index++, 0, R.string.about);
-    menu.add(0, index, 0, R.string.exit);
-    //menu.add(0, index, 0, getString(R.string.version, BuildConfig.VERSION_NAME));
+    menu.add(0, index,   0, R.string.exit);
 
     return true;
   }
@@ -169,12 +178,25 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if(cs == null) {
       Log.d("DEBUG", "press actionbar back!");
 
+      /*
       int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
       if(backStackCount != 0) {
         getSupportFragmentManager().popBackStack("MAIN", 0);
         setActionBarTitle(getString(R.string.app_name));
         setActionBarBack(false);
       }
+      */
+      FragmentManager manager = getSupportFragmentManager();
+      FragmentTransaction transaction = manager.beginTransaction();
+
+      //transaction.setCustomAnimations(R.anim.slide_in, android.R.anim.fade_out);
+      transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
+      transaction.replace(R.id.container, menuFragment);
+      transaction.addToBackStack(null);
+      transaction.commit();
+
+      setActionBarTitle(getString(R.string.app_name));
+      setActionBarBack(false);
 
       return true;
     }
@@ -216,18 +238,25 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       FragmentManager manager = getSupportFragmentManager();
       FragmentTransaction transaction = manager.beginTransaction();
 
+      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
       transaction.replace(R.id.container, basicConfigFragment);
       transaction.addToBackStack(null);
       transaction.commit();
 
       return true;
     }
+    /*
+     * MODIFY YOURSELF
+     * Add your implemented function's configuration
+     *
+     */
     else if(itemTitle.equals(getString(R.string.osc_conf))) {
       Log.d("DEBUG", "tap osc setting");
 
       FragmentManager manager = getSupportFragmentManager();
       FragmentTransaction transaction = manager.beginTransaction();
 
+      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
       transaction.replace(R.id.container, oscConfigFragment);
       transaction.addToBackStack(null);
       transaction.commit();
@@ -240,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       FragmentManager manager = getSupportFragmentManager();
       FragmentTransaction transaction = manager.beginTransaction();
 
+      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
       transaction.replace(R.id.container, midiConfigFragment);
       transaction.addToBackStack(null);
       transaction.commit();
@@ -252,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       FragmentManager manager = getSupportFragmentManager();
       FragmentTransaction transaction = manager.beginTransaction();
 
+      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
       transaction.replace(R.id.container, aboutFragment);
       transaction.addToBackStack(null);
       transaction.commit();
@@ -399,12 +430,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void onBackPressed() {
     Log.d("DEBUG", "press back!");
 
-    int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-    if(backStackCount != 0) {
-      getSupportFragmentManager().popBackStack("MAIN", 0);
-      setActionBarTitle(getString(R.string.app_name));
-      setActionBarBack(false);
-    }
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+
+    transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
+    transaction.replace(R.id.container, menuFragment);
+    transaction.addToBackStack(null);
+    transaction.commit();
+
+    setActionBarTitle(getString(R.string.app_name));
+    setActionBarBack(false);
   }
 
   void setActionBarTitle(@NonNull String title) {
