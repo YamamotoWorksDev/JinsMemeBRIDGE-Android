@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -35,8 +36,6 @@ import java.util.List;
  **/
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.10";
-
   // please write your APP_ID and APPSSECRET
   private static final String APP_ID = "";
   private static final String APP_SECRET = "";
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       index++;
     }
 
-    menu.add(0, index, 0, "SCAN").setCheckable(true);
+    menu.add(0, index, 0, R.string.scan).setCheckable(true);
     index++;
 
     if(scannedMemeList.size() > 0 && scannedMemeList.size() < 9) {
@@ -117,20 +116,57 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
 
-    menu.add(0, index++, 0, "SETTINGS");
-    menu.add(0, index++, 0, "EXIT");
-    menu.add(0, index++, 0, "Ver." + VERSION);
+    menu.add(0, index++, 0, R.string.settings);
+    menu.add(0, index++, 0, R.string.exit);
+    menu.add(0, index, 0, getString(R.string.version, BuildConfig.VERSION_NAME));
+
+    return true;
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    super.onPrepareOptionsMenu(menu);
+
+    if(getSupportActionBar().getTitle().toString().equals(getString(R.string.settings))) {
+      for(int i = 0; i < menu.size(); i++) {
+        MenuItem item = menu.getItem(i);
+        String title = item.getTitle().toString();
+        if(!title.equals(getString(R.string.exit)) && !title.contains("VER")) {
+          item.setVisible(false);
+        }
+      }
+    }
+    else {
+      for(int i = 0; i < menu.size(); i++) {
+        menu.getItem(i).setVisible(true);
+      }
+    }
 
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(final MenuItem item) {
+    CharSequence cs = item.getTitle();
+
+    if(cs == null) {
+      Log.d("DEBUG", "press actionbar back!");
+
+      int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+      if(backStackCount != 0) {
+        getSupportFragmentManager().popBackStack();
+        setActionBarTitle(getString(R.string.app_name));
+        setActionBarBack(false);
+      }
+
+      return true;
+    }
+
     String itemTitle = item.getTitle().toString();
 
     Log.d("DEBUG", "item id = " + item.getItemId() + " " + itemTitle);
 
-    if(itemTitle.equals("SCAN")) {
+    if(itemTitle.equals(getString(R.string.scan))) {
       if(!item.isChecked()) {
         item.setChecked(true);
 
@@ -157,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
       return true;
     }
-    else if(itemTitle.equals("SETTINGS")) {
+    else if(itemTitle.equals(getString(R.string.settings))) {
       Log.d("DEBUG", "tap setting");
 
       FragmentManager manager = getSupportFragmentManager();
@@ -169,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       return true;
     }
-    else if(itemTitle.equals("EXIT")) {
+    else if(itemTitle.equals(getString(R.string.exit))) {
       finish();
     }
     else if(scannedMemeList.contains(itemTitle)) {
@@ -313,6 +349,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
     if(backStackCount != 0) {
       getSupportFragmentManager().popBackStack();
+      setActionBarTitle(getString(R.string.app_name));
+      setActionBarBack(false);
     }
+  }
+
+  void setActionBarTitle(@NonNull String title) {
+    getSupportActionBar().setTitle(title);
+  }
+
+  void setActionBarBack(boolean flag) {
+    getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
   }
 }
