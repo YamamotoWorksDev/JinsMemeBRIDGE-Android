@@ -44,7 +44,7 @@ public class SettingFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ((MainActivity)getActivity()).setActionBarTitle("SETTINGS");
+    ((MainActivity)getActivity()).setActionBarTitle(getString(R.string.settings));
     ((MainActivity)getActivity()).setActionBarBack(true);
   }
 }
