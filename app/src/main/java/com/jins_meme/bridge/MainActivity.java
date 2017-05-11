@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -178,25 +179,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if(cs == null) {
       Log.d("DEBUG", "press actionbar back!");
 
-      /*
-      int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-      if(backStackCount != 0) {
-        getSupportFragmentManager().popBackStack("MAIN", 0);
-        setActionBarTitle(getString(R.string.app_name));
-        setActionBarBack(false);
-      }
-      */
-      FragmentManager manager = getSupportFragmentManager();
-      FragmentTransaction transaction = manager.beginTransaction();
-
-      //transaction.setCustomAnimations(R.anim.slide_in, android.R.anim.fade_out);
-      transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
-      transaction.replace(R.id.container, menuFragment);
-      transaction.addToBackStack(null);
-      transaction.commit();
-
-      setActionBarTitle(getString(R.string.app_name));
-      setActionBarBack(false);
+      transitToMain(0);
 
       return true;
     }
@@ -235,13 +218,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if(itemTitle.equals(getString(R.string.basic_conf))) {
       Log.d("DEBUG", "tap basic setting");
 
-      FragmentManager manager = getSupportFragmentManager();
-      FragmentTransaction transaction = manager.beginTransaction();
-
-      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
-      transaction.replace(R.id.container, basicConfigFragment);
-      transaction.addToBackStack(null);
-      transaction.commit();
+      transitToConfig(basicConfigFragment);
 
       return true;
     }
@@ -253,39 +230,21 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if(itemTitle.equals(getString(R.string.osc_conf))) {
       Log.d("DEBUG", "tap osc setting");
 
-      FragmentManager manager = getSupportFragmentManager();
-      FragmentTransaction transaction = manager.beginTransaction();
-
-      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
-      transaction.replace(R.id.container, oscConfigFragment);
-      transaction.addToBackStack(null);
-      transaction.commit();
+      transitToConfig(oscConfigFragment);
 
       return true;
     }
     else if(itemTitle.equals(getString(R.string.midi_conf))) {
       Log.d("DEBUG", "tap midi setting");
 
-      FragmentManager manager = getSupportFragmentManager();
-      FragmentTransaction transaction = manager.beginTransaction();
-
-      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
-      transaction.replace(R.id.container, midiConfigFragment);
-      transaction.addToBackStack(null);
-      transaction.commit();
+      transitToConfig(midiConfigFragment);
 
       return true;
     }
     else if(itemTitle.equals(getString(R.string.about))) {
       Log.d("DEBUG", "tap about");
 
-      FragmentManager manager = getSupportFragmentManager();
-      FragmentTransaction transaction = manager.beginTransaction();
-
-      transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
-      transaction.replace(R.id.container, aboutFragment);
-      transaction.addToBackStack(null);
-      transaction.commit();
+      transitToConfig(aboutFragment);
 
       return true;
     }
@@ -430,16 +389,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void onBackPressed() {
     Log.d("DEBUG", "press back!");
 
-    FragmentManager manager = getSupportFragmentManager();
-    FragmentTransaction transaction = manager.beginTransaction();
-
-    transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
-    transaction.replace(R.id.container, menuFragment);
-    transaction.addToBackStack(null);
-    transaction.commit();
-
-    setActionBarTitle(getString(R.string.app_name));
-    setActionBarBack(false);
+    transitToMain(1);
   }
 
   void setActionBarTitle(@NonNull String title) {
@@ -448,5 +398,35 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   void setActionBarBack(boolean flag) {
     getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
+  }
+
+  void transitToConfig(Fragment fragment) {
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+
+    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
+    transaction.replace(R.id.container, fragment);
+    transaction.addToBackStack(null);
+    transaction.commit();
+  }
+
+  void transitToMain(int direction) {
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+
+    switch(direction) {
+      case 0:
+        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
+        break;
+      case 1:
+        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
+        break;
+    }
+    transaction.replace(R.id.container, menuFragment);
+    transaction.addToBackStack(null);
+    transaction.commit();
+
+    setActionBarTitle(getString(R.string.app_name));
+    setActionBarBack(false);
   }
 }
