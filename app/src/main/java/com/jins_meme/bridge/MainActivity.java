@@ -42,7 +42,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private MemeLib memeLib;
   private MenuFragment menuFragment;
-  private SettingFragment settingFragment;
+  private BasicConfigFragment basicConfigFragment;
+  private OSCConfigFragment oscConfigFragment;
+  private MIDIConfigFragment midiConfigFragment;
+  private AboutFragment aboutFragment;
   private Handler handler;
 
   private List<String> scannedMemeList = new ArrayList<>();
@@ -54,11 +57,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     handler = new Handler();
     menuFragment = new MenuFragment();
-    settingFragment = new SettingFragment();
+    basicConfigFragment = new BasicConfigFragment();
+    oscConfigFragment = new OSCConfigFragment();
+    midiConfigFragment = new MIDIConfigFragment();
+    aboutFragment = new AboutFragment();
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
     transaction.replace(R.id.container, menuFragment);
+    transaction.addToBackStack("MAIN");
     transaction.commit();
 
     if(Build.VERSION.SDK_INT >= 23) {
@@ -96,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //Log.d("DEBUG", "test..." + scannedMemeList.size() + " connectedDeviceName : " + memeBTSPP.getConnectedDeviceName());
 
     int index = 0;
+    /*
     for(String pairedDeviceName : menuFragment.getBtPairedDeviceName()) {
       if(pairedDeviceName.equals(menuFragment.getBtConnectedDeviceName())) {
         menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(true);
@@ -105,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
       index++;
     }
+    */
 
     menu.add(0, index, 0, R.string.scan).setCheckable(true);
     index++;
@@ -116,9 +125,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
 
-    menu.add(0, index++, 0, R.string.settings);
-    menu.add(0, index++, 0, R.string.exit);
-    menu.add(0, index, 0, getString(R.string.version, BuildConfig.VERSION_NAME));
+    menu.add(0, index++, 0, R.string.basic_conf);
+    menu.add(0, index++, 0, R.string.osc_conf);
+    menu.add(0, index++, 0, R.string.midi_conf);
+    menu.add(0, index++, 0, R.string.about);
+    menu.add(0, index, 0, R.string.exit);
+    //menu.add(0, index, 0, getString(R.string.version, BuildConfig.VERSION_NAME));
 
     return true;
   }
@@ -127,12 +139,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
 
-    if(getSupportActionBar().getTitle().toString().equals(getString(R.string.settings))) {
+    String barTitle = getSupportActionBar().getTitle().toString();
+
+    if(!barTitle.contains(getString(R.string.app_name))) {
       for(int i = 0; i < menu.size(); i++) {
         MenuItem item = menu.getItem(i);
         String title = item.getTitle().toString();
-        if(!title.equals(getString(R.string.exit)) && !title.contains("VER")) {
+        if(barTitle.contains(title)) {
           item.setVisible(false);
+        }
+        else {
+          item.setVisible(true);
         }
       }
     }
@@ -154,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
       if(backStackCount != 0) {
-        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().popBackStack("MAIN", 0);
         setActionBarTitle(getString(R.string.app_name));
         setActionBarBack(false);
       }
@@ -193,13 +210,49 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
       return true;
     }
-    else if(itemTitle.equals(getString(R.string.settings))) {
-      Log.d("DEBUG", "tap setting");
+    else if(itemTitle.equals(getString(R.string.basic_conf))) {
+      Log.d("DEBUG", "tap basic setting");
 
       FragmentManager manager = getSupportFragmentManager();
       FragmentTransaction transaction = manager.beginTransaction();
 
-      transaction.replace(R.id.container, settingFragment);
+      transaction.replace(R.id.container, basicConfigFragment);
+      transaction.addToBackStack(null);
+      transaction.commit();
+
+      return true;
+    }
+    else if(itemTitle.equals(getString(R.string.osc_conf))) {
+      Log.d("DEBUG", "tap osc setting");
+
+      FragmentManager manager = getSupportFragmentManager();
+      FragmentTransaction transaction = manager.beginTransaction();
+
+      transaction.replace(R.id.container, oscConfigFragment);
+      transaction.addToBackStack(null);
+      transaction.commit();
+
+      return true;
+    }
+    else if(itemTitle.equals(getString(R.string.midi_conf))) {
+      Log.d("DEBUG", "tap midi setting");
+
+      FragmentManager manager = getSupportFragmentManager();
+      FragmentTransaction transaction = manager.beginTransaction();
+
+      transaction.replace(R.id.container, midiConfigFragment);
+      transaction.addToBackStack(null);
+      transaction.commit();
+
+      return true;
+    }
+    else if(itemTitle.equals(getString(R.string.about))) {
+      Log.d("DEBUG", "tap about");
+
+      FragmentManager manager = getSupportFragmentManager();
+      FragmentTransaction transaction = manager.beginTransaction();
+
+      transaction.replace(R.id.container, aboutFragment);
       transaction.addToBackStack(null);
       transaction.commit();
 
@@ -348,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
     if(backStackCount != 0) {
-      getSupportFragmentManager().popBackStack();
+      getSupportFragmentManager().popBackStack("MAIN", 0);
       setActionBarTitle(getString(R.string.app_name));
       setActionBarBack(false);
     }
