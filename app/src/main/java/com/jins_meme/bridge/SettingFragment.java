@@ -39,4 +39,12 @@ public class SettingFragment extends Fragment {
   public void onDetach() {
     super.onDetach();
   }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+    ((MainActivity)getActivity()).setActionBarTitle("SETTINGS");
+    ((MainActivity)getActivity()).setActionBarBack(true);
+  }
 }
