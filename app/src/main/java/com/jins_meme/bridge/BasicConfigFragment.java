@@ -18,8 +18,7 @@ import android.view.ViewGroup;
  *
  **/
 
-public class SettingFragment extends Fragment {
-
+public class BasicConfigFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -44,7 +43,7 @@ public class SettingFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ((MainActivity)getActivity()).setActionBarTitle(getString(R.string.settings));
+    ((MainActivity)getActivity()).setActionBarTitle(getString(R.string.basic_conf) + " SETTING");
     ((MainActivity)getActivity()).setActionBarBack(true);
   }
 }
