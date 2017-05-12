@@ -6,20 +6,24 @@
            android:toYScale="0.5"
            android:duration="0" />
 
-    <translate android:fromXDelta="25%p"
-               android:fromYDelta="100%p"
+    <translate android:fromXDelta="100%p"
+               android:fromYDelta="15%p"
                android:toXDelta="25%p"
-               android:toYDelta="25%p"
+               android:toYDelta="15%p"
                android:fillAfter="true"
                android:duration="500"
                android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+
+    <alpha android:fromAlpha="0.5"
+           android:toAlpha="1.0"
+           android:duration="500"/>
 
     <scale android:fromXScale="1.0"
            android:fromYScale="1.0"
            android:toXScale="2.0"
            android:toYScale="2.0"
            android:pivotX="50%p"
-           android:pivotY="50%p"
+           android:pivotY="30%p"
            android:duration="300"
            android:startOffset="400"
            android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
