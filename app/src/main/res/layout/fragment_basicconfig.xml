@@ -1,14 +1,43 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+             android:background="#C5CAE9"
              tools:context="com.jins_meme.bridge.BasicConfigFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#C5CAE9"
-        android:text="Hello Basic Config Fragment"/>
 
-</FrameLayout>
+    <Spinner
+        android:id="@+id/meme_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/connect"
+        android:layout_marginStart="20dp"/>
+
+    <Switch
+        android:id="@+id/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CONNECT "
+        android:textOff="disconnect"
+        android:textOn="connect"
+        android:layout_below="@+id/meme_list"
+        android:layout_alignStart="@+id/scan"
+        android:layout_marginTop="23dp"/>
+
+    <Switch
+        android:id="@+id/scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/meme_list"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="26dp"
+        android:checked="false"
+        android:splitTrack="false"
+        android:text="SCAN"
+        android:textOff="STOP"
+        android:textOn="START"/>
+
+</RelativeLayout>
