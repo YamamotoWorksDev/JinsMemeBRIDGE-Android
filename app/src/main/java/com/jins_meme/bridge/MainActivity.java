@@ -1,8 +1,12 @@
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +16,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.jins_jp.meme.MemeConnectListener;
@@ -35,8 +41,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
   // please write your APP_ID and APPSSECRET
-  private static final String APP_ID = "";
-  private static final String APP_SECRET = "";
+  private String appID = null;
+  private String appSecret = null;
+
+  private SharedPreferences preferences;
+  private SharedPreferences.Editor editor;
+
+  private Handler handler;
+  private FrameLayout mainLayout;
 
   private MemeLib memeLib;
   private List<String> scannedMemeList = new ArrayList<>();
@@ -44,24 +56,37 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
 
+  private OSCConfigFragment oscConfigFragment;
+  private MIDIConfigFragment midiConfigFragment;
   /*
    * MODIFY YOURSELF
    * Add your implemented function's configuration
    *
    */
-  private OSCConfigFragment oscConfigFragment;
-  private MIDIConfigFragment midiConfigFragment;
+  // private ***ConfigFragment ***ConfigFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bridge_menu);
 
+    handler = new Handler();
+    mainLayout = (FrameLayout)findViewById(R.id.container);
+
+    preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    editor = preferences.edit();
+
     menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
     midiConfigFragment = new MIDIConfigFragment();
     aboutFragment = new AboutFragment();
+    /*
+     * MODIFY YOURSELF
+     * Add your implemented function's configuration
+     *
+     */
+    // ***ConfigFragment = new ***ConfigFragment
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
@@ -72,31 +97,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if(Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
     }
-
-    /*
-    Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(this));
-    if(!MemeMIDI.checkUsbMidi(this)) {
-      AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Warning");
-      alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
-      alert.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Quit App...");
-
-          finish();
-        }
-      });
-      alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Close Alert Dialog...");
-        }
-      });
-
-      alert.create().show();
-    }
-    */
 
     initMemeLib();
   }
@@ -171,11 +171,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       return true;
     }
-    /*
-     * MODIFY YOURSELF
-     * Add your implemented function's configuration
-     *
-     */
     else if(itemTitle.equals(getString(R.string.osc_conf))) {
       Log.d("DEBUG", "tap osc setting");
 
@@ -190,6 +185,20 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       return true;
     }
+    /*
+     * MODIFY YOURSELF
+     * Add your implemented function's configuration
+     *
+     */
+    /*
+    else if(itemTitle.equals(getString(R.string.***_config) {
+      Log.d("DEBUG", "tap *** setting");
+
+      transittToConfig(***ConfigFragment);
+
+      return true;
+    }
+     */
     else if(itemTitle.equals(getString(R.string.about))) {
       Log.d("DEBUG", "tap about");
 
@@ -200,20 +209,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if(itemTitle.equals(getString(R.string.exit))) {
       finish();
     }
-    /*
-    else {
-      if(item.isChecked()) {
-        Log.d("DEBUG", "disconnect....");
-        menuFragment.btDisconnect();
-        item.setChecked(false);
-      }
-      else {
-        Log.d("DEBUG", "connect....");
-        menuFragment.btConnect(itemTitle);
-        item.setChecked(true);
-      }
-    }
-    */
 
     return super.onOptionsItemSelected(item);
   }
@@ -236,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onDestroy() {
     super.onDestroy();
 
-    if(memeLib.isConnected()) {
+    if(memeLib != null && memeLib.isConnected()) {
       memeLib.disconnect();
       memeLib = null;
     }
@@ -245,13 +240,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     basicConfigFragment = null;
     aboutFragment = null;
 
+    oscConfigFragment = null;
+    midiConfigFragment = null;
     /*
      * MODIFY YOURSELF
      * Add your implemented function's configuration
      *
      */
-    oscConfigFragment = null;
-    midiConfigFragment = null;
+    // ***ConfigFragment = null;
 
     Log.d("DEBUG", "onDestroy...");
   }
@@ -293,9 +289,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void initMemeLib() {
-    MemeLib.setAppClientID(this, APP_ID, APP_SECRET);
-    memeLib = MemeLib.getInstance();
-    memeLib.setAutoConnect(false);
+    appID = preferences.getString("APP_ID", getString(R.string.meme_app_id));
+    appSecret = preferences.getString("APP_SECRET", getString(R.string.meme_app_secret));
+
+    if(appID != null && appSecret != null) {
+      Log.d("MAIN", "Initialized MemeLib with " + appID + " and " + appSecret);
+
+      MemeLib.setAppClientID(this, appID, appSecret);
+      memeLib = MemeLib.getInstance();
+      memeLib.setAutoConnect(false);
+    }
 
     //Log.d("DEBUG", "devs : " + memeBTSPP.getPairedDeviceName());
   }
@@ -334,6 +337,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     return scannedMemeList;
   }
 
+  public int getScannedMemeSize() {
+    return scannedMemeList.size();
+  }
+
+  public boolean isMemeConnected() {
+    return memeLib.isConnected();
+  }
+
   public void connectToMeme(String id) {
     memeLib.connect(id);
   }
@@ -367,23 +378,40 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.commit();
   }
 
-  void transitToMain(int direction) {
-    FragmentManager manager = getSupportFragmentManager();
-    FragmentTransaction transaction = manager.beginTransaction();
+  void transitToMain(final int direction) {
+    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    imm.hideSoftInputFromWindow(mainLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-    switch(direction) {
-      case 0:
-        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
-        break;
-      case 1:
-        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
-        break;
-    }
-    transaction.replace(R.id.container, menuFragment);
-    transaction.addToBackStack(null);
-    transaction.commit();
+    handler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
 
-    setActionBarTitle(getString(R.string.app_name));
-    setActionBarBack(false);
+        switch(direction) {
+          case 0:
+            transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
+            break;
+          case 1:
+            transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
+            break;
+        }
+        transaction.replace(R.id.container, menuFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        setActionBarTitle(getString(R.string.app_name));
+        setActionBarBack(false);
+      }
+    }, 50);
+  }
+
+  String getSavedText(String key) {
+    return preferences.getString(key, null);
+  }
+
+  void autoSaveText(String key, String text) {
+    editor.putString(key, text);
+    editor.apply();
   }
 }
