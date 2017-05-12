@@ -1,15 +1,12 @@
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private static final String APP_ID = "";
   private static final String APP_SECRET = "";
 
-  private Handler handler;
   private MemeLib memeLib;
   private List<String> scannedMemeList = new ArrayList<>();
   private MenuFragment menuFragment;
@@ -61,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bridge_menu);
 
-    handler = new Handler();
     menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -78,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       requestGPSPermission();
     }
 
+    /*
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(this));
     if(!MemeMIDI.checkUsbMidi(this)) {
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -100,34 +96,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       alert.create().show();
     }
+    */
 
-    init();
+    initMemeLib();
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     int index = 0;
-    /*
-    for(String pairedDeviceName : menuFragment.getBtPairedDeviceName()) {
-      if(pairedDeviceName.equals(menuFragment.getBtConnectedDeviceName())) {
-        menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(true);
-      }
-      else {
-        menu.add(0, index, 0, pairedDeviceName).setCheckable(true).setChecked(false);
-      }
-      index++;
-    }
-    */
-
-    menu.add(0, index, 0, R.string.scan).setCheckable(true);
-    index++;
-
-    if(scannedMemeList.size() > 0 && scannedMemeList.size() < 9) {
-      for(String memeId : scannedMemeList) {
-        menu.add(0, index, 0, memeId).setCheckable(true);
-        index++;
-      }
-    }
 
     menu.add(0, index++, 0, R.string.basic_conf);
 
@@ -188,34 +164,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     Log.d("DEBUG", "item id = " + item.getItemId() + " " + itemTitle);
 
-    if(itemTitle.equals(getString(R.string.scan))) {
-      if(!item.isChecked()) {
-        item.setChecked(true);
-
-        if(scannedMemeList != null)
-          scannedMemeList.clear();
-
-        startScan();
-
-        handler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            item.setChecked(false);
-
-            stopScan();
-          }
-        }, 5000);
-      }
-      else {
-        item.setChecked(false);
-
-        handler.removeCallbacks(null);
-
-        stopScan();
-      }
-      return true;
-    }
-    else if(itemTitle.equals(getString(R.string.basic_conf))) {
+    if(itemTitle.equals(getString(R.string.basic_conf))) {
       Log.d("DEBUG", "tap basic setting");
 
       transitToConfig(basicConfigFragment);
@@ -251,21 +200,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if(itemTitle.equals(getString(R.string.exit))) {
       finish();
     }
-    else if(scannedMemeList.contains(itemTitle)) {
-      Log.d("DEBUG", "check = " + item.isChecked());
-
-      if(item.isChecked() && memeLib.isConnected()) {
-        memeLib.disconnect();
-        item.setChecked(false);
-      }
-      else if(!item.isChecked() && !memeLib.isConnected()) {
-        Log.d("CONNECT", "meme ADDRESS: " + item.getTitle().toString());
-
-        memeLib.connect(item.getTitle().toString());
-        item.setChecked(true);
-      }
-      return true;
-    }
+    /*
     else {
       if(item.isChecked()) {
         Log.d("DEBUG", "disconnect....");
@@ -278,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         item.setChecked(true);
       }
     }
+    */
 
     return super.onOptionsItemSelected(item);
   }
@@ -306,8 +242,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     menuFragment = null;
+    basicConfigFragment = null;
+    aboutFragment = null;
 
-    handler = null;
+    /*
+     * MODIFY YOURSELF
+     * Add your implemented function's configuration
+     *
+     */
+    oscConfigFragment = null;
+    midiConfigFragment = null;
 
     Log.d("DEBUG", "onDestroy...");
   }
@@ -348,18 +292,19 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("CONNECT", "meme disconnected.");
   }
 
-  public void init() {
+  public void initMemeLib() {
     MemeLib.setAppClientID(this, APP_ID, APP_SECRET);
     memeLib = MemeLib.getInstance();
     memeLib.setAutoConnect(false);
-
-    handler = new Handler();
 
     //Log.d("DEBUG", "devs : " + memeBTSPP.getPairedDeviceName());
   }
 
   public void startScan() {
     Log.d("SCAN", "start scannig...");
+
+    if(scannedMemeList != null)
+      scannedMemeList.clear();
 
     memeLib.setMemeConnectListener(this);
 
@@ -383,6 +328,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       invalidateOptionsMenu();
     }
+  }
+
+  public List<String> getScannedMemeList() {
+    return scannedMemeList;
+  }
+
+  public void connectToMeme(String id) {
+    memeLib.connect(id);
+  }
+
+  public void disconnectToMeme() {
+    memeLib.disconnect();
   }
 
   @Override

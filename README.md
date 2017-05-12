@@ -9,7 +9,7 @@ To bulid this app, you need to have [JINS developer account](https://developers.
 After that, please write them to "APP_ID" and "APP_SECRET" in MainActivity.java.
 ```java:MainActivity.java
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.12";
+  private static final String VERSION = "0.5.13";
 
   // please write your APP_ID and APPSSECRET
   private static final String APP_ID = "";
