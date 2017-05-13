@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">MemeBridge</string>
-    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <!-- PLEASE INPUT YOUR APP_ID & APP_SECRET -->
+    <string name="meme_app_id"></string>
+    <string name="meme_app_secret"></string>
 
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="request_permission">Camera permission is required.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

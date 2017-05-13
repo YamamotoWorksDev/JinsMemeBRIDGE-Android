@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#C5CAE9"
+             tools:context="com.jins_meme.bridge.BasicConfigFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <Spinner
+        android:id="@+id/meme_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_toEndOf="@+id/connect"
+        />
+
+    <Switch
+        android:id="@+id/connect"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/scan"
+        android:layout_below="@+id/meme_list"
+        android:layout_marginTop="15dp"
+        android:text="CONNECT "
+        android:textOff="disconnect"
+        android:textOn="connect"/>
+
+    <Switch
+        android:id="@+id/scan"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/meme_list"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="25dp"
+        android:checked="false"
+        android:splitTrack="false"
+        android:text="SCAN"
+        android:textOff="STOP"
+        android:textOn="START"/>
+
+    <EditText
+        android:id="@+id/app_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/connect"
+        android:layout_below="@+id/connect"
+        android:layout_marginTop="43dp"
+        android:layout_toStartOf="@+id/space"
+        android:contentDescription="APP_ID"
+        android:ems="10"
+        android:inputType="textPersonName"/>
+
+    <EditText
+        android:id="@+id/app_secret"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/app_id"
+        android:layout_below="@+id/app_id"
+        android:layout_marginTop="23dp"
+        android:contentDescription="APP_SECRET"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_toStartOf="@+id/space"/>
+
+    <Space
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/app_secret"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/app_id"
+        android:id="@+id/space"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textView2"
+        android:layout_below="@+id/app_id"
+        android:layout_marginTop="-5dp"
+        android:text="APP_ID"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/app_secret"
+        android:layout_below="@+id/app_secret"
+        android:layout_marginEnd="13dp"
+        android:layout_marginTop="-5dp"
+        android:text="APP_SECRET"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SCANNED MEME LIST"
+        android:layout_above="@+id/scan"
+        android:layout_alignStart="@+id/meme_list"/>
+
+</RelativeLayout>

@@ -1,9 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#0099cc"
-    tools:context="com.jins_meme.bridge.BridgeMenu">
-
-</LinearLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#0099cc"
+             android:id="@+id/container"
+             android:keepScreenOn="true"
+             tools:context="com.jins_meme.bridge.BridgeMenu">
+</FrameLayout>

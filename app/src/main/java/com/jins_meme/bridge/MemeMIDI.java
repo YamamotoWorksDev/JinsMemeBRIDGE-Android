@@ -1,3 +1,12 @@
+/**
+ * MemeMIDI.java
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
@@ -10,22 +19,12 @@ import android.util.Log;
 
 import java.io.IOException;
 
-/**
- *
- * MemeMIDI.java
- *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
- *
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- *
- **/
-
 public class MemeMIDI {
+
   public static final int EYE_BLINK = 30;
-  public static final int EYE_UP    = 31;
-  public static final int EYE_DOWN  = 32;
-  public static final int EYE_LEFT  = 33;
+  public static final int EYE_UP = 31;
+  public static final int EYE_DOWN = 32;
+  public static final int EYE_LEFT = 33;
   public static final int EYE_RIGHT = 34;
 
   private Context context;
@@ -45,25 +44,26 @@ public class MemeMIDI {
   }
 
   public static boolean checkUsbMidi(Context context) {
-    MidiManager midiManager = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
-    if(midiManager != null) {
+    MidiManager midiManager = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
+    if (midiManager != null) {
       final MidiDeviceInfo[] infos = midiManager.getDevices();
-      if(infos.length > 0)
+      if (infos.length > 0) {
         return true;
-      else
+      } else {
         return false;
-    }
-    else
+      }
+    } else {
       return false;
+    }
   }
 
   public void initPort() {
     Log.d("DEBUG", "initPort...");
 
-    midiManager = (MidiManager)context.getSystemService(Context.MIDI_SERVICE);
-    if(midiManager != null) {
+    midiManager = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
+    if (midiManager != null) {
       final MidiDeviceInfo[] infos = midiManager.getDevices();
-      if(infos.length > 0) {
+      if (infos.length > 0) {
         final int numInputs = infos[0].getInputPortCount();
         final int numOutputs = infos[0].getOutputPortCount();
         MidiDeviceInfo.PortInfo[] portInfos = infos[0].getPorts();
@@ -71,20 +71,21 @@ public class MemeMIDI {
         midiManager.openDevice(infos[0], new MidiManager.OnDeviceOpenedListener() {
           @Override
           public void onDeviceOpened(MidiDevice device) {
-            if(device == null) {
+            if (device == null) {
               Log.d("DEBUG", "could not open device " + infos[0]);
-            }
-            else {
+            } else {
               Log.d("DEBUG", "a onDeviceOpend...");
 
               midiInputPort = device.openInputPort(numInputs - 1);
               midiOutputPort = device.openOutputPort(numOutputs - 1);
 
-              if(midiInputPort == null)
+              if (midiInputPort == null) {
                 Log.d("DEBUG", "midi input port is null...");
+              }
 
-              if(midiOutputPort == null)
+              if (midiOutputPort == null) {
                 Log.d("DEBUG", "midi output port is null...");
+              }
 
               initializedMidi = true;
             }
@@ -111,88 +112,88 @@ public class MemeMIDI {
 
   public void closePort() {
     try {
-      if(midiInputPort != null) {
+      if (midiInputPort != null) {
         midiInputPort.close();
         midiInputPort = null;
       }
 
-      if(midiOutputPort != null) {
+      if (midiOutputPort != null) {
         midiOutputPort.close();
         midiOutputPort = null;
       }
 
       midiManager = null;
-    }
-    catch(IOException ioe) {
+    } catch (IOException ioe) {
       ioe.printStackTrace();
     }
   }
 
   public void sendNote(int channel, int pitch, int velocity) {
-    if(channel < 1 || channel > 16)
+    if (channel < 1 || channel > 16) {
       return;
-
-    if(pitch < 0 || pitch > 127)
-      return;
-
-    if(velocity < 0) {
-      velocity = 0;
     }
-    else if(velocity > 127) {
+
+    if (pitch < 0 || pitch > 127) {
+      return;
+    }
+
+    if (velocity < 0) {
+      velocity = 0;
+    } else if (velocity > 127) {
       velocity = 127;
     }
 
     // MIDI
     byte[] buffer = new byte[32];
     int numBytes = 0;
-    if(velocity > 0) {
-      buffer[numBytes++] = (byte)(0x90 + (channel - 1)); // Note On
-      buffer[numBytes++] = (byte)pitch;
-      buffer[numBytes++] = (byte)velocity;
-    }
-    else if(velocity == 0) {
-      buffer[numBytes++] = (byte)(0x80 + (channel - 1)); // Note Off
-      buffer[numBytes++] = (byte)pitch;
-      buffer[numBytes++] = (byte)0;
+    if (velocity > 0) {
+      buffer[numBytes++] = (byte) (0x90 + (channel - 1)); // Note On
+      buffer[numBytes++] = (byte) pitch;
+      buffer[numBytes++] = (byte) velocity;
+    } else if (velocity == 0) {
+      buffer[numBytes++] = (byte) (0x80 + (channel - 1)); // Note Off
+      buffer[numBytes++] = (byte) pitch;
+      buffer[numBytes++] = (byte) 0;
     }
     int offset = 0;
 
     try {
-      if(midiInputPort != null)
+      if (midiInputPort != null) {
         midiInputPort.send(buffer, offset, numBytes);
-    }
-    catch(IOException ioe) {
+      }
+    } catch (IOException ioe) {
       ioe.printStackTrace();
     }
   }
 
   public void sendControlChange(int channel, int number, int value) {
-    if(channel < 1 || channel > 16)
+    if (channel < 1 || channel > 16) {
       return;
-
-    if(number < 0 || number > 127)
-      return;
-
-    if(value < 0) {
-      value = 0;
     }
-    else if(value > 119) {
+
+    if (number < 0 || number > 127) {
+      return;
+    }
+
+    if (value < 0) {
+      value = 0;
+    } else if (value > 119) {
       value = 119;
     }
 
     // MIDI
     byte[] buffer = new byte[32];
     int numBytes = 0;
-    buffer[numBytes++] = (byte)(0xB0 + (channel - 1)); // Control Change
-    buffer[numBytes++] = (byte)number;
-    buffer[numBytes++] = (byte)value;
+    buffer[numBytes++] = (byte) (0xB0 + (channel - 1)); // Control Change
+    buffer[numBytes++] = (byte) number;
+    buffer[numBytes++] = (byte) value;
     int offset = 0;
 
     try {
-      if(midiInputPort != null)
+      if (midiInputPort != null) {
         midiInputPort.send(buffer, offset, numBytes);
-    }
-    catch(IOException ioe) {
+      }
+    } catch (IOException ioe) {
       ioe.printStackTrace();
     }
   }

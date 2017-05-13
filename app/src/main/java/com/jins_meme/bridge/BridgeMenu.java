@@ -1,3 +1,12 @@
+/**
+ * MenuFragment.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.app.Activity;
@@ -13,9 +22,9 @@ import android.widget.TextView;
 
 public class BridgeMenu extends Activity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bridge_menu);
-    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_bridge_menu);
+  }
 }
