@@ -10,10 +10,10 @@
 package com.jins_meme.bridge;
 
 import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
@@ -47,7 +47,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         LAUNCH_CAMERA {
             @Override
             public void apply(AppCompatActivity activity, Fragment parent) {
-                activity.getFragmentManager().beginTransaction()
+                activity.getSupportFragmentManager().beginTransaction()
                         .addToBackStack(null)
                         .hide(parent)
                         .add(R.id.container, new CameraFragment())

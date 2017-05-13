@@ -11,9 +11,6 @@ package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +22,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setContentView(R.layout.activity_bridge_menu);
 
     menuFragment = new MenuFragment();
-    getFragmentManager().beginTransaction()
+    getSupportFragmentManager().beginTransaction()
             .add(R.id.container, menuFragment)
             .commit();
 
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      */
     // ***ConfigFragment = new ***ConfigFragment
 
-    FragmentManager manager = getFragmentManager();
+    FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
     transaction.replace(R.id.container, menuFragment);
     transaction.addToBackStack("MAIN");
@@ -480,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void transitToConfig(Fragment fragment) {
-    FragmentManager manager = getFragmentManager();
+    FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
 
     transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
@@ -496,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        FragmentManager manager = getFragmentManager();
+        FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
         switch (direction) {
