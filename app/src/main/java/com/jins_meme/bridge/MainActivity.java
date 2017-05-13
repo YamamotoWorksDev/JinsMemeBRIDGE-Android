@@ -10,9 +10,14 @@
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -39,7 +44,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
 
-  // please write your APP_ID and APPSSECRET
   private String appID = null;
   private String appSecret = null;
 
@@ -75,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     preferences = PreferenceManager.getDefaultSharedPreferences(this);
     editor = preferences.edit();
 
+    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+
     menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -92,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.replace(R.id.container, menuFragment);
     transaction.addToBackStack("MAIN");
     transaction.commit();
+
+    checkBluetoothEnable();
 
     if (Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
@@ -246,6 +254,51 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("DEBUG", "onDestroy...");
   }
 
+  private void checkBluetoothEnable() {
+    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    if (!bluetoothAdapter.isEnabled()) {
+      Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+      startActivityForResult(intent, 0);
+      /*
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
+      alert.setTitle("Warning");
+      alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
+      alert.setPositiveButton("NO", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d("DEBUG", "Quit App...");
+
+          finish();
+        }
+      });
+      alert.setNegativeButton("YES", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d("DEBUG", "Close Alert Dialog...");
+
+
+        }
+      });
+
+      alert.create().show();
+      */
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == 0) {
+      if (resultCode == Activity.RESULT_OK) {
+        Log.d("MAIN", "Bluetooth ON");
+      }
+      else {
+        finish();
+      }
+    }
+  }
+
   @TargetApi(23)
   private void requestGPSPermission() {
     if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -272,14 +325,32 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void memeConnectCallback(boolean b) {
-    Log.d("CONNECT", "meme connected.");
+    Log.d("MAIN", "meme connected. " + b);
+    
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
+
+        Toast.makeText(MainActivity.this, "JINS MEME CONNECTED", Toast.LENGTH_SHORT).show();
+      }
+    });
 
     memeLib.startDataReport(menuFragment);
   }
 
   @Override
   public void memeDisconnectCallback() {
-    Log.d("CONNECT", "meme disconnected.");
+    Log.d("MAIN", "meme disconnected.");
+
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+
+        Toast.makeText(MainActivity.this, "JINS MEME DISCONNECTED", Toast.LENGTH_SHORT).show();
+      }
+    });
   }
 
   public void initMemeLib() {
