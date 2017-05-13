@@ -148,6 +148,9 @@ public class BasicConfigFragment extends Fragment {
     } else {
       swConnect.setEnabled(false);
     }
+    if (((MainActivity) getActivity()).isMemeConnected() && !swConnect.isChecked()) {
+      swConnect.setChecked(true);
+    }
 
     Log.d("BASIC", "spMemeList new");
 

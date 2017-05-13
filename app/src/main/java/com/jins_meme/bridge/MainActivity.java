@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private String appID = null;
   private String appSecret = null;
 
+  private String lastConnectedMemeID;
+
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
 
@@ -105,7 +107,33 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       requestGPSPermission();
     }
 
+    lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
     initMemeLib();
+
+    if(lastConnectedMemeID != null) {
+      Log.d("MAIN", "SCAN Start");
+      Toast.makeText(this, "SCANNING...", Toast.LENGTH_SHORT).show();
+
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          startScan();
+
+          handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              stopScan();
+
+              if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
+                connectToMeme(lastConnectedMemeID);
+
+                //Toast.makeText(, "SCANNING...", Toast.LENGTH_SHORT).show();
+              }
+            }
+          }, 3000);
+        }
+      }, 10000);
+    }
   }
 
   @Override
@@ -219,14 +247,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onResume() {
     super.onResume();
 
-    Log.d("DEBUG", "onResume..." + scannedMemeList.size());
+    Log.d("MAIN", "onResume..." + scannedMemeList.size());
   }
 
   @Override
   protected void onStop() {
     super.onStop();
 
-    Log.d("DEBUG", "onStop...");
+    Log.d("MAIN", "onStop...");
   }
 
   @Override
@@ -251,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      */
     // ***ConfigFragment = null;
 
-    Log.d("DEBUG", "onDestroy...");
+    Log.d("MAIN", "onDestroy...");
   }
 
   private void checkBluetoothEnable() {
@@ -325,8 +353,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void memeConnectCallback(boolean b) {
-    Log.d("MAIN", "meme connected. " + b);
-    
+    Log.d("MAIN", "meme connected. " + b + " " + lastConnectedMemeID);
+
+    if (b) {
+      autoSaveText("LAST_CONNECTED_MEME_ID", lastConnectedMemeID);
+    }
+
     handler.post(new Runnable() {
       @Override
       public void run() {
@@ -369,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void startScan() {
-    Log.d("SCAN", "start scannig...");
+    Log.d("MAIN", "start scannig...");
 
     if (scannedMemeList != null) {
       scannedMemeList.clear();
@@ -380,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     MemeStatus status = memeLib.startScan(new MemeScanListener() {
       @Override
       public void memeFoundCallback(String s) {
-        Log.d("SCAN", "found: " + s);
+        Log.d("MAIN", "found: " + s);
 
         scannedMemeList.add(s);
       }
@@ -388,12 +420,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void stopScan() {
-    Log.d("SCAN", "stop scannig...");
+    Log.d("MAIN", "stop scannig...");
 
     if (memeLib.isScanning()) {
       memeLib.stopScan();
 
-      Log.d("SCAN", "scan stopped.");
+      Log.d("MAIN", "scan stopped.");
 
       invalidateOptionsMenu();
     }
@@ -412,6 +444,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void connectToMeme(String id) {
+    lastConnectedMemeID = id;
+
     memeLib.connect(id);
   }
 
@@ -421,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void onBackPressed() {
-    Log.d("DEBUG", "press back!");
+    Log.d("MAIN", "press back!");
 
     transitToMain(1);
   }
