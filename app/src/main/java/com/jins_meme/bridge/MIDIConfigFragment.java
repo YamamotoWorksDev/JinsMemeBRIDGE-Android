@@ -1,3 +1,12 @@
+/**
+ * SettingFragment.java
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
@@ -10,17 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- *
- * SettingFragment.java
- *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
- *
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- *
- **/
-
 public class MIDIConfigFragment extends Fragment {
 
   @Override
@@ -30,7 +28,8 @@ public class MIDIConfigFragment extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_midiconfig, container, false);
   }
@@ -49,11 +48,11 @@ public class MIDIConfigFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ((MainActivity)getActivity()).setActionBarTitle(getString(R.string.midi_conf) + " SETTING");
-    ((MainActivity)getActivity()).setActionBarBack(true);
+    ((MainActivity) getActivity()).setActionBarTitle(getString(R.string.midi_conf) + " SETTING");
+    ((MainActivity) getActivity()).setActionBarBack(true);
 
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(getContext()));
-    if(!MemeMIDI.checkUsbMidi(getContext())) {
+    if (!MemeMIDI.checkUsbMidi(getContext())) {
       AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
       alert.setTitle("Warning");
       alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
@@ -62,7 +61,7 @@ public class MIDIConfigFragment extends Fragment {
         public void onClick(DialogInterface dialogInterface, int i) {
           Log.d("DEBUG", "Quit App...");
 
-          ((MainActivity)getActivity()).finish();
+          ((MainActivity) getActivity()).finish();
         }
       });
       alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
@@ -70,7 +69,7 @@ public class MIDIConfigFragment extends Fragment {
         public void onClick(DialogInterface dialogInterface, int i) {
           Log.d("DEBUG", "Close Alert Dialog...");
 
-          ((MainActivity)getActivity()).transitToMain(0);
+          ((MainActivity) getActivity()).transitToMain(0);
         }
       });
 

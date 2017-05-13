@@ -1,3 +1,12 @@
+/**
+ * HueController.java
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
@@ -23,22 +32,12 @@ import com.philips.lighting.model.PHLightState;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * HueController.java
- *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
- *
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- *
- **/
-
 public class HueController {
+
   private static final String DEBUG = "TEST";
   private static final String HUE_SHARED_PREFERENCES_STORE = "HueSharedPrefs";
-  private static final String LAST_CONNECTED_USERNAME      = "LastConnectedUsername";
-  private static final String LAST_CONNECTED_IP            = "LastConnectedIP";
+  private static final String LAST_CONNECTED_USERNAME = "LastConnectedUsername";
+  private static final String LAST_CONNECTED_IP = "LastConnectedIP";
 
   private Context context;
   private PHHueSDK hueSDK;
@@ -62,7 +61,9 @@ public class HueController {
 
       hueSDK.setSelectedBridge(phBridge);
       hueSDK.enableHeartbeat(phBridge, PHHueSDK.HB_INTERVAL);
-      hueSDK.getLastHeartbeat().put(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress(), System.currentTimeMillis());
+      hueSDK.getLastHeartbeat()
+          .put(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress(),
+              System.currentTimeMillis());
 
       setLastConnectIp(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress());
       setUsername(s);
@@ -78,7 +79,9 @@ public class HueController {
 
       float[] xy = {currentLightState.getX(), currentLightState.getY()};
       int color = PHUtilities.colorFromXY(xy, currentLight.getModelNumber());
-      Log.d(DEBUG, currentLightState.isOn() + " (r,g,b) = (" + Color.red(color) + ", " + Color.green(color) + ", " + Color.blue(color) + ") ");
+      Log.d(DEBUG,
+          currentLightState.isOn() + " (r,g,b) = (" + Color.red(color) + ", " + Color.green(color)
+              + ", " + Color.blue(color) + ") ");
 
       turnOn();
     }
@@ -94,7 +97,7 @@ public class HueController {
     public void onAccessPointsFound(List<PHAccessPoint> list) {
       Log.d(DEBUG, "Access Point Found... " + list.size());
 
-      if(list.size() > 0) {
+      if (list.size() > 0) {
         hueSDK.getAccessPointsFound().clear();
         hueSDK.getAccessPointsFound().addAll(list);
 
@@ -115,16 +118,14 @@ public class HueController {
     public void onError(int i, String s) {
       Log.d(DEBUG, "Error Called : " + i + ":" + s);
 
-      if(i == PHHueError.NO_CONNECTION) {
+      if (i == PHHueError.NO_CONNECTION) {
         Log.d(DEBUG, "No Connection...");
-      }
-      else if(i == PHHueError.AUTHENTICATION_FAILED || i == PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
+      } else if (i == PHHueError.AUTHENTICATION_FAILED
+          || i == PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
         Log.d(DEBUG, "Authentication failed... / Pushlink Authentication failed...");
-      }
-      else if(i == PHHueError.BRIDGE_NOT_RESPONDING) {
+      } else if (i == PHHueError.BRIDGE_NOT_RESPONDING) {
         Log.d(DEBUG, "Bridge Not Responding..");
-      }
-      else if(i == PHMessageType.BRIDGE_NOT_FOUND) {
+      } else if (i == PHMessageType.BRIDGE_NOT_FOUND) {
         Log.d(DEBUG, "Bridge Not Found...");
 
         //if(!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
@@ -145,14 +146,14 @@ public class HueController {
     public void onConnectionLost(PHAccessPoint phAccessPoint) {
       Log.d(DEBUG, "onConnectionLost : " + phAccessPoint.getIpAddress());
 
-      if(!hueSDK.getDisconnectedAccessPoint().contains(phAccessPoint)) {
+      if (!hueSDK.getDisconnectedAccessPoint().contains(phAccessPoint)) {
         hueSDK.getDisconnectedAccessPoint().add(phAccessPoint);
       }
     }
 
     @Override
     public void onParsingErrors(List<PHHueParsingError> list) {
-      for(PHHueParsingError parsingError: list) {
+      for (PHHueParsingError parsingError : list) {
         Log.d(DEBUG, "ParsingError : " + parsingError.getMessage());
       }
     }
@@ -205,21 +206,21 @@ public class HueController {
 
     hueSDK.getNotificationManager().registerSDKListener(phListener);
 
-    if(getLastConnectedIp() != null && !getLastConnectedIp().equals("")) {
+    if (getLastConnectedIp() != null && !getLastConnectedIp().equals("")) {
       Log.d("TEST", "connect... " + getLastConnectedIp() + " / " + getUsername());
 
       PHAccessPoint accessPoint = new PHAccessPoint();
       accessPoint.setIpAddress(getLastConnectedIp());
       accessPoint.setUsername(getUsername());
 
-      if(!hueSDK.isAccessPointConnected(accessPoint)) {
+      if (!hueSDK.isAccessPointConnected(accessPoint)) {
         hueSDK.connect(accessPoint);
       }
-    }
-    else {
+    } else {
       Log.d("TEST", "search...");
 
-      PHBridgeSearchManager searchManager = (PHBridgeSearchManager) hueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
+      PHBridgeSearchManager searchManager = (PHBridgeSearchManager) hueSDK
+          .getSDKService(PHHueSDK.SEARCH_BRIDGE);
       searchManager.search(true, true);
     }
   }

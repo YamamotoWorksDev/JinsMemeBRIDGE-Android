@@ -1,3 +1,12 @@
+/**
+ * MainActivity.java
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
@@ -28,18 +37,8 @@ import com.jins_jp.meme.MemeStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * MainActivity.java
- *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
- *
- * This software is released under the MIT License.
- * http://opensource.org/licenses/mit-license.php
- *
- **/
-
 public class MainActivity extends AppCompatActivity implements MemeConnectListener {
+
   // please write your APP_ID and APPSSECRET
   private String appID = null;
   private String appSecret = null;
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setContentView(R.layout.activity_bridge_menu);
 
     handler = new Handler();
-    mainLayout = (FrameLayout)findViewById(R.id.container);
+    mainLayout = (FrameLayout) findViewById(R.id.container);
 
     preferences = PreferenceManager.getDefaultSharedPreferences(this);
     editor = preferences.edit();
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.addToBackStack("MAIN");
     transaction.commit();
 
-    if(Build.VERSION.SDK_INT >= 23) {
+    if (Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
     }
 
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     menu.add(0, index++, 0, R.string.midi_conf);
 
     menu.add(0, index++, 0, R.string.about);
-    menu.add(0, index,   0, R.string.exit);
+    menu.add(0, index, 0, R.string.exit);
 
     return true;
   }
@@ -127,20 +126,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     String barTitle = getSupportActionBar().getTitle().toString();
 
-    if(!barTitle.contains(getString(R.string.app_name))) {
-      for(int i = 0; i < menu.size(); i++) {
+    if (!barTitle.contains(getString(R.string.app_name))) {
+      for (int i = 0; i < menu.size(); i++) {
         MenuItem item = menu.getItem(i);
         String title = item.getTitle().toString();
-        if(barTitle.contains(title)) {
+        if (barTitle.contains(title)) {
           item.setVisible(false);
-        }
-        else {
+        } else {
           item.setVisible(true);
         }
       }
-    }
-    else {
-      for(int i = 0; i < menu.size(); i++) {
+    } else {
+      for (int i = 0; i < menu.size(); i++) {
         menu.getItem(i).setVisible(true);
       }
     }
@@ -152,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onOptionsItemSelected(final MenuItem item) {
     CharSequence cs = item.getTitle();
 
-    if(cs == null) {
+    if (cs == null) {
       Log.d("DEBUG", "press actionbar back!");
 
       transitToMain(0);
@@ -164,21 +161,19 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     Log.d("DEBUG", "item id = " + item.getItemId() + " " + itemTitle);
 
-    if(itemTitle.equals(getString(R.string.basic_conf))) {
+    if (itemTitle.equals(getString(R.string.basic_conf))) {
       Log.d("DEBUG", "tap basic setting");
 
       transitToConfig(basicConfigFragment);
 
       return true;
-    }
-    else if(itemTitle.equals(getString(R.string.osc_conf))) {
+    } else if (itemTitle.equals(getString(R.string.osc_conf))) {
       Log.d("DEBUG", "tap osc setting");
 
       transitToConfig(oscConfigFragment);
 
       return true;
-    }
-    else if(itemTitle.equals(getString(R.string.midi_conf))) {
+    } else if (itemTitle.equals(getString(R.string.midi_conf))) {
       Log.d("DEBUG", "tap midi setting");
 
       transitToConfig(midiConfigFragment);
@@ -199,14 +194,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       return true;
     }
      */
-    else if(itemTitle.equals(getString(R.string.about))) {
+    else if (itemTitle.equals(getString(R.string.about))) {
       Log.d("DEBUG", "tap about");
 
       transitToConfig(aboutFragment);
 
       return true;
-    }
-    else if(itemTitle.equals(getString(R.string.exit))) {
+    } else if (itemTitle.equals(getString(R.string.exit))) {
       finish();
     }
 
@@ -231,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onDestroy() {
     super.onDestroy();
 
-    if(memeLib != null && memeLib.isConnected()) {
+    if (memeLib != null && memeLib.isConnected()) {
       memeLib.disconnect();
       memeLib = null;
     }
@@ -254,24 +248,24 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @TargetApi(23)
   private void requestGPSPermission() {
-    if(checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
       requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
     }
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-    if(requestCode == 1) {
-      if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+  public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      int[] grantResults) {
+    if (requestCode == 1) {
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         Log.d("PERMISSION", "Succeeded");
         Toast.makeText(MainActivity.this, "Succeed", Toast.LENGTH_SHORT).show();
-      }
-      else {
+      } else {
         Log.d("PERMISSION", "Failed");
         Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
       }
-    }
-    else {
+    } else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
   }
@@ -292,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     appID = preferences.getString("APP_ID", getString(R.string.meme_app_id));
     appSecret = preferences.getString("APP_SECRET", getString(R.string.meme_app_secret));
 
-    if(appID != null && appSecret != null) {
+    if (appID != null && appSecret != null) {
       Log.d("MAIN", "Initialized MemeLib with " + appID + " and " + appSecret);
 
       MemeLib.setAppClientID(this, appID, appSecret);
@@ -306,8 +300,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void startScan() {
     Log.d("SCAN", "start scannig...");
 
-    if(scannedMemeList != null)
+    if (scannedMemeList != null) {
       scannedMemeList.clear();
+    }
 
     memeLib.setMemeConnectListener(this);
 
@@ -324,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void stopScan() {
     Log.d("SCAN", "stop scannig...");
 
-    if(memeLib.isScanning()) {
+    if (memeLib.isScanning()) {
       memeLib.stopScan();
 
       Log.d("SCAN", "scan stopped.");
@@ -379,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void transitToMain(final int direction) {
-    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(mainLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
     handler.postDelayed(new Runnable() {
@@ -388,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        switch(direction) {
+        switch (direction) {
           case 0:
             transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
             break;
