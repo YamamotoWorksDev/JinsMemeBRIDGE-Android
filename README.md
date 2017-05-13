@@ -4,18 +4,20 @@ The repositorty for meme BRIDGE.
 ### LICENSE
 This software is released under the MIT License, see [LICENSE.txt](https://github.com/jins-meme/MemeBRIDGE_for_Android/blob/master/LICENSE.txt).
 
+### SUPPORT ANDROID VERSION
+Android 6.0(Marshmallow) or later.
+
 ### REQUIREMENTS
 To bulid this app, you need to have [JINS developer account](https://developers.jins.com/en/) and create an ID and SECRET for your app.  
-After that, please write them to "APP_ID" and "APP_SECRET" in MainActivity.java.
-```java:MainActivity.java
-public class MainActivity extends AppCompatActivity implements MemeConnectListener {
-  private static final String VERSION = "0.5.13";
-
-  // please write your APP_ID and APPSSECRET
-  private static final String APP_ID = "";
-  private static final String APP_SECRET = "";
-
-  private MemeLib memeLib;
+After that, please write them in strings.xml.
+```xml:strings.xml
+<resources>
+    <string name="app_name">MEME BRIDGE</string>
+  
+    <!-- PLEASE INPUT YOUR APP_ID & APP_SECRET -->
+    <string name="meme_app_id"></string>
+    <string name="meme_app_secret"></string>
+</resources>
 ```
 
 ### OSC(Open Sound Control)
