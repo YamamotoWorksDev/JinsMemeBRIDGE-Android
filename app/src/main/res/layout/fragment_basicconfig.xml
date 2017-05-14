@@ -41,57 +41,6 @@
         android:textOff="STOP"
         android:textOn="START"/>
 
-    <EditText
-        android:id="@+id/app_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/connect"
-        android:layout_below="@+id/connect"
-        android:layout_marginTop="43dp"
-        android:layout_toStartOf="@+id/space"
-        android:contentDescription="APP_ID"
-        android:ems="10"
-        android:inputType="textPersonName"/>
-
-    <EditText
-        android:id="@+id/app_secret"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/app_id"
-        android:layout_below="@+id/app_id"
-        android:layout_marginTop="23dp"
-        android:contentDescription="APP_SECRET"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:layout_toStartOf="@+id/space"/>
-
-    <Space
-        android:layout_width="30dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/app_secret"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/app_id"
-        android:id="@+id/space"/>
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/textView2"
-        android:layout_below="@+id/app_id"
-        android:layout_marginTop="-5dp"
-        android:text="APP_ID"/>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/app_secret"
-        android:layout_below="@+id/app_secret"
-        android:layout_marginEnd="13dp"
-        android:layout_marginTop="-5dp"
-        android:text="APP_SECRET"/>
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -99,5 +48,99 @@
         android:text="SCANNED MEME LIST"
         android:layout_above="@+id/scan"
         android:layout_alignStart="@+id/meme_list"/>
+    <TextView
+      android:id="@+id/blink_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="30dp"
+      android:layout_alignStart="@+id/connect"
+      android:layout_below="@+id/connect"
+      android:text="BLINK"/>
+    <SeekBar
+      android:id="@+id/blink_threshold"
+      style="@style/Widget.AppCompat.SeekBar"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:max="150"
+      android:progress="40"
+      android:layout_below="@+id/blink_title"
+      android:layout_alignStart="@+id/blink_title"
+      android:layout_toStartOf="@+id/space"/>
+    <TextView
+      android:id="@+id/textView2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_alignStart="@+id/blink_threshold"
+      android:layout_below="@+id/blink_threshold"
+      android:text="UP/DOWN"/>
+    <SeekBar
+      android:id="@+id/updown_threshold"
+      style="@style/Widget.AppCompat.SeekBar.Discrete"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignEnd="@+id/blink_threshold"
+      android:layout_alignStart="@+id/textView2"
+      android:layout_below="@+id/textView2"
+      android:max="3"
+      android:progress="0"/>
+    <TextView
+      android:id="@+id/textView4"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_alignStart="@+id/updown_threshold"
+      android:layout_below="@+id/updown_threshold"
+      android:text="LEFT/RIGHT"/>
+    <SeekBar
+      android:id="@+id/leftright_threshold"
+      style="@style/Widget.AppCompat.SeekBar.Discrete"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignEnd="@+id/updown_threshold"
+      android:layout_alignStart="@+id/textView4"
+      android:layout_below="@+id/textView4"
+      android:max="3"
+      android:progress="0"/>
+    <TextView
+      android:id="@+id/textView5"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="52dp"
+      android:layout_alignStart="@+id/leftright_threshold"
+      android:layout_below="@+id/leftright_threshold"
+      android:text="APP_ID"/>
+    <EditText
+      android:id="@+id/app_id"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignEnd="@+id/leftright_threshold"
+      android:layout_alignStart="@+id/textView5"
+      android:layout_below="@+id/textView5"
+      android:ems="10"
+      android:inputType="textPersonName"/>
+    <TextView
+      android:id="@+id/textView6"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:layout_alignStart="@+id/app_id"
+      android:layout_below="@+id/app_id"
+      android:text="APP_SECRET"/>
+    <EditText
+      android:id="@+id/app_secret"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignEnd="@+id/app_id"
+      android:layout_alignStart="@+id/textView6"
+      android:layout_below="@+id/textView6"
+      android:ems="10"
+      android:inputType="textPersonName"/>
+    <Space
+      android:id="@+id/space"
+      android:layout_width="40dp"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_alignTop="@+id/blink_threshold"/>
 
 </RelativeLayout>

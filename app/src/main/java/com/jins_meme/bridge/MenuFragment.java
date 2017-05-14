@@ -262,7 +262,10 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       memeMIDI.sendControlChange(1, 35, -iroll);
     }
 
-    memeFilter.update(memeRealtimeData, 30, 0);
+    memeFilter.update(memeRealtimeData,
+        ((MainActivity) getActivity()).getBlinkThreshold(),
+        ((MainActivity) getActivity()).getUpDownThreshold(),
+        ((MainActivity) getActivity()).getLeftRightThreshold());
     if (memeFilter.isBlink()) {
       handler.post(new Runnable() {
         @Override

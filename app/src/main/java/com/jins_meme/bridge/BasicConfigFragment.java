@@ -23,8 +23,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,10 @@ public class BasicConfigFragment extends Fragment {
   private Spinner spMemeList;
   private EditText etAppId;
   private EditText etAppSecret;
+  private TextView tvBlinkTitle;
+  private SeekBar sbBlinkThreshold;
+  private SeekBar sbUpDownThreshold;
+  private SeekBar sbLeftRightThreshold;
 
   private ArrayAdapter<String> adapter;
 
@@ -74,6 +79,9 @@ public class BasicConfigFragment extends Fragment {
     spMemeList = null;
     etAppId = null;
     etAppSecret = null;
+    sbBlinkThreshold = null;
+    sbUpDownThreshold = null;
+    sbLeftRightThreshold = null;
   }
 
   @Override
@@ -171,7 +179,7 @@ public class BasicConfigFragment extends Fragment {
 
       @Override
       public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        ((MainActivity) getActivity()).autoSaveText("APP_ID", charSequence.toString());
+        ((MainActivity) getActivity()).autoSaveValue("APP_ID", charSequence.toString());
         Log.d("BASIC", "APP_ID: " + charSequence.toString());
       }
 
@@ -180,7 +188,7 @@ public class BasicConfigFragment extends Fragment {
 
       }
     });
-    etAppId.setText(((MainActivity) getActivity()).getSavedText("APP_ID"),
+    etAppId.setText(((MainActivity) getActivity()).getSavedValue("APP_ID"),
         TextView.BufferType.EDITABLE);
 
     etAppSecret = (EditText) view.findViewById(R.id.app_secret);
@@ -192,7 +200,7 @@ public class BasicConfigFragment extends Fragment {
 
       @Override
       public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        ((MainActivity) getActivity()).autoSaveText("APP_SECRET", charSequence.toString());
+        ((MainActivity) getActivity()).autoSaveValue("APP_SECRET", charSequence.toString());
         Log.d("BASIC", "APP_SECRET: " + charSequence.toString());
       }
 
@@ -201,11 +209,81 @@ public class BasicConfigFragment extends Fragment {
 
       }
     });
-    etAppSecret.setText(((MainActivity) getActivity()).getSavedText("APP_SECRET"),
+    etAppSecret.setText(((MainActivity) getActivity()).getSavedValue("APP_SECRET"),
         TextView.BufferType.EDITABLE);
 
     Log.d("BASIC", "adapter count = " + adapter.getCount());
 
+    tvBlinkTitle = (TextView) view.findViewById(R.id.blink_title);
+    tvBlinkTitle.setText(String.format("BLINK (%d)", ((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90)));
+
+    sbBlinkThreshold = (SeekBar) view.findViewById(R.id.blink_threshold);
+    sbBlinkThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90) - 50);
+    sbBlinkThreshold.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        int value = seekBar.getProgress() + 50;
+        tvBlinkTitle.setText(String.format("BLINK (%d)", value));
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        int value = seekBar.getProgress() + 50;
+        ((MainActivity) getActivity()).autoSaveValue("BLINK_TH", value);
+        Log.d("BASIC", "blink th. = " + value);
+        Toast.makeText(getActivity(), "BLINK THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
+        tvBlinkTitle.setText(String.format("BLINK (%d)", value));
+      }
+    });
+
+    sbUpDownThreshold = (SeekBar) view.findViewById(R.id.updown_threshold);
+    sbUpDownThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("UD_TH", 0));
+    sbUpDownThreshold.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        int value = seekBar.getProgress();
+        ((MainActivity) getActivity()).autoSaveValue("UD_TH", value);
+        Log.d("BASIC", "up/down th. = " + value);
+        Toast.makeText(getActivity(), "UP/DOWN THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
+      }
+    });
+
+    sbLeftRightThreshold = (SeekBar) view.findViewById(R.id.leftright_threshold);
+    sbLeftRightThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("LR_TH", 0));
+    sbLeftRightThreshold.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        int value = seekBar.getProgress();
+        ((MainActivity) getActivity()).autoSaveValue("LR_TH", value);
+        Log.d("BASIC", "left/right th. = " + value);
+        Toast.makeText(getActivity(), "LEFT/RIGHT THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
+      }
+    });
   }
 
   private void setSelection(@NonNull String item) {

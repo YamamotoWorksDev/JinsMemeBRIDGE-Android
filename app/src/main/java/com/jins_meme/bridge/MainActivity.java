@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private String lastConnectedMemeID;
 
+  private int blinkThreshold = 90;
+  private int upDownThreshold = 0;
+  private int leftRightThreshold = 0;
+
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
 
@@ -69,6 +73,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
    *
    */
   // private ***ConfigFragment ***ConfigFragment;
+
+  public int getBlinkThreshold() {
+    return blinkThreshold;
+  }
+
+  public int getUpDownThreshold() {
+    return upDownThreshold;
+  }
+
+  public int getLeftRightThreshold() {
+    return leftRightThreshold;
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -356,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("MAIN", "meme connected. " + b + " " + lastConnectedMemeID);
 
     if (b) {
-      autoSaveText("LAST_CONNECTED_MEME_ID", lastConnectedMemeID);
+      autoSaveValue("LAST_CONNECTED_MEME_ID", lastConnectedMemeID);
     }
 
     handler.post(new Runnable() {
@@ -506,12 +522,33 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }, 50);
   }
 
-  String getSavedText(String key) {
+  String getSavedValue(String key) {
     return preferences.getString(key, null);
   }
 
-  void autoSaveText(String key, String text) {
+  int getSavedValue(String key, int initValue) {
+    return preferences.getInt(key, initValue);
+  }
+
+  void autoSaveValue(String key, String text) {
     editor.putString(key, text);
+    editor.apply();
+  }
+
+  void autoSaveValue(String key, int value) {
+    switch(key) {
+      case "BLINK_TH":
+        blinkThreshold = value;
+        break;
+      case "UD_TH":
+        upDownThreshold = value;
+        break;
+      case "LR_TH":
+        leftRightThreshold = value;
+        break;
+    }
+
+    editor.putInt(key, value);
     editor.apply();
   }
 }
