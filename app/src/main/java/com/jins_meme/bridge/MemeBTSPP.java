@@ -76,6 +76,8 @@ public class MemeBTSPP {
     return connectedDeviceName;
   }
 
+  public boolean isEnabled() { return btAdapter != null; }
+
   public void connect(String connectDeviceName) {
     if (isConnectedMachine) {
       return;

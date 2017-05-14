@@ -9,14 +9,18 @@
 
 package com.jins_meme.bridge;
 
-import android.support.v4.app.Fragment;
+import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jins_jp.meme.MemeRealtimeData;
@@ -36,14 +40,44 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private MemeOSC memeOSC;
   private MemeBTSPP memeBTSPP;
 
-  private MemeRealtimeDataFilter memeFilter;
+    private MemeRealtimeDataFilter memeFilter;
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    mView = new BridgeUIView(getContext());
-    return mView;
-  }
+    // MenuFragmentからactivityへの通知イベント関連
+    public enum MenuFragmentEvent {
+        LAUNCH_CAMERA {
+            @Override
+            public void apply(AppCompatActivity activity, Fragment parent) {
+                activity.getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .hide(parent)
+                        .add(R.id.container, new CameraFragment())
+                        .commit();
+
+            }
+        };
+        abstract public void apply(AppCompatActivity activity, Fragment parent);
+    }
+    public interface MenuFragmentListener {
+        void onMenuFragmentEnd(MenuFragmentEvent event);
+    }
+    private MenuFragmentListener mListener;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MenuFragmentListener) {
+                mListener = (MenuFragmentListener)context;
+        }
+        else {
+            throw new RuntimeException(context.toString() + " must implement MenuFragmentListener");
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView = new BridgeUIView(getContext());
+        mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
+        return mView;
+    }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,10 +104,14 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 //        memeFilter.setMoveType(MemeRealtimeDataFilter.MoveType.HEAD);
   }
 
-  @Override
-  public void onStop() {
-    super.onStop();
+    public boolean isEnabledBLE() {
+        return memeBTSPP.isEnabled();
+    }
 
+
+    @Override
+    public void onStop() {
+        super.onStop();
     Log.d("FRAGMENT", "onStop...");
   }
 
@@ -188,6 +226,15 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
       }
     }
+      {
+          // camera?
+          switch(id) {
+              case R.string.camera:
+                  mListener.onMenuFragmentEnd(MenuFragmentEvent.LAUNCH_CAMERA);
+                  break;
+
+          }
+      }
   }
 
   @Override
@@ -321,151 +368,151 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
   public class MyAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
 
-    Context mContext;
-    LayoutInflater mInflater;
+      Context mContext;
+      LayoutInflater mInflater;
 
-    MyAdapter(Context context, IResultListener listener) {
-      super(listener);
-      mContext = context;
-      mInflater = LayoutInflater.from(context);
-    }
-
-    private final int CATD_TYPE_ONLY_TITLE = 0;
-    private final int CATD_TYPE_COUNTER = 1;
-
-    @Override
-    public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-      switch (card_type) {
-        case CATD_TYPE_COUNTER:
-          return new CountCardHolder(mInflater.inflate(R.layout.card_count, parent, false));
-        default:
-          return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
+      MyAdapter(Context context, IResultListener listener) {
+          super(listener);
+          mContext = context;
+          mInflater = LayoutInflater.from(context);
       }
-    }
 
-    @Override
-    public CardFunction getCardFunction(int id) {
-      switch (id) {
-        case R.string.back:
-          return CardFunction.BACK;
-        case R.string.midi:
-        case R.string.osc:
-        case R.string.functions:
-          return CardFunction.ENTER_MENU;
-      }
-      return CardFunction.END;
-    }
+      private final int CATD_TYPE_ONLY_TITLE = 0;
+      private final int CATD_TYPE_COUNTER = 1;
 
-    @Override
-    public void onBindCardHolder(CardHolder cardHolder, int id) {
-      switch (id) {
-        case R.string.blink_count:
-          ((CountCardHolder) (cardHolder)).mTitle.setText(getResources().getString(id));
-          ((CountCardHolder) (cardHolder)).reset();
-          break;
-        default:
-          ((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
-          break;
-      }
-    }
-
-    @Override
-    public int getCardId(int parent_id, int position) {
-      int id = NO_ID;
-      switch (parent_id) {
-        case NO_ID:
-          switch (position) {
-            case 0:
-              id = R.string.midi;
-              break;
-            case 1:
-              id = R.string.osc;
-              break;
-            case 2:
-              id = R.string.functions;
-              break;
+      @Override
+      public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
+          switch (card_type) {
+              case CATD_TYPE_COUNTER:
+                  return new CountCardHolder(mInflater.inflate(R.layout.card_count, parent, false));
+              default:
+                  return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
           }
-          break;
-        case R.string.midi:
-          if (position < 8) {
-            id = getResources()
-                .getIdentifier("noteon_6" + position, "string", mContext.getPackageName());
-          } else {
-            id = R.string.back;
-          }
-          break;
-        case R.string.osc:
-          switch (position) {
-            case 0:
-              id = R.string.osc_220hz;
-              break;
-            case 1:
-              id = R.string.osc_440hz;
-              break;
-            case 2:
-              id = R.string.osc_mute_on;
-              break;
-            case 3:
-              id = R.string.osc_mute_off;
-              break;
-            case 4:
-              id = R.string.back;
-              break;
-          }
-          break;
-        case R.string.functions:
-          switch (position) {
-            case 0:
-              id = R.string.blink_count;
-              break;
-            case 1:
-              id = R.string.back;
-              break;
-            case 2:
-              id = R.string.back;
-              break;
-          }
-          break;
       }
-      return id;
-    }
 
-    @Override
-    public int getChildCardCount(int parent_id) {
-      switch (parent_id) {
-        case R.string.midi:
-          return 9;
-        case R.string.osc:
-          return 5;
-        case R.string.functions:
-          return 3;
-        case NO_ID:
-          return 3;
+      @Override
+      public void onBindCardHolder(CardHolder cardHolder, int id) {
+          switch (id) {
+              case R.string.blink_count:
+                  ((CountCardHolder) (cardHolder)).mTitle.setText(getResources().getString(id));
+                  ((CountCardHolder) (cardHolder)).reset();
+                  break;
+              default:
+                  ((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
+                  break;
+          }
       }
-      return 0;
-    }
 
-    @Override
-    public int getCardType(int id) {
-      switch (id) {
-        case R.string.blink_count:
-          return CATD_TYPE_COUNTER;
-        default:
-          return CATD_TYPE_ONLY_TITLE;
+      @Override
+      public CardFunction getCardFunction(int id) {
+          switch (id) {
+              case R.string.back:
+                  return CardFunction.BACK;
+              case R.string.midi:
+              case R.string.osc:
+              case R.string.functions:
+                  return CardFunction.ENTER_MENU;
+          }
+          return CardFunction.END;
       }
-    }
+
+      @Override
+      public int getCardId(int parent_id, int position) {
+          int id = NO_ID;
+          switch (parent_id) {
+              case NO_ID:
+                  switch (position) {
+                      case 0:
+                          id = R.string.midi;
+                          break;
+                      case 1:
+                          id = R.string.osc;
+                          break;
+                      case 2:
+                          id = R.string.functions;
+                          break;
+                      case 3:
+                          id = R.string.camera;
+                          break;
+                  }
+                  break;
+              case R.string.midi:
+                  if (position < 8) {
+                      id = getResources().getIdentifier("noteon_6" + position, "string", mContext.getPackageName());
+                  } else {
+                      id = R.string.back;
+                  }
+                  break;
+              case R.string.osc:
+                  switch (position) {
+                      case 0:
+                          id = R.string.osc_220hz;
+                          break;
+                      case 1:
+                          id = R.string.osc_440hz;
+                          break;
+                      case 2:
+                          id = R.string.osc_mute_on;
+                          break;
+                      case 3:
+                          id = R.string.osc_mute_off;
+                          break;
+                      case 4:
+                          id = R.string.back;
+                          break;
+                  }
+                  break;
+              case R.string.functions:
+                  switch (position) {
+                      case 0:
+                          id = R.string.blink_count;
+                          break;
+                      case 1:
+                          id = R.string.back;
+                          break;
+                      case 2:
+                          id = R.string.back;
+                          break;
+                  }
+                  break;
+          }
+          return id;
+      }
+
+      @Override
+      public int getChildCardCount(int parent_id) {
+          switch (parent_id) {
+              case R.string.midi:
+                  return 9;
+              case R.string.osc:
+                  return 5;
+              case R.string.functions:
+                  return 3;
+              case NO_ID:
+                  return 4;
+          }
+          return 0;
+      }
+
+      @Override
+      public int getCardType(int id) {
+          switch (id) {
+              case R.string.blink_count:
+                  return CATD_TYPE_COUNTER;
+              default:
+                  return CATD_TYPE_ONLY_TITLE;
+          }
+      }
   }
+      class MyCardHolder extends CardHolder {
 
-  class MyCardHolder extends CardHolder {
+          TextView mTextView;
 
-    TextView mTextView;
-
-    MyCardHolder(View itemView) {
-      super(itemView);
-      mTextView = (TextView) itemView.findViewById(R.id.card_text);
-    }
-  }
-
+          MyCardHolder(View itemView) {
+              super(itemView);
+              mTextView = (TextView) itemView.findViewById(R.id.card_text);
+          }
+      }
   class CountCardHolder extends CardHolder {
 
     TextView mTitle;

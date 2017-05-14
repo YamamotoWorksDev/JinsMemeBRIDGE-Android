@@ -17,4 +17,5 @@
     <string name="osc_mute_off">mute off</string>
     <string name="functions">functions</string>
     <string name="blink_count">blink count</string>
+    <string name="camera">camera</string>
 </resources>

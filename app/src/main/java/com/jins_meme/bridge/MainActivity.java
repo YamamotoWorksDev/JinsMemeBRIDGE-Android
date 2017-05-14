@@ -42,7 +42,7 @@ import com.jins_jp.meme.MemeStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MemeConnectListener {
+public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private Handler handler;
   private FrameLayout mainLayout;
 
-  private MemeLib memeLib;
+  private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
   private MenuFragment menuFragment;
   private BasicConfigFragment basicConfigFragment;
@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bridge_menu);
+
+    menuFragment = new MenuFragment();
+    getSupportFragmentManager().beginTransaction()
+            .add(R.id.container, menuFragment)
+            .commit();
 
     handler = new Handler();
     mainLayout = (FrameLayout) findViewById(R.id.container);
@@ -124,7 +129,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
-    initMemeLib();
+    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+      initMemeLib();
+    }
 
     if (lastConnectedMemeID != null) {
       Log.d("MAIN", "SCAN Start");
@@ -300,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private void checkBluetoothEnable() {
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    if (!bluetoothAdapter.isEnabled()) {
+    if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
       Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
       startActivityForResult(intent, 0);
       /*
@@ -456,6 +464,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   }
 
+  // Fragmentからの通知イベント関連
+  @Override
+  public void onMenuFragmentEnd(MenuFragment.MenuFragmentEvent event) {
+    event.apply(this, menuFragment);
+  }
+
   public List<String> getScannedMemeList() {
     return scannedMemeList;
   }
@@ -465,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public boolean isMemeConnected() {
-    return memeLib.isConnected();
+    return memeLib != null && memeLib.isConnected();
   }
 
   public void connectToMeme(String id) {
