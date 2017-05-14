@@ -42,7 +42,8 @@ import com.jins_jp.meme.MemeStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
+//public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
+public class MainActivity extends AppCompatActivity implements MemeConnectListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -467,10 +468,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   // Fragmentからの通知イベント関連
+  /*
   @Override
   public void onMenuFragmentEnd(MenuFragment.MenuFragmentEvent event) {
     event.apply(this, menuFragment);
   }
+  */
 
   public List<String> getScannedMemeList() {
     return scannedMemeList;
@@ -545,6 +548,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         setActionBarBack(false);
       }
     }, 50);
+  }
+
+  void transitToCamera() {
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+
+    //transaction.replace(R.id.container, cameraFragment);
+    transaction.replace(R.id.container, new CameraFragment());
+    transaction.addToBackStack(null);
+    transaction.commit();
   }
 
   String getSavedValue(String key) {

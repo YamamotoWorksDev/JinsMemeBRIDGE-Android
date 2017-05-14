@@ -9,13 +9,11 @@
 
 package com.jins_meme.bridge;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,33 +41,41 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     private MemeRealtimeDataFilter memeFilter;
 
     // MenuFragmentからactivityへの通知イベント関連
+  /*
     public enum MenuFragmentEvent {
         LAUNCH_CAMERA {
             @Override
             public void apply(AppCompatActivity activity, Fragment parent) {
+
                 activity.getSupportFragmentManager().beginTransaction()
                         .addToBackStack(null)
                         .hide(parent)
                         .add(R.id.container, new CameraFragment())
                         .commit();
 
+              //((MainActivity) getActivity()).transitToCamera();
             }
         };
         abstract public void apply(AppCompatActivity activity, Fragment parent);
     }
+    */
+  /*
     public interface MenuFragmentListener {
         void onMenuFragmentEnd(MenuFragmentEvent event);
     }
     private MenuFragmentListener mListener;
+*/
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+      /*
         if (context instanceof MenuFragmentListener) {
                 mListener = (MenuFragmentListener)context;
         }
         else {
             throw new RuntimeException(context.toString() + " must implement MenuFragmentListener");
         }
+        */
     }
 
     @Override
@@ -80,8 +86,10 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     }
 
   @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
+  //public void onActivityCreated(Bundle savedInstanceState) {
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    //super.onActivityCreated(savedInstanceState);
+    super.onViewCreated(view, savedInstanceState);
 
     myAdapter = new MyAdapter(getContext(), this);
     mView.setAdapter(myAdapter);
@@ -230,7 +238,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           // camera?
           switch(id) {
               case R.string.camera:
-                  mListener.onMenuFragmentEnd(MenuFragmentEvent.LAUNCH_CAMERA);
+                  //mListener.onMenuFragmentEnd(MenuFragmentEvent.LAUNCH_CAMERA);
+                ((MainActivity) getActivity()).transitToCamera();
                   break;
 
           }
