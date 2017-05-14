@@ -20,6 +20,10 @@ After that, please write them in strings.xml.
 </resources>
 ```
 
+Also, it's editable through the app such as the following screen shot.
+
+<image src="https://github.com/jins-meme/JinsMemeBRIDGE-Android/blob/image/basic_setting.png" width="320px">
+
 ### OSC(Open Sound Control)
 The default OSC Setting is as follows.
 * Remote IP: 192.168.1.255(Destination IP)
