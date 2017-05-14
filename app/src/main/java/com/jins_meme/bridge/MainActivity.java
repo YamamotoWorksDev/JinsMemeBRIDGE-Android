@@ -526,28 +526,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(mainLayout.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-    handler.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
 
-        switch (direction) {
-          case 0:
-            transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
-            break;
-          case 1:
-            transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
-            break;
-        }
-        transaction.replace(R.id.container, menuFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+    switch (direction) {
+      case 0:
+        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
+        break;
+      case 1:
+        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
+        break;
+    }
+    transaction.replace(R.id.container, menuFragment);
+    transaction.addToBackStack(null);
+    transaction.commit();
 
-        setActionBarTitle(getString(R.string.app_name));
-        setActionBarBack(false);
-      }
-    }, 50);
+    setActionBarTitle(getString(R.string.app_name));
+    setActionBarBack(false);
   }
 
   void transitToCamera() {
