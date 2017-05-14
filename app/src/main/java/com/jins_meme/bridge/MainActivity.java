@@ -440,22 +440,24 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       scannedMemeList.clear();
     }
 
-    memeLib.setMemeConnectListener(this);
+    if(memeLib != null) {
+      memeLib.setMemeConnectListener(this);
 
-    MemeStatus status = memeLib.startScan(new MemeScanListener() {
-      @Override
-      public void memeFoundCallback(String s) {
-        Log.d("MAIN", "found: " + s);
+      MemeStatus status = memeLib.startScan(new MemeScanListener() {
+        @Override
+        public void memeFoundCallback(String s) {
+          Log.d("MAIN", "found: " + s);
 
-        scannedMemeList.add(s);
-      }
-    });
+          scannedMemeList.add(s);
+        }
+      });
+    }
   }
 
   public void stopScan() {
     Log.d("MAIN", "stop scannig...");
 
-    if (memeLib.isScanning()) {
+    if (memeLib != null && memeLib.isScanning()) {
       memeLib.stopScan();
 
       Log.d("MAIN", "scan stopped.");
