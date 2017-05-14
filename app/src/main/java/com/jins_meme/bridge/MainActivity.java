@@ -10,7 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
+import android.app.KeyguardManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
     initMemeLib();
 
-    if(lastConnectedMemeID != null) {
+    if (lastConnectedMemeID != null) {
       Log.d("MAIN", "SCAN Start");
       Toast.makeText(this, "SCANNING...", Toast.LENGTH_SHORT).show();
 
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      *
      */
     /*
-    else if(itemTitle.equals(getString(R.string.***_config) {
+    else if (itemTitle.equals(getString(R.string.***_config) {
       Log.d("DEBUG", "tap *** setting");
 
       transittToConfig(***ConfigFragment);
@@ -334,11 +334,20 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == 0) {
-      if (resultCode == Activity.RESULT_OK) {
+      if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Bluetooth ON");
-      }
-      else {
+      } else {
         finish();
+      }
+    } else {
+      if (resultCode == RESULT_OK) {
+        Log.d("MAIN", "Auth OK");
+
+        basicConfigFragment.unlockAppIDandSecret();
+      } else {
+        Log.d("MAIN", "Auth NG");
+
+        basicConfigFragment.lockAppIDandSecret();
       }
     }
   }
@@ -536,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void autoSaveValue(String key, int value) {
-    switch(key) {
+    switch (key) {
       case "BLINK_TH":
         blinkThreshold = value;
         break;
@@ -550,5 +559,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     editor.putInt(key, value);
     editor.apply();
+  }
+
+  void showAuthScreen() {
+    KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+
+    Intent intent = keyguardManager.createConfirmDeviceCredentialIntent("ロック解除", "APP_IDとAPP_SECRETを編集するには認証を行って下さい。");
+
+    if (intent != null) {
+      startActivityForResult(intent, 1);
+    }
   }
 }

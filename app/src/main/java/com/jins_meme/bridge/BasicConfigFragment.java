@@ -19,10 +19,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -43,10 +45,12 @@ public class BasicConfigFragment extends Fragment {
   private SeekBar sbBlinkThreshold;
   private SeekBar sbUpDownThreshold;
   private SeekBar sbLeftRightThreshold;
+  private ImageButton ibLock;
 
   private ArrayAdapter<String> adapter;
 
   private String selectedMemeID;
+  private boolean isLockOn = true;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -171,6 +175,7 @@ public class BasicConfigFragment extends Fragment {
     spMemeList.setAdapter(adapter);
 
     etAppId = (EditText) view.findViewById(R.id.app_id);
+    etAppId.setEnabled(false);
     etAppId.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -192,6 +197,7 @@ public class BasicConfigFragment extends Fragment {
         TextView.BufferType.EDITABLE);
 
     etAppSecret = (EditText) view.findViewById(R.id.app_secret);
+    etAppSecret.setEnabled(false);
     etAppSecret.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -215,7 +221,8 @@ public class BasicConfigFragment extends Fragment {
     Log.d("BASIC", "adapter count = " + adapter.getCount());
 
     tvBlinkTitle = (TextView) view.findViewById(R.id.blink_title);
-    tvBlinkTitle.setText(String.format("BLINK (%d)", ((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90)));
+    tvBlinkTitle.setText(
+        String.format("BLINK (%d)", ((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90)));
 
     sbBlinkThreshold = (SeekBar) view.findViewById(R.id.blink_threshold);
     sbBlinkThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90) - 50);
@@ -284,6 +291,18 @@ public class BasicConfigFragment extends Fragment {
         Toast.makeText(getActivity(), "LEFT/RIGHT THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
       }
     });
+
+    ibLock = (ImageButton) view.findViewById(R.id.lock);
+    ibLock.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (isLockOn) {
+          ((MainActivity) getActivity()).showAuthScreen();
+        } else {
+          lockAppIDandSecret();
+        }
+      }
+    });
   }
 
   private void setSelection(@NonNull String item) {
@@ -295,5 +314,21 @@ public class BasicConfigFragment extends Fragment {
       }
     }
     spMemeList.setSelection(index);
+  }
+
+  void lockAppIDandSecret() {
+    ibLock.setImageResource(R.mipmap.ic_lock_black_24dp);
+    etAppId.setEnabled(false);
+    etAppSecret.setEnabled(false);
+
+    isLockOn = true;
+  }
+
+  void unlockAppIDandSecret() {
+    ibLock.setImageResource(R.mipmap.ic_lock_open_black_24dp);
+    etAppId.setEnabled(true);
+    etAppSecret.setEnabled(true);
+
+    isLockOn = false;
   }
 }
