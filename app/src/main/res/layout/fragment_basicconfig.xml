@@ -150,5 +150,13 @@
       android:layout_alignEnd="@+id/app_secret"
       android:layout_below="@+id/app_secret"
       app:srcCompat="@mipmap/ic_lock_black_24dp"/>
+    <ImageButton
+      android:id="@+id/restart"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="10dp"
+      android:layout_below="@+id/app_secret"
+      android:layout_toStartOf="@+id/lock"
+      app:srcCompat="@mipmap/ic_autorenew_black_24dp"/>
 
 </RelativeLayout>

@@ -10,6 +10,8 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -45,6 +47,7 @@ public class BasicConfigFragment extends Fragment {
   private SeekBar sbBlinkThreshold;
   private SeekBar sbUpDownThreshold;
   private SeekBar sbLeftRightThreshold;
+  private ImageButton ibRestart;
   private ImageButton ibLock;
 
   private ArrayAdapter<String> adapter;
@@ -102,28 +105,34 @@ public class BasicConfigFragment extends Fragment {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (b) {
-          Log.d("BASIC", "SCAN Start");
-          Toast.makeText(getActivity(), "SCANNING...", Toast.LENGTH_SHORT).show();
+          if (((MainActivity) getActivity()).checkAppIDandSecret()) {
+            Log.d("BASIC", "SCAN Start");
+            Toast.makeText(getActivity(), "SCANNING...", Toast.LENGTH_SHORT).show();
 
-          ((MainActivity) getActivity()).startScan();
+            ((MainActivity) getActivity()).startScan();
 
-          adapter.clear();
-          //spMemeList.setAdapter(adapter);
+            adapter.clear();
+            //spMemeList.setAdapter(adapter);
 
-          handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              swScan.setChecked(false);
+            handler.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                swScan.setChecked(false);
 
-              ((MainActivity) getActivity()).stopScan();
+                ((MainActivity) getActivity()).stopScan();
 
-              if (((MainActivity) getActivity()).getScannedMemeSize() > 0) {
-                adapter.addAll(((MainActivity) getActivity()).getScannedMemeList());
-                swConnect.setEnabled(true);
-                selectedMemeID = (String) spMemeList.getSelectedItem();
+                if (((MainActivity) getActivity()).getScannedMemeSize() > 0) {
+                  adapter.addAll(((MainActivity) getActivity()).getScannedMemeList());
+                  swConnect.setEnabled(true);
+                  selectedMemeID = (String) spMemeList.getSelectedItem();
+                }
               }
-            }
-          }, 5000);
+            }, 5000);
+          } else {
+            swScan.setChecked(false);
+
+            ((MainActivity) getActivity()).showAppIDandSecretWarning();
+          }
         } else {
           Log.d("BASIC", "SCAN Stop");
           Toast.makeText(getActivity(), "SCAN STOPPED.", Toast.LENGTH_SHORT).show();
@@ -186,6 +195,8 @@ public class BasicConfigFragment extends Fragment {
       public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         ((MainActivity) getActivity()).autoSaveValue("APP_ID", charSequence.toString());
         Log.d("BASIC", "APP_ID: " + charSequence.toString());
+
+        setEnableRestart(true);
       }
 
       @Override
@@ -208,6 +219,8 @@ public class BasicConfigFragment extends Fragment {
       public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         ((MainActivity) getActivity()).autoSaveValue("APP_SECRET", charSequence.toString());
         Log.d("BASIC", "APP_SECRET: " + charSequence.toString());
+
+        setEnableRestart(true);
       }
 
       @Override
@@ -292,6 +305,15 @@ public class BasicConfigFragment extends Fragment {
       }
     });
 
+    ibRestart = (ImageButton) view.findViewById(R.id.restart);
+    ibRestart.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        ((MainActivity) getActivity()).restart();
+      }
+    });
+    setEnableRestart(false);
+
     ibLock = (ImageButton) view.findViewById(R.id.lock);
     ibLock.setOnClickListener(new OnClickListener() {
       @Override
@@ -330,5 +352,16 @@ public class BasicConfigFragment extends Fragment {
     etAppSecret.setEnabled(true);
 
     isLockOn = false;
+  }
+
+  void setEnableRestart(boolean b) {
+    if(ibRestart != null) {
+      ibRestart.setEnabled(b);
+      if (b) {
+        ibRestart.setColorFilter(Color.BLACK, Mode.SRC_IN);
+      } else {
+        ibRestart.setColorFilter(Color.GRAY, Mode.SRC_IN);
+      }
+    }
   }
 }

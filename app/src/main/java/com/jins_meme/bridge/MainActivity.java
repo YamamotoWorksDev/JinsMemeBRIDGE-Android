@@ -10,9 +10,12 @@
 package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.KeyguardManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,8 +46,7 @@ import com.jins_jp.meme.MemeStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-//public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
-public class MainActivity extends AppCompatActivity implements MemeConnectListener {
+public class MainActivity extends AppCompatActivity implements MemeConnectListener, MenuFragment.MenuFragmentListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -92,11 +95,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bridge_menu);
 
-    menuFragment = new MenuFragment();
-    getSupportFragmentManager().beginTransaction()
-            .add(R.id.container, menuFragment)
-            .commit();
-
     handler = new Handler();
     mainLayout = (FrameLayout) findViewById(R.id.container);
 
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.replace(R.id.container, menuFragment);
+    transaction.add(R.id.container, menuFragment);
     transaction.addToBackStack("MAIN");
     transaction.commit();
 
@@ -130,11 +128,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
-    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
-      initMemeLib();
-    }
-
     if (lastConnectedMemeID != null) {
       Log.d("MAIN", "SCAN Start");
       Toast.makeText(this, "SCANNING...", Toast.LENGTH_SHORT).show();
@@ -312,29 +305,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
       Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
       startActivityForResult(intent, 0);
-      /*
-      AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Warning");
-      alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
-      alert.setPositiveButton("NO", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Quit App...");
-
-          finish();
-        }
-      });
-      alert.setNegativeButton("YES", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Close Alert Dialog...");
-
-
-        }
-      });
-
-      alert.create().show();
-      */
+    }
+    else if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+      Log.d("MAIN", "Initialize MEME LIB");
+      initMemeLib();
     }
   }
 
@@ -363,8 +337,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @TargetApi(23)
   private void requestGPSPermission() {
-    if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-        != PackageManager.PERMISSION_GRANTED) {
+    if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
       requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
     }
   }
@@ -423,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     appID = preferences.getString("APP_ID", getString(R.string.meme_app_id));
     appSecret = preferences.getString("APP_SECRET", getString(R.string.meme_app_secret));
 
-    if (appID != null && appSecret != null) {
+    if (appID != null && appID.length() > 0 && appSecret != null && appSecret.length() > 0) {
       Log.d("MAIN", "Initialized MemeLib with " + appID + " and " + appSecret);
 
       MemeLib.setAppClientID(this, appID, appSecret);
@@ -441,7 +414,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       scannedMemeList.clear();
     }
 
-    if(memeLib != null) {
+    if (memeLib == null) {
+      Log.d("MAIN", "memeLib is null!");
+    }
+
+    if (memeLib != null) {
       memeLib.setMemeConnectListener(this);
 
       MemeStatus status = memeLib.startScan(new MemeScanListener() {
@@ -452,6 +429,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           scannedMemeList.add(s);
         }
       });
+
+      Log.d("MAIN", "MemeStatus = " + status);
+
+      switch(status) {
+        case MEME_ERROR_SDK_AUTH:
+        case MEME_ERROR_APP_AUTH:
+          showAppIDandSecretWarning();
+          break;
+      }
+    }
+    else {
+
     }
   }
 
@@ -468,12 +457,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   // Fragmentからの通知イベント関連
-  /*
   @Override
   public void onMenuFragmentEnd(MenuFragment.MenuFragmentEvent event) {
     event.apply(this, menuFragment);
   }
-  */
 
   public List<String> getScannedMemeList() {
     return scannedMemeList;
@@ -593,5 +580,41 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (intent != null) {
       startActivityForResult(intent, 1);
     }
+  }
+
+  void showAppIDandSecretWarning() {
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle("INCORRECT APP_ID & APP_SECRET");
+    alert.setMessage("Please input the correct APP_ID and APP_SECRET.");
+    alert.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d("DEBUG", "Quit App...");
+
+        finish();
+      }
+    });
+    alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d("DEBUG", "Close Alert Dialog...");
+
+        transitToConfig(basicConfigFragment);
+      }
+    });
+
+    alert.create().show();
+  }
+
+  boolean checkAppIDandSecret() {
+    return (appID != null && appID.length() > 0 && appSecret != null && appSecret.length() > 0);
+  }
+
+  void restart() {
+    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, getIntent(), PendingIntent.FLAG_CANCEL_CURRENT);
+    AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+    alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 500, pendingIntent);
+
+    finish();
   }
 }
