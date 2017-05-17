@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
     if (lastConnectedMemeID != null) {
       Log.d("MAIN", "SCAN Start");
-      Toast.makeText(this, "SCANNING...", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, getString(R.string.meme_scanning), Toast.LENGTH_SHORT).show();
 
       handler.postDelayed(new Runnable() {
         @Override
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     menu.add(0, index++, 0, R.string.midi_conf);
 
     menu.add(0, index++, 0, R.string.about);
-    menu.add(0, index, 0, R.string.exit);
+    menu.add(0, index, 0, R.string.exit_app);
 
     return true;
   }
@@ -348,10 +348,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (requestCode == 1) {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         Log.d("PERMISSION", "Succeeded");
-        Toast.makeText(MainActivity.this, "Succeed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.succeeded), Toast.LENGTH_SHORT).show();
       } else {
         Log.d("PERMISSION", "Failed");
-        Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
       }
     } else {
       super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       public void run() {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
 
-        Toast.makeText(MainActivity.this, "JINS MEME CONNECTED", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.meme_connected), Toast.LENGTH_SHORT).show();
       }
     });
 
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       public void run() {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
-        Toast.makeText(MainActivity.this, "JINS MEME DISCONNECTED", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, getString(R.string.meme_disconnected), Toast.LENGTH_SHORT).show();
       }
     });
   }
@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   void showAuthScreen() {
     KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 
-    Intent intent = keyguardManager.createConfirmDeviceCredentialIntent("ロック解除", "APP_IDとAPP_SECRETを編集するには認証を行って下さい。");
+    Intent intent = keyguardManager.createConfirmDeviceCredentialIntent(getString(R.string.unlock_auth_title), getString(R.string.unlock_auth_explain));
 
     if (intent != null) {
       startActivityForResult(intent, 1);
@@ -584,9 +584,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   void showAppIDandSecretWarning() {
     AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle("INCORRECT APP_ID & APP_SECRET");
-    alert.setMessage("Please input the correct APP_ID and APP_SECRET.");
-    alert.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
+    alert.setTitle(getString(R.string.incorrect_app_id_secret_title));
+    alert.setMessage(getString(R.string.incorrect_app_id_secret_explain));
+    alert.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {
         Log.d("DEBUG", "Quit App...");
@@ -594,7 +594,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         finish();
       }
     });
-    alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+    alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {
         Log.d("DEBUG", "Close Alert Dialog...");

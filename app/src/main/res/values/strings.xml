@@ -4,6 +4,21 @@
     <string name="meme_app_id"></string>
     <string name="meme_app_secret"></string>
 
+    <string name="ok">OK</string>
+    <string name="exit">EXIT</string>
+    <string name="succeeded">SUCCEEDED</string>
+    <string name="failed">FAILED</string>
+    
+    <string name="meme_scanning">START SCANNING...</string>
+    <string name="meme_connected">JINS MEME CONNECTED</string>
+    <string name="meme_disconnected">JINS MEME DISCONNECTED</string>
+    
+    <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
+    <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
+
+    <string name="unlock_auth_title">UNLOCK</string>
+    <string name="unlock_auth_explain">Please unlock to edit the APP_ID and APP_SECRET.</string>
+    
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="request_permission">Camera permission is required.</string>
 

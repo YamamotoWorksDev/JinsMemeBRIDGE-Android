@@ -5,5 +5,5 @@
     <string name="osc_conf">OSC</string>
     <string name="midi_conf">MIDI</string>
     <string name="about">ABOUT</string>
-    <string name="exit">EXIT</string>
+    <string name="exit_app">EXIT APP.</string>
 </resources>
