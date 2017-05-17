@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_bridge_menu);
 
+    setActionBarTitle("JINS MEME BRIDGE");
+
     handler = new Handler();
     mainLayout = (FrameLayout) findViewById(R.id.container);
 
@@ -528,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.addToBackStack(null);
     transaction.commit();
 
-    setActionBarTitle(getString(R.string.app_name));
+    setActionBarTitle("JINS MEME BRIDGE");
     setActionBarBack(false);
   }
 
