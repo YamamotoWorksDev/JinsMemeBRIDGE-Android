@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MemeBridge</string>
+    <string name="app_name">BRIDGE</string>
     <!-- PLEASE INPUT YOUR APP_ID & APP_SECRET -->
     <string name="meme_app_id"></string>
     <string name="meme_app_secret"></string>
