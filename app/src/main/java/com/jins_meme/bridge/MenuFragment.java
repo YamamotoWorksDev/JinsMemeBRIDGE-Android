@@ -40,6 +40,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
   private MemeRealtimeDataFilter memeFilter;
 
+  private int midiChannel = 1;
+
   // MenuFragmentからactivityへの通知イベント関連
   public enum MenuFragmentEvent {
     LAUNCH_CAMERA {
@@ -91,6 +93,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());
     memeMIDI.initPort();
+    midiChannel = ((MainActivity) getActivity()).getSavedValue("MIDI_CH", 0) + 1;
 
     // Initialize OSC
     memeOSC = new MemeOSC();
@@ -104,6 +107,14 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     memeFilter = new MemeRealtimeDataFilter();
 //        memeFilter.setMoveType(MemeRealtimeDataFilter.MoveType.HEAD);
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+
+    memeMIDI.closePort();
+    memeMIDI = null;
   }
 
   public boolean isEnabledBLE() {
@@ -170,14 +181,14 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
             @Override
             public void run() {
               Log.d("DEBUG", "note on " + finalNote);
-              memeMIDI.sendNote(1, finalNote, 127);
+              memeMIDI.sendNote(midiChannel, finalNote, 127);
               try {
                 Thread.sleep(1000);
               } catch (InterruptedException e) {
                 e.printStackTrace();
               } finally {
                 Log.d("DEBUG", "note off " + finalNote);
-                memeMIDI.sendNote(1, finalNote, 0);
+                memeMIDI.sendNote(midiChannel, finalNote, 0);
               }
             }
           }).start();
@@ -293,21 +304,21 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     //debug Log.d("DEBUG", "irotation = " + iyaw + ", " + ipitch + ", " + iroll);
 
     if (iyaw >= 0) {
-      memeMIDI.sendControlChange(1, 30, iyaw);
+      memeMIDI.sendControlChange(midiChannel, 30, iyaw);
     } else {
-      memeMIDI.sendControlChange(1, 31, -iyaw);
+      memeMIDI.sendControlChange(midiChannel, 31, -iyaw);
     }
 
     if (ipitch >= 0) {
-      memeMIDI.sendControlChange(1, 32, ipitch);
+      memeMIDI.sendControlChange(midiChannel, 32, ipitch);
     } else {
-      memeMIDI.sendControlChange(1, 33, -ipitch);
+      memeMIDI.sendControlChange(midiChannel, 33, -ipitch);
     }
 
     if (iroll >= 0) {
-      memeMIDI.sendControlChange(1, 34, iroll);
+      memeMIDI.sendControlChange(midiChannel, 34, iroll);
     } else {
-      memeMIDI.sendControlChange(1, 35, -iroll);
+      memeMIDI.sendControlChange(midiChannel, 35, -iroll);
     }
 
     memeFilter.update(memeRealtimeData,
