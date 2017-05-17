@@ -532,18 +532,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarBack(false);
   }
 
-  void transitToCamera() {
-    FragmentManager manager = getSupportFragmentManager();
-    FragmentTransaction transaction = manager.beginTransaction();
-
-    //transaction.replace(R.id.container, cameraFragment);
-    transaction.replace(R.id.container, new CameraFragment());
-    transaction.addToBackStack(null);
-    transaction.commit();
-  }
-
   String getSavedValue(String key) {
     return preferences.getString(key, null);
+  }
+
+  String getSavedValue(String key, String initValue) {
+    return preferences.getString(key, initValue);
   }
 
   int getSavedValue(String key, int initValue) {
