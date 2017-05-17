@@ -22,4 +22,22 @@
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="request_permission">Camera permission is required.</string>
 
+  <string-array name="midi_ch">
+    <item>1</item>
+    <item>2</item>
+    <item>3</item>
+    <item>4</item>
+    <item>5</item>
+    <item>6</item>
+    <item>7</item>
+    <item>8</item>
+    <item>9</item>
+    <item>10</item>
+    <item>11</item>
+    <item>12</item>
+    <item>13</item>
+    <item>14</item>
+    <item>15</item>
+    <item>16</item>
+  </string-array>
 </resources>
