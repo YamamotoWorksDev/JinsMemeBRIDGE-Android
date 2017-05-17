@@ -94,9 +94,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     // Initialize OSC
     memeOSC = new MemeOSC();
-    memeOSC.setRemoteIP("192.168.1.255");
-    memeOSC.setRemotePort(10316);
-    memeOSC.setHostPort(11316);
+    memeOSC.setRemoteIP(((MainActivity) getActivity()).getSavedValue("REMOTE_IP", MemeOSC.getRemoteIPv4Address()));
+    memeOSC.setRemotePort(((MainActivity) getActivity()).getSavedValue("REMOTE_PORT", 10316));
+    memeOSC.setHostPort(((MainActivity) getActivity()).getSavedValue("HOST_PORT", 11316));
     memeOSC.initSocket();
 
     // Initialize BTSPP
