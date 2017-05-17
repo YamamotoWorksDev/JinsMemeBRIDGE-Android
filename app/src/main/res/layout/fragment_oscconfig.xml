@@ -53,6 +53,7 @@
       android:layout_below="@+id/textView8"
       android:ems="10"
       android:inputType="number"
+      android:maxLength="5"
       android:text="10316"/>
     <TextView
       android:id="@+id/textView9"
@@ -96,6 +97,7 @@
       android:layout_below="@+id/textView11"
       android:ems="10"
       android:inputType="number"
+      android:maxLength="5"
       android:text="11316"/>
     <Button
       android:id="@+id/remote_test"
