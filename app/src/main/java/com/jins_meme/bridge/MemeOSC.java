@@ -86,8 +86,9 @@ public class MemeOSC {
 
   public void initSocket() {
     try {
-      //Log.d("DEBUG", "init osc socket...");
-      System.out.println("DEBUG: " + "init osc socket...");
+      Log.d("DEBUG", "init osc socket...");
+
+      closeSocket();
 
       sndSocket = new DatagramSocket();
       rcvSocket = new DatagramSocket(hostPort);
@@ -95,8 +96,7 @@ public class MemeOSC {
 
       oscInitFlag = true;
     } catch (SocketException se) {
-      //Log.d("DEBUG", "failed socket...");
-      System.out.println("DEBUG: " + "failed socket...");
+      Log.d("DEBUG", "failed socket...");
     }
   }
 
@@ -306,19 +306,15 @@ public class MemeOSC {
   }
 
   public void receiveMessage() {
-    //rcvPacket = new DatagramPacket(rcvOSCData, rcvOSCData.length);
-
     try {
       rcvSocket.receive(rcvPacket);
 
       //System.out.println(Arrays.toString(rcvOSCData));
     } catch (NullPointerException npe) {
-      //Log.d("DEBUG", "socket closed... 0");
-      System.out.println("DEBUG: " + "socket closed... 0");
+      Log.d("DEBUG", "socket closed... 0");
     } catch (SocketException se) {
       //Log.d("EXCEPTION", "message", se);
-      //Log.d("DEBUG", "socket closed... 1");
-      System.out.println("DEBUG: " + "socket closed... 1");
+      Log.d("DEBUG", "socket closed... 1");
     } catch (IOException ioe) {
       //Log.e("EXCEPTION", "message", ioe);
       ioe.printStackTrace();
@@ -385,6 +381,10 @@ public class MemeOSC {
       return false;
     }
 
+    if (rcvArgsTypeArray == null || rcvArgsTypeArray.length() == 0) {
+      return false;
+    }
+
     for (int i = 0; i < rcvArgumentsLength - 1; i++) {
       rcvArgumentsStartIndex[i] = rcvTypesStartIndex + length + n;
       switch (rcvArgsTypeArray.substring(i, i + 1)) {
@@ -415,6 +415,10 @@ public class MemeOSC {
 
   public String getAddress() {
     return rcvAddressStrings;
+  }
+
+  public String getTypeTags() {
+    return rcvArgsTypeArray;
   }
 
   public int getArgumentsLength() {
