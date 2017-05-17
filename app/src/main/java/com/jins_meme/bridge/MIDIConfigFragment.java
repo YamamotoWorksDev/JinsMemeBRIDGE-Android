@@ -72,6 +72,7 @@ public class MIDIConfigFragment extends Fragment {
           ((MainActivity) getActivity()).transitToMain(0);
         }
       });
+      alert.setCancelable(false);
 
       alert.create().show();
     }

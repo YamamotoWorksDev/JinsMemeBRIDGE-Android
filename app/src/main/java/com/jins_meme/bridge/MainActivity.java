@@ -596,7 +596,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         transitToConfig(basicConfigFragment);
       }
     });
-
+    alert.setCancelable(false);
     alert.create().show();
   }
 
