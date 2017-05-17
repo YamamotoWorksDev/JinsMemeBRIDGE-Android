@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MemeOSC {
 
@@ -544,5 +547,47 @@ public class MemeOSC {
         break;
     }
     return flag;
+  }
+
+  public static String getRemoteIPv4Address() {
+    try {
+      List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+      for (NetworkInterface ni : interfaces) {
+        List<InetAddress> addresses = Collections.list(ni.getInetAddresses());
+        for (InetAddress addr : addresses) {
+          if (!addr.isLoopbackAddress()) {
+            String strAddr = addr.getHostAddress();
+            if(!strAddr.contains(":")) {
+              return strAddr.substring(0, strAddr.lastIndexOf(".") + 1) + "255";
+            }
+          }
+        }
+      }
+    } catch (SocketException e) {
+      e.printStackTrace();
+    }
+
+    return "255.255.255.255";
+  }
+
+  public static String getHostIPv4Address() {
+    try {
+      List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+      for (NetworkInterface ni : interfaces) {
+        List<InetAddress> addresses = Collections.list(ni.getInetAddresses());
+        for (InetAddress addr : addresses) {
+          if (!addr.isLoopbackAddress()) {
+            String strAddr = addr.getHostAddress();
+            if(!strAddr.contains(":")) {
+              return strAddr;
+            }
+          }
+        }
+      }
+    } catch (SocketException e) {
+      e.printStackTrace();
+    }
+
+    return "0.0.0.0";
   }
 }
