@@ -104,8 +104,8 @@
       android:layout_width="80dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
+      android:layout_alignBottom="@+id/remote_port"
       android:layout_alignTop="@+id/remote_port"
       android:layout_toEndOf="@+id/remote_port"
-      android:text="TEST"
-      android:layout_alignBottom="@+id/remote_port"/>
+      android:text="TEST"/>
 </RelativeLayout>
