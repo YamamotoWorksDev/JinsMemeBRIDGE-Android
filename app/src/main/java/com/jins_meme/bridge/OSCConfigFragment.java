@@ -118,8 +118,8 @@ public class OSCConfigFragment extends Fragment {
             return "";
           } else {
             String[] splits = resultingTxt.split("\\.");
-            for (int i=0; i<splits.length; i++) {
-              if (Integer.valueOf(splits[i]) > 255) {
+            for (String split : splits) {
+              if (Integer.valueOf(split) > 255) {
                 return "";
               }
             }
@@ -142,7 +142,7 @@ public class OSCConfigFragment extends Fragment {
       @Override
       public void onFocusChange(View view, boolean b) {
         if (!b) {
-          InputMethodManager imm = (InputMethodManager)((MainActivity) getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
           imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
       }
@@ -175,7 +175,7 @@ public class OSCConfigFragment extends Fragment {
       @Override
       public void onFocusChange(View view, boolean b) {
         if (!b) {
-          InputMethodManager imm = (InputMethodManager)((MainActivity) getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
           imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
       }
@@ -215,7 +215,7 @@ public class OSCConfigFragment extends Fragment {
       @Override
       public void onFocusChange(View view, boolean b) {
         if (!b) {
-          InputMethodManager imm = (InputMethodManager)((MainActivity) getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
           imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
       }
@@ -288,7 +288,7 @@ public class OSCConfigFragment extends Fragment {
     }
   }
 
-  class ReceiveTestTRunnable implements Runnable {
+  private class ReceiveTestTRunnable implements Runnable {
     @Override
     public void run() {
       while (isShown) {
@@ -336,7 +336,7 @@ public class OSCConfigFragment extends Fragment {
             }
           });
         } catch (NullPointerException e) {
-
+          e.printStackTrace();
         }
 
         try {
