@@ -81,14 +81,19 @@ public class BasicConfigFragment extends Fragment {
 
     Log.d("BASIC", "onDetach");
 
+    handler = null;
+
     swScan = null;
     swConnect = null;
     spMemeList = null;
     etAppId = null;
     etAppSecret = null;
+    tvBlinkTitle = null;
     sbBlinkThreshold = null;
     sbUpDownThreshold = null;
     sbLeftRightThreshold = null;
+    ibRestart = null;
+    ibLock = null;
   }
 
   @Override
@@ -325,6 +330,25 @@ public class BasicConfigFragment extends Fragment {
         }
       }
     });
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+
+    handler = null;
+
+    swScan = null;
+    swConnect = null;
+    spMemeList = null;
+    etAppId = null;
+    etAppSecret = null;
+    tvBlinkTitle = null;
+    sbBlinkThreshold = null;
+    sbUpDownThreshold = null;
+    sbLeftRightThreshold = null;
+    ibRestart = null;
+    ibLock = null;
   }
 
   private void setSelection(@NonNull String item) {
