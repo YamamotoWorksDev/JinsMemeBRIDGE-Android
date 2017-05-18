@@ -44,7 +44,7 @@ public class AboutFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ((MainActivity) getActivity()).setActionBarTitle(getString(R.string.about));
+    ((MainActivity) getActivity()).setActionBarTitle(R.string.about);
     ((MainActivity) getActivity()).setActionBarBack(true);
   }
 }

@@ -100,7 +100,7 @@ public class OSCConfigFragment extends Fragment {
       }
     });
 
-    ((MainActivity) getActivity()).setActionBarTitle(getString(R.string.osc_conf) + " SETTING");
+    ((MainActivity) getActivity()).setActionBarTitle(R.string.osc_conf);
     ((MainActivity) getActivity()).setActionBarBack(true);
 
     InputFilter[] filters = new InputFilter[1];

@@ -102,7 +102,7 @@ public class BasicConfigFragment extends Fragment {
 
     Log.d("BASIC", "onViewCreated");
 
-    ((MainActivity) getActivity()).setActionBarTitle(getString(R.string.basic_conf) + " SETTING");
+    ((MainActivity) getActivity()).setActionBarTitle(R.string.basic_conf);
     ((MainActivity) getActivity()).setActionBarBack(true);
 
     swScan = (Switch) view.findViewById(R.id.scan);
@@ -209,7 +209,8 @@ public class BasicConfigFragment extends Fragment {
 
       }
     });
-    etAppId.setText(((MainActivity) getActivity()).getSavedValue("APP_ID"),
+    etAppId.setText(
+        ((MainActivity) getActivity()).getSavedValue("APP_ID", getString(R.string.meme_app_id)),
         TextView.BufferType.EDITABLE);
 
     etAppSecret = (EditText) view.findViewById(R.id.app_secret);
@@ -233,7 +234,9 @@ public class BasicConfigFragment extends Fragment {
 
       }
     });
-    etAppSecret.setText(((MainActivity) getActivity()).getSavedValue("APP_SECRET"),
+    etAppSecret.setText(
+        ((MainActivity) getActivity())
+            .getSavedValue("APP_SECRET", getString(R.string.meme_app_secret)),
         TextView.BufferType.EDITABLE);
 
     Log.d("BASIC", "adapter count = " + adapter.getCount());
@@ -379,7 +382,7 @@ public class BasicConfigFragment extends Fragment {
   }
 
   void setEnableRestart(boolean b) {
-    if(ibRestart != null) {
+    if (ibRestart != null) {
       ibRestart.setEnabled(b);
       if (b) {
         ibRestart.setColorFilter(Color.BLACK, Mode.SRC_IN);
