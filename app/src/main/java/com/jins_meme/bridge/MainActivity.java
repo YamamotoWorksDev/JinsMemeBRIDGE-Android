@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private int blinkThreshold = 90;
   private int upDownThreshold = 0;
   private int leftRightThreshold = 0;
+  private int rollThreshold = 15;
 
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
@@ -88,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   public int getLeftRightThreshold() {
     return leftRightThreshold;
+  }
+
+  public int getRollThreshold() {
+    return rollThreshold;
   }
 
   @Override
@@ -577,6 +582,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       case "LR_TH":
         leftRightThreshold = value;
         break;
+      case "ROLL_TH":
+        rollThreshold = value;
     }
 
     editor.putInt(key, value);

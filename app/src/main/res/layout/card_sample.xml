@@ -7,13 +7,25 @@
     >
 
     <TextView
-        android:id="@+id/card_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAppearance="@android:style/TextAppearance.Material.Widget.Button"
-        android:fontFamily="sans-serif-medium"
-        android:textSize="64sp"
-        android:textStyle="normal|bold"
-        android:gravity="center" />
+      android:id="@+id/card_text"
+      android:textStyle="normal|bold"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1.2"
+      android:fontFamily="sans-serif-medium"
+      android:gravity="bottom|center_horizontal"
+      android:text="SAMPLE"
+      android:textAlignment="center"
+      android:textAppearance="@android:style/TextAppearance.Material.Widget.Button"
+      android:textSize="50sp"/>
+    <TextView
+      android:id="@+id/card_select"
+      android:textStyle="italic"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:textAlignment="center"
+      android:textSize="24sp"
+      android:typeface="normal"/>
 
 </LinearLayout>

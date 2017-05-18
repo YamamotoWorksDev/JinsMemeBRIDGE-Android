@@ -44,9 +44,11 @@ public class BasicConfigFragment extends Fragment {
   private EditText etAppId;
   private EditText etAppSecret;
   private TextView tvBlinkTitle;
+  private TextView tvRollTitle;
   private SeekBar sbBlinkThreshold;
   private SeekBar sbUpDownThreshold;
   private SeekBar sbLeftRightThreshold;
+  private SeekBar sbRollThreshold;
   private ImageButton ibRestart;
   private ImageButton ibLock;
 
@@ -89,9 +91,11 @@ public class BasicConfigFragment extends Fragment {
     etAppId = null;
     etAppSecret = null;
     tvBlinkTitle = null;
+    tvRollTitle = null;
     sbBlinkThreshold = null;
     sbUpDownThreshold = null;
     sbLeftRightThreshold = null;
+    sbRollThreshold = null;
     ibRestart = null;
     ibLock = null;
   }
@@ -310,6 +314,34 @@ public class BasicConfigFragment extends Fragment {
         ((MainActivity) getActivity()).autoSaveValue("LR_TH", value);
         Log.d("BASIC", "left/right th. = " + value);
         Toast.makeText(getActivity(), "LEFT/RIGHT THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
+      }
+    });
+
+    tvRollTitle = (TextView) view.findViewById(R.id.roll_title);
+    tvRollTitle.setText(
+        String.format("CANCEL/PAUSE ANGLE(ROLL: %d)", ((MainActivity) getActivity()).getSavedValue("ROLL_TH", 15)));
+
+    sbRollThreshold = (SeekBar) view.findViewById(R.id.roll_threshold);
+    sbRollThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("ROLL_TH", 15) - 10);
+    sbRollThreshold.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        int value = seekBar.getProgress() + 10;
+        tvRollTitle.setText(String.format("CANCEL/PAUSE ANGLE(ROLL: %d)", value));
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        int value = seekBar.getProgress() + 10;
+        ((MainActivity) getActivity()).autoSaveValue("ROLL_TH", value);
+        Log.d("BASIC", "roll th. = " + value);
+        Toast.makeText(getActivity(), "ROLL THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
+        tvRollTitle.setText(String.format("CANCEL/PAUSE ANGLE(ROLL: %d)", value));
       }
     });
 

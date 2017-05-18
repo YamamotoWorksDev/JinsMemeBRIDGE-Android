@@ -29,6 +29,8 @@ import static com.jins_meme.bridge.BridgeUIView.IResultListener;
 
 public class MenuFragment extends Fragment implements IResultListener, MemeRealtimeListener {
 
+  private static final int PAUSE_MAX = 50;
+
   private BridgeUIView mView = null;
   private MyAdapter myAdapter;
 
@@ -41,6 +43,13 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private MemeRealtimeDataFilter memeFilter;
 
   private int midiChannel = 1;
+
+  private boolean cancelFlag = false;
+  private int pauseCount = 0;
+  private boolean pauseFlag = false;
+
+  private int currentEnteredMenu = 0;
+  private int currentSelectedItem = 0;
 
   // MenuFragmentからactivityへの通知イベント関連
   public enum MenuFragmentEvent {
@@ -157,6 +166,25 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   @Override
   public void onEndCardSelected(int id) {
     Log.d("RESULT", getResources().getString(id));
+
+    if (pauseCount >= PAUSE_MAX) {
+      final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
+
+      if (pauseFlag) {
+        pauseFlag = false;
+
+        mych.reset();
+      } else {
+        pauseFlag = true;
+
+        mych.pause();
+      }
+
+      return;
+    }
+
+    final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
+
     {
       // MIDI?
       int note = 60;
@@ -176,6 +204,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.noteon_61:
           ++note;
         case R.string.noteon_60:
+          mych.select();
+
           final int finalNote = note;
           new Thread(new Runnable() {
             @Override
@@ -183,12 +213,19 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
               Log.d("DEBUG", "note on " + finalNote);
               memeMIDI.sendNote(midiChannel, finalNote, 127);
               try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
               } catch (InterruptedException e) {
                 e.printStackTrace();
               } finally {
                 Log.d("DEBUG", "note off " + finalNote);
                 memeMIDI.sendNote(midiChannel, finalNote, 0);
+
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mych.reset();
+                  }
+                });
               }
             }
           }).start();
@@ -204,6 +241,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           memeOSC.setTypeTag("i");
           memeOSC.addArgument(220);
           memeOSC.flushMessage();
+
+          mych.select(500);
           break;
         case R.string.osc_440hz:
           Log.d("DEBUG", "set freq 440");
@@ -211,6 +250,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           memeOSC.setTypeTag("i");
           memeOSC.addArgument(440);
           memeOSC.flushMessage();
+
+          mych.select(500);
           break;
         case R.string.osc_mute_on:
           Log.d("DEBUG", "mute on");
@@ -218,6 +259,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           memeOSC.setTypeTag("f");
           memeOSC.addArgument(0.);
           memeOSC.flushMessage();
+
+          mych.select(500);
           break;
         case R.string.osc_mute_off:
           Log.d("DEBUG", "mute off");
@@ -225,6 +268,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           memeOSC.setTypeTag("f");
           memeOSC.addArgument(1.);
           memeOSC.flushMessage();
+
+          mych.select(500);
           break;
       }
     }
@@ -321,32 +366,69 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       memeMIDI.sendControlChange(midiChannel, 35, -iroll);
     }
 
-    memeFilter.update(memeRealtimeData,
-        ((MainActivity) getActivity()).getBlinkThreshold(),
-        ((MainActivity) getActivity()).getUpDownThreshold(),
-        ((MainActivity) getActivity()).getLeftRightThreshold());
-    if (memeFilter.isBlink()) {
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
-          mView.enter();
+    if (Math.abs(roll) > ((MainActivity) getActivity()).getRollThreshold()) {
+      cancelFlag = true;
+      //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
+
+      if (pauseCount < PAUSE_MAX) {
+        pauseCount++;
+
+        if (pauseCount == PAUSE_MAX) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              mView.enter();
+            }
+          });
         }
-      });
-    } else if (memeFilter.isLeft()) {
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
-          mView.move(-1);
+      }
+    } else if (Math.abs(roll) <= ((MainActivity) getActivity()).getRollThreshold()) {
+      if (!pauseFlag) {
+        if (cancelFlag && pauseCount < PAUSE_MAX) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              mView.reset();
+            }
+          });
+        } else {
+          memeFilter.update(memeRealtimeData,
+              ((MainActivity) getActivity()).getBlinkThreshold(),
+              ((MainActivity) getActivity()).getUpDownThreshold(),
+              ((MainActivity) getActivity()).getLeftRightThreshold());
+
+          if (memeFilter.isBlink()) {
+            Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                mView.enter();
+              }
+            });
+          } else if (memeFilter.isLeft()) {
+            Log.d("EYE", "left = " + eyeLeft);
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                mView.move(-1);
+              }
+            });
+          } else if (memeFilter.isRight()) {
+            Log.d("EYE", "right = " + eyeRight);
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                mView.move(1);
+              }
+            });
+          }
         }
-      });
-    } else if (memeFilter.isRight()) {
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
-          mView.move(1);
-        }
-      });
+      }
+
+      cancelFlag = false;
+      pauseCount = 0;
     }
+
     if (eyeBlinkStrength > 0 || eyeBlinkSpeed > 0) {
       Log.d("EYE", String.format("meme: BLINK = %d/%d", eyeBlinkStrength, eyeBlinkSpeed));
 
@@ -423,7 +505,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.midi:
         case R.string.osc:
         case R.string.functions:
-          return CardFunction.ENTER_MENU;
+          if (pauseCount < PAUSE_MAX) {
+            return CardFunction.ENTER_MENU;
+          }
       }
       return CardFunction.END;
     }
@@ -489,6 +573,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           }
           break;
       }
+
+      if (pauseCount >= PAUSE_MAX) {
+        id = parent_id;
+      }
+
       return id;
     }
 
@@ -521,10 +610,35 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private class MyCardHolder extends CardHolder {
 
     TextView mTextView;
+    TextView mValue;
 
     MyCardHolder(View itemView) {
       super(itemView);
       mTextView = (TextView) itemView.findViewById(R.id.card_text);
+      mValue = (TextView) itemView.findViewById(R.id.card_select);
+    }
+
+    public void select() {
+      mValue.setText("selected");
+    }
+
+    public void select(int msec) {
+      mValue.setText("selected");
+
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          mValue.setText(" ");
+        }
+      }, msec);
+    }
+
+    public void pause() {
+      mValue.setText("pause");
+    }
+
+    public void reset() {
+      mValue.setText(" ");
     }
   }
 
