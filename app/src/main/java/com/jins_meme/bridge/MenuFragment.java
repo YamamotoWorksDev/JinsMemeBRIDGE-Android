@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jins_jp.meme.MemeFitStatus;
 import com.jins_jp.meme.MemeRealtimeData;
 import com.jins_jp.meme.MemeRealtimeListener;
 
@@ -30,6 +31,7 @@ import static com.jins_meme.bridge.BridgeUIView.IResultListener;
 public class MenuFragment extends Fragment implements IResultListener, MemeRealtimeListener {
 
   private static final int PAUSE_MAX = 50;
+  private static final int REFRACTORY_PERIOD_MAX = 20;
 
   private BridgeUIView mView = null;
   private MyAdapter myAdapter;
@@ -47,6 +49,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private boolean cancelFlag = false;
   private int pauseCount = 0;
   private boolean pauseFlag = false;
+  private int refractoryPeriod = 0;
 
   private int currentEnteredMenu = 0;
   private int currentSelectedItem = 0;
@@ -86,9 +89,16 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    cancelFlag = false;
+    pauseCount = 0;
+    pauseFlag = false;
+    refractoryPeriod = 0;
+
     mView = new BridgeUIView(getContext());
-    mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+    mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.MATCH_PARENT));
     return mView;
   }
 
@@ -106,7 +116,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     // Initialize OSC
     memeOSC = new MemeOSC();
-    memeOSC.setRemoteIP(((MainActivity) getActivity()).getSavedValue("REMOTE_IP", MemeOSC.getRemoteIPv4Address()));
+    memeOSC.setRemoteIP(
+        ((MainActivity) getActivity()).getSavedValue("REMOTE_IP", MemeOSC.getRemoteIPv4Address()));
     memeOSC.setRemotePort(((MainActivity) getActivity()).getSavedValue("REMOTE_PORT", 10316));
     //memeOSC.setHostPort(((MainActivity) getActivity()).getSavedValue("HOST_PORT", 11316));
     memeOSC.initSocket();
@@ -366,67 +377,75 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       memeMIDI.sendControlChange(midiChannel, 35, -iroll);
     }
 
-    if (Math.abs(roll) > ((MainActivity) getActivity()).getRollThreshold()) {
-      cancelFlag = true;
-      //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
+    if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
+      if (Math.abs(roll) > ((MainActivity) getActivity()).getRollThreshold()) {
+        cancelFlag = true;
+        //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
 
-      if (pauseCount < PAUSE_MAX) {
-        pauseCount++;
+        if (pauseCount < PAUSE_MAX) {
+          pauseCount++;
 
-        if (pauseCount == PAUSE_MAX) {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              mView.enter();
-            }
-          });
-        }
-      }
-    } else if (Math.abs(roll) <= ((MainActivity) getActivity()).getRollThreshold()) {
-      if (!pauseFlag) {
-        if (cancelFlag && pauseCount < PAUSE_MAX) {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              mView.reset();
-            }
-          });
-        } else {
-          memeFilter.update(memeRealtimeData,
-              ((MainActivity) getActivity()).getBlinkThreshold(),
-              ((MainActivity) getActivity()).getUpDownThreshold(),
-              ((MainActivity) getActivity()).getLeftRightThreshold());
-
-          if (memeFilter.isBlink()) {
-            Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+          if (pauseCount == PAUSE_MAX) {
             handler.post(new Runnable() {
               @Override
               public void run() {
                 mView.enter();
               }
             });
-          } else if (memeFilter.isLeft()) {
-            Log.d("EYE", "left = " + eyeLeft);
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                mView.move(-1);
-              }
-            });
-          } else if (memeFilter.isRight()) {
-            Log.d("EYE", "right = " + eyeRight);
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                mView.move(1);
-              }
-            });
           }
         }
-      }
+      } else if (Math.abs(roll) <= ((MainActivity) getActivity()).getRollThreshold()) {
+        if (!pauseFlag) {
+          if (cancelFlag && pauseCount < PAUSE_MAX) {
+            refractoryPeriod = REFRACTORY_PERIOD_MAX;
 
-      cancelFlag = false;
-      pauseCount = 0;
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                mView.reset();
+              }
+            });
+          } else {
+            if (refractoryPeriod > 0) {
+              refractoryPeriod--;
+            } else {
+              memeFilter.update(memeRealtimeData,
+                  ((MainActivity) getActivity()).getBlinkThreshold(),
+                  ((MainActivity) getActivity()).getUpDownThreshold(),
+                  ((MainActivity) getActivity()).getLeftRightThreshold());
+
+              if (memeFilter.isBlink()) {
+                Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mView.enter();
+                  }
+                });
+              } else if (memeFilter.isLeft()) {
+                Log.d("EYE", "left = " + eyeLeft);
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mView.move(-1);
+                  }
+                });
+              } else if (memeFilter.isRight()) {
+                Log.d("EYE", "right = " + eyeRight);
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mView.move(1);
+                  }
+                });
+              }
+            }
+          }
+        }
+
+        cancelFlag = false;
+        pauseCount = 0;
+      }
     }
 
     if (eyeBlinkStrength > 0 || eyeBlinkSpeed > 0) {

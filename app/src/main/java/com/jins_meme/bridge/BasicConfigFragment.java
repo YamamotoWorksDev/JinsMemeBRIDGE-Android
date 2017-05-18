@@ -159,7 +159,7 @@ public class BasicConfigFragment extends Fragment {
           if (!((MainActivity) getActivity()).isMemeConnected()) {
             selectedMemeID = (String) spMemeList.getSelectedItem();
             Log.d("BASIC", "CONNECT Start " + selectedMemeID);
-            Toast.makeText(getActivity(), "CONNECTING TO " + selectedMemeID + "...",
+            Toast.makeText(getActivity(), "CONNECTING TO " + selectedMemeID,
                 Toast.LENGTH_SHORT).show();
 
             ((MainActivity) getActivity()).connectToMeme(selectedMemeID);
@@ -169,6 +169,10 @@ public class BasicConfigFragment extends Fragment {
           Toast.makeText(getActivity(), "DISCONNECTING...", Toast.LENGTH_SHORT).show();
 
           ((MainActivity) getActivity()).disconnectToMeme();
+
+          ((MainActivity) getActivity()).clearScannedMemeList();
+          adapter.clear();
+          swConnect.setEnabled(false);
         }
       }
     });
@@ -413,7 +417,7 @@ public class BasicConfigFragment extends Fragment {
     isLockOn = false;
   }
 
-  void setEnableRestart(boolean b) {
+  private void setEnableRestart(boolean b) {
     if (ibRestart != null) {
       ibRestart.setEnabled(b);
       if (b) {
@@ -422,5 +426,19 @@ public class BasicConfigFragment extends Fragment {
         ibRestart.setColorFilter(Color.GRAY, Mode.SRC_IN);
       }
     }
+  }
+
+  void setSwConnect(final boolean b) {
+    Log.d("BASIC", "state " + b);
+
+    swConnect.setChecked(b);
+    /*
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        swConnect.setChecked(b);
+      }
+    });
+    */
   }
 }

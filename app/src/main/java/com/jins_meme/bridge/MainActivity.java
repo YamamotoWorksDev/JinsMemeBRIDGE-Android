@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     setContentView(R.layout.activity_bridge_menu);
 
     setActionBarTitle(R.string.actionbar_title);
@@ -152,7 +153,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
               if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
                 connectToMeme(lastConnectedMemeID);
 
-                //Toast.makeText(, "SCANNING...", Toast.LENGTH_SHORT).show();
+                final String s2 = lastConnectedMemeID;
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    Toast.makeText(MainActivity.this, getString(R.string.meme_connect, s2), Toast.LENGTH_SHORT).show();
+                  }
+                });
               }
             }
           }, 3000);
@@ -398,6 +405,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       public void run() {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
+        basicConfigFragment.setSwConnect(false);
+
         Toast.makeText(MainActivity.this, getString(R.string.meme_disconnected), Toast.LENGTH_SHORT).show();
       }
     });
@@ -420,6 +429,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //Log.d("DEBUG", "devs : " + memeBTSPP.getPairedDeviceName());
   }
 
+  public void clearScannedMemeList() {
+    if (scannedMemeList != null) {
+      scannedMemeList.clear();
+    }
+  }
+
   public void startScan() {
     Log.d("MAIN", "start scannig...");
 
@@ -437,7 +452,28 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       MemeStatus status = memeLib.startScan(new MemeScanListener() {
         @Override
         public void memeFoundCallback(String s) {
-          Log.d("MAIN", "found: " + s);
+          Log.d("MAIN", getString(R.string.meme_found, s));
+
+          final String s2 = s;
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              Toast.makeText(MainActivity.this, getString(R.string.meme_found, s2), Toast.LENGTH_SHORT).show();
+            }
+          });
+
+          if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
+            handler.removeCallbacksAndMessages(null);
+
+            connectToMeme(lastConnectedMemeID);
+
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                Toast.makeText(MainActivity.this, getString(R.string.meme_connect, s2), Toast.LENGTH_SHORT).show();
+              }
+            });
+          }
 
           scannedMemeList.add(s);
         }
@@ -493,7 +529,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void disconnectToMeme() {
-    memeLib.disconnect();
+    if(memeLib.isConnected()) {
+      memeLib.disconnect();
+    }
   }
 
   @Override
