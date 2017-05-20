@@ -26,6 +26,10 @@
   <string name="camera_error">This device doesn\'t support Camera2 API.</string>
   <string name="request_permission">Camera permission is required.</string>
 
+  <string name="selected">selected</string>
+  <string name="pause">pause</string>
+  <string name="count">%1$d</string>
+
   <string-array name="midi_ch">
     <item>1</item>
     <item>2</item>

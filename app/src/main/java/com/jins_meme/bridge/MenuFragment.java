@@ -34,7 +34,6 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private static final int REFRACTORY_PERIOD_MAX = 20;
 
   private BridgeUIView mView = null;
-  private MyAdapter myAdapter;
 
   private Handler handler = new Handler();
 
@@ -52,19 +51,15 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private int refractoryPeriod = 0;
   private int batteryCheckCount = 2000;
 
-  private int currentEnteredMenu = 0;
-  private int currentSelectedItem = 0;
-
   // MenuFragmentからactivityへの通知イベント関連
-  public enum MenuFragmentEvent {
+  enum MenuFragmentEvent {
     LAUNCH_CAMERA {
       @Override
       public void apply(AppCompatActivity activity, Fragment parent) {
 
         activity.getSupportFragmentManager().beginTransaction()
             .addToBackStack(null)
-            .hide(parent)
-            .add(R.id.container, new CameraFragment())
+            .replace(R.id.container, new CameraFragment())
             .commit();
       }
     };
@@ -72,7 +67,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     abstract public void apply(AppCompatActivity activity, Fragment parent);
   }
 
-  public interface MenuFragmentListener {
+  interface MenuFragmentListener {
 
     void onMenuFragmentEnd(MenuFragmentEvent event);
   }
@@ -104,10 +99,10 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   }
 
   @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
 
-    myAdapter = new MyAdapter(getContext(), this);
+    MyAdapter myAdapter = new MyAdapter(getContext(), this);
     mView.setAdapter(myAdapter);
 
     // Initialize MIDI
@@ -134,12 +129,15 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   public void onDestroyView() {
     super.onDestroyView();
 
-    memeMIDI.closePort();
-    memeMIDI = null;
-  }
+    if (memeMIDI != null) {
+      memeMIDI.closePort();
+      memeMIDI = null;
+    }
 
-  public boolean isEnabledBLE() {
-    return memeBTSPP.isEnabled();
+    if ((memeOSC != null)) {
+      memeOSC.closeSocket();
+      memeOSC = null;
+    }
   }
 
   @Override
@@ -290,7 +288,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       switch (id) {
         case R.string.blink_count:
           CountCardHolder ch = (CountCardHolder) mView.findViewHolderForItemId(id);
-          ch.countup();
+          ch.countUp();
           break;
 
       }
@@ -407,12 +405,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           if (cancelFlag && pauseCount < PAUSE_MAX) {
             refractoryPeriod = REFRACTORY_PERIOD_MAX;
 
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                mView.reset();
-              }
-            });
+            resetCard();
           } else {
             if (refractoryPeriod > 0) {
               refractoryPeriod--;
@@ -471,23 +464,35 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     }
   }
 
+  void resetCard() {
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        mView.reset();
+      }
+    });
+  }
+
+  // for Bluetooth SPP
+  /*
+  public boolean isEnabledBLE() {
+    return memeBTSPP.isEnabled();
+  }
   public void btConnect(String name) {
     memeBTSPP.connect(name);
   }
-
   public void btDisconnect() {
     memeBTSPP.disconnect();
   }
-
   public String[] getBtPairedDeviceName() {
     return memeBTSPP.getPairedDeviceName();
   }
-
   public String getBtConnectedDeviceName() {
     return memeBTSPP.getConnectedDeviceName();
   }
+  */
 
-  public class MyAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
+  private class MyAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
 
     Context mContext;
     LayoutInflater mInflater;
@@ -645,12 +650,12 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       mValue = (TextView) itemView.findViewById(R.id.card_select);
     }
 
-    public void select() {
-      mValue.setText("selected");
+    void select() {
+      mValue.setText(getString(R.string.selected));
     }
 
-    public void select(int msec) {
-      mValue.setText("selected");
+    void select(int msec) {
+      mValue.setText(getString(R.string.selected));
 
       handler.postDelayed(new Runnable() {
         @Override
@@ -660,11 +665,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       }, msec);
     }
 
-    public void pause() {
-      mValue.setText("pause");
+    void pause() {
+      mValue.setText(getString(R.string.pause));
     }
 
-    public void reset() {
+    void reset() {
       mValue.setText(" ");
     }
   }
@@ -683,12 +688,12 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     private void reset() {
       count = 0;
-      mValue.setText(count + "");
+      mValue.setText(getString(R.string.count, count));
     }
 
-    private void countup() {
+    private void countUp() {
       ++count;
-      mValue.setText(count + "");
+      mValue.setText(getString(R.string.count, count));
     }
   }
 }

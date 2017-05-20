@@ -108,6 +108,7 @@ public class CameraFragment extends Camera2BasicFragment implements MemeRealtime
         }
     }
     private void endFragment() {
-        getFragmentManager().popBackStack();
+        //getFragmentManager().popBackStack();
+        ((MainActivity) getActivity()).transitToMain(-1);
     }
 }
