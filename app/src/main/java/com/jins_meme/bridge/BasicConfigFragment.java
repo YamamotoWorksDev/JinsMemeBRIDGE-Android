@@ -108,6 +108,7 @@ public class BasicConfigFragment extends Fragment {
 
     ((MainActivity) getActivity()).setActionBarTitle(R.string.basic_conf);
     ((MainActivity) getActivity()).setActionBarBack(true);
+    getActivity().invalidateOptionsMenu();
 
     swScan = (Switch) view.findViewById(R.id.scan);
     swScan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

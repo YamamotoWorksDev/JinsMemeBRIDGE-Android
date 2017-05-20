@@ -46,5 +46,6 @@ public class AboutFragment extends Fragment {
 
     ((MainActivity) getActivity()).setActionBarTitle(R.string.about);
     ((MainActivity) getActivity()).setActionBarBack(true);
+    getActivity().invalidateOptionsMenu();
   }
 }

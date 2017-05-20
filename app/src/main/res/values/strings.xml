@@ -1,6 +1,6 @@
 <resources>
   <string name="app_name">BRIDGE</string>
-  <string name="actionbar_title">BRIDGE for EyeVDJ</string>
+  <string name="actionbar_title">JINS MEME BRIDGE</string>
 
   <!-- PLEASE INPUT YOUR APP_ID & APP_SECRET -->
   <string name="meme_app_id"></string>

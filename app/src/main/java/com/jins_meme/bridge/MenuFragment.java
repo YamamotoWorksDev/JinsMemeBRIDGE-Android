@@ -50,6 +50,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private int pauseCount = 0;
   private boolean pauseFlag = false;
   private int refractoryPeriod = 0;
+  private int batteryCheckCount = 2000;
 
   private int currentEnteredMenu = 0;
   private int currentSelectedItem = 0;
@@ -375,6 +376,13 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       memeMIDI.sendControlChange(midiChannel, 34, iroll);
     } else {
       memeMIDI.sendControlChange(midiChannel, 35, -iroll);
+    }
+
+    if (++batteryCheckCount > 2000) {
+      Log.d("DEBUG", "battery status = " + memeRealtimeData.getPowerLeft());
+      ((MainActivity) getActivity()).renewBatteryState(memeRealtimeData.getPowerLeft());
+
+      batteryCheckCount = 0;
     }
 
     if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {

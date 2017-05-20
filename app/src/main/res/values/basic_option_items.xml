@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="scan">SCAN</string>
+    <string name="battery">BATTERY</string>
     <string name="basic_conf">BASIC</string>
     <string name="osc_conf">OSC</string>
     <string name="midi_conf">MIDI</string>
     <string name="about">ABOUT</string>
-    <string name="exit_app">EXIT APP.</string>
+    <string name="exit_app">EXIT APP</string>
 </resources>
