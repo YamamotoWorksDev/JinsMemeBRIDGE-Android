@@ -26,20 +26,13 @@ Also, it's editable through the app such as the following screen shot.
 
 ### OSC(Open Sound Control)
 The default OSC Setting is as follows.
-* Remote IP: 192.168.1.255(Destination IP)
+* Remote IP: xxx.xxx.xxx.255(Destination IP / Local Network Broadcast Address)
 * Remote Port: 10316
 * Host Port: 11316
 
-These settings are in MenuFragment.java.
-```java:MenuFragment.java
-  // Initialize OSC
-  memeOSC = new MemeOSC();
-  memeOSC.setRemoteIP("192.168.1.255");
-  memeOSC.setRemotePort(10316);
-  memeOSC.setHostPort(11316);
-  memeOSC.initSocket();
-```
-If you want to change the destination IP and port, please rewrite the above codes.
+These settings are editable on OSC SETTING.
+
+<image src="https://github.com/jins-meme/JinsMemeBRIDGE-Android/blob/image/osc_setting.png" width="320px">
 
 ### Bluetooth SPP Test Program for Win/Mac
 The MemeBTSPPTester is developed on JetBrain IntelliJ and JDK 1.8.  
