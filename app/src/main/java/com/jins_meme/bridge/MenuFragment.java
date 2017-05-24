@@ -98,6 +98,10 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     return mView;
   }
 
+  public boolean menuBack() {
+    return mView.back();
+  }
+
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);

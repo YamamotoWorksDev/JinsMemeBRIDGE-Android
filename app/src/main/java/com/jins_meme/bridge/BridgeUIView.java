@@ -49,6 +49,9 @@ public class BridgeUIView extends RecyclerView {
   public void reset() {
     ((Adapter) getAdapter()).reset();
   }
+  public boolean back() {
+    return ((Adapter) getAdapter()).back();
+  }
 
   private int getCurrentCenteredItemPosition() {
     int last = mLayoutManager.findLastVisibleItemPosition();
@@ -113,9 +116,27 @@ public class BridgeUIView extends RecyclerView {
       return 0;
     }
 
+    void enter(int id) {
+      mListener.onEnterCard(id);
+      mHistory.push(id);
+      notifyDataSetChanged();
+    }
     void reset() {
       mHistory.clear();
       notifyDataSetChanged();
+    }
+    void end(int id) {
+      mListener.onEndCardSelected(id);
+    }
+
+    boolean back() {
+      if(mHistory.empty()) {
+        return false;
+      }
+      mListener.onExitCard(getSelectedCardId());
+      mHistory.pop();
+      notifyDataSetChanged();
+      return true;
     }
 
     @Override
@@ -148,21 +169,13 @@ public class BridgeUIView extends RecyclerView {
         public void onClick(View v) {
           switch (result) {
             case BACK:
-              if (mHistory.empty()) {
-                mListener.onEndCardSelected(NO_ID);
-              } else {
-                mListener.onExitCard(getSelectedCardId());
-                mHistory.pop();
-                notifyDataSetChanged();
-              }
+              back();
               break;
             case ENTER_MENU:
-              mListener.onEnterCard(id);
-              mHistory.push(id);
-              notifyDataSetChanged();
+              enter(id);
               break;
             case END:
-              mListener.onEndCardSelected(id);
+              end(id);
               break;
           }
         }

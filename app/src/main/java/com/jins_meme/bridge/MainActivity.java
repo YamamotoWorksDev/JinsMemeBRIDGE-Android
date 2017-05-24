@@ -126,9 +126,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    //transaction.add(R.id.container, menuFragment);
-    transaction.replace(R.id.container, menuFragment);
-    transaction.addToBackStack("MAIN");
+    transaction.add(R.id.container, menuFragment);
     transaction.commit();
 
     checkBluetoothEnable();
@@ -584,13 +582,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       memeLib.disconnect();
     }
   }
-
   @Override
   public void onBackPressed() {
     Log.d("MAIN", "press back!");
 
-    transitToMain(1);
-    menuFragment.resetCard();
+    FragmentManager manager = getSupportFragmentManager();
+    Fragment active = manager.findFragmentById(R.id.container);
+
+    if(active != menuFragment || !menuFragment.menuBack()) {
+      super.onBackPressed();
+    }
   }
 
   void setActionBarTitle(int resId) {
@@ -613,7 +614,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
 
-    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out);
+    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
     transaction.replace(R.id.container, fragment);
     transaction.addToBackStack(null);
     transaction.commit();
@@ -639,7 +640,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
     }
     transaction.replace(R.id.container, menuFragment);
-    transaction.addToBackStack(null);
+//    transaction.addToBackStack(null);
     transaction.commit();
 
     setActionBarTitle(R.string.actionbar_title);
