@@ -264,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       Log.d("DEBUG", "press actionbar back!");
 
       transitToMain(0);
-      menuFragment.resetCard();
 
       return true;
     }
@@ -612,10 +611,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   void transitToConfig(Fragment fragment) {
     FragmentManager manager = getSupportFragmentManager();
+    Fragment active = manager.findFragmentById(R.id.container);
+
     FragmentTransaction transaction = manager.beginTransaction();
 
     transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
-    transaction.replace(R.id.container, fragment);
+    if(active == menuFragment) {
+      transaction.hide(menuFragment);
+      transaction.add(R.id.container, fragment);
+    }
+    else {
+      transaction.replace(R.id.container, fragment);
+    }
     transaction.addToBackStack(null);
     transaction.commit();
   }
@@ -639,18 +646,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       default:
         break;
     }
-    transaction.replace(R.id.container, menuFragment);
+    transaction.remove(manager.findFragmentById(R.id.container));
+    transaction.show(menuFragment);
 //    transaction.addToBackStack(null);
     transaction.commit();
 
     setActionBarTitle(R.string.actionbar_title);
     setActionBarBack(false);
     invalidateOptionsMenu();
-
-    if (direction == -1) {
-      menuFragment.resetCard();
-    }
-
   }
 
   String getSavedValue(String key) {
