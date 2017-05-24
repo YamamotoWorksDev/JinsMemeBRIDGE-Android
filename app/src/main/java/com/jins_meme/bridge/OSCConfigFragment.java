@@ -31,7 +31,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class OSCConfigFragment extends Fragment {
+public class OSCConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
   private RelativeLayout layout;

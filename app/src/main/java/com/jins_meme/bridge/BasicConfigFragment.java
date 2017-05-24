@@ -34,7 +34,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BasicConfigFragment extends Fragment {
+public class BasicConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
 

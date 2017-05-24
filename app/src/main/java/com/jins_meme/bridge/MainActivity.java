@@ -619,8 +619,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Fragment active = manager.findFragmentById(R.id.container);
 
     FragmentTransaction transaction = manager.beginTransaction();
-
-    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
     if(active == menuFragment) {
       transaction.hide(menuFragment);
       transaction.add(R.id.container, fragment);

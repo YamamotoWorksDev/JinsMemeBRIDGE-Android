@@ -29,7 +29,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 
-public class MIDIConfigFragment extends Fragment {
+public class MIDIConfigFragment extends ConfigFragmentBase {
 
   private Spinner spMidiCh;
   private SeekBar sbCC72;
