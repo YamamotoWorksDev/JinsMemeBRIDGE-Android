@@ -591,6 +591,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if(active != menuFragment || !menuFragment.menuBack()) {
       super.onBackPressed();
     }
+    if(manager.getBackStackEntryCount() == 0) {
+      setActionBarTitle(R.string.actionbar_title);
+      setActionBarBack(false);
+      invalidateOptionsMenu();
+    }
   }
 
   void setActionBarTitle(int resId) {
