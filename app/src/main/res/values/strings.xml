@@ -11,7 +11,7 @@
   <string name="succeeded">SUCCEEDED</string>
   <string name="failed">FAILED</string>
 
-  <string name="meme_scanning">START SCANNING...</string>
+  <string name="meme_scanning">START SCANNING&#8230;</string>
   <string name="meme_found">FOUND: %1$s</string>
   <string name="meme_connect">CONNECT TO: %1$s</string>
   <string name="meme_connected">JINS MEME CONNECTED</string>
