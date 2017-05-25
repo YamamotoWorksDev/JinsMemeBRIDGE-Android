@@ -75,8 +75,10 @@ public class MIDIConfigFragment extends ConfigFragmentBase {
     btnNote74 = null;
     btnNote75 = null;
 
-    testMIDI.closePort();
-    testMIDI = null;
+    if(testMIDI != null) {
+      testMIDI.closePort();
+      testMIDI = null;
+    }
   }
 
   @Override
