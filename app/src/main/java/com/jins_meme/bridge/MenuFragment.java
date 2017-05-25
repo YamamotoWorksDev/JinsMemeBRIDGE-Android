@@ -170,6 +170,20 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   @Override
   public void onEnterCard(int id) {
     Log.d("ENTER", getResources().getString(id));
+
+    if (pauseCount >= PAUSE_MAX) {
+      final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
+
+      if (pauseFlag) {
+        pauseFlag = false;
+
+        mych.reset();
+      } else {
+        pauseFlag = true;
+
+        mych.pause();
+      }
+    }
   }
 
   @Override
