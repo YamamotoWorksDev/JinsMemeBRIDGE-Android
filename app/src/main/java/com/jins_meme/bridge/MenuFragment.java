@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.jins_jp.meme.MemeFitStatus;
 import com.jins_jp.meme.MemeRealtimeData;
 import com.jins_jp.meme.MemeRealtimeListener;
+import java.util.Random;
 
 import static com.jins_meme.bridge.BridgeUIView.CardHolder;
 import static com.jins_meme.bridge.BridgeUIView.IResultListener;
@@ -37,6 +38,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
   private Handler handler = new Handler();
 
+  private HueController hueController;
   private MemeMIDI memeMIDI;
   private MemeOSC memeOSC;
   private MemeBTSPP memeBTSPP;
@@ -109,6 +111,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     MyAdapter myAdapter = new MyAdapter(getContext(), this);
     mView.setAdapter(myAdapter);
 
+    // Initialize Hue
+    hueController = new HueController(getContext());
+
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());
     memeMIDI.initPort();
@@ -133,6 +138,13 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   public void onDestroyView() {
     super.onDestroyView();
 
+    Log.d("FRAGMENT", "onDestroyView");
+
+    if (hueController != null) {
+      hueController.turnOff();
+      hueController = null;
+    }
+
     if (memeMIDI != null) {
       memeMIDI.closePort();
       memeMIDI = null;
@@ -153,6 +165,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   @Override
   public void onDestroy() {
     super.onDestroy();
+
+    if (hueController != null) {
+      hueController.turnOff();
+      hueController = null;
+    }
 
     if (memeMIDI != null) {
       memeMIDI.closePort();
@@ -308,7 +325,6 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           CountCardHolder ch = (CountCardHolder) mView.findViewHolderForItemId(id);
           ch.countUp();
           break;
-
       }
     }
     {
@@ -317,7 +333,27 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.camera:
           mListener.onMenuFragmentEnd(MenuFragmentEvent.LAUNCH_CAMERA);
           break;
-
+      }
+    }
+    {
+      // Hue
+      switch (id) {
+        case R.string.random:
+          Random rand = new Random();
+          hueController.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+          break;
+        case R.string.light1:
+          hueController.changeColor(255, 0, 0);
+          break;
+        case R.string.light2:
+          hueController.changeColor(0, 255, 0);
+          break;
+        case R.string.light3:
+          hueController.changeColor(0, 0, 255);
+          break;
+        case R.string.light4:
+          hueController.changeColor(255, 255, 255);
+          break;
       }
     }
   }
@@ -555,6 +591,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.midi:
         case R.string.osc:
         case R.string.functions:
+        case R.string.hue:
           if (pauseCount < PAUSE_MAX) {
             return CardFunction.ENTER_MENU;
           }
@@ -579,6 +616,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
               break;
             case 3:
               id = R.string.camera;
+              break;
+            case 4:
+              id = R.string.hue;
               break;
           }
           break;
@@ -622,6 +662,25 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
               break;
           }
           break;
+        case R.string.hue:
+          switch (position) {
+            case 0:
+              id = R.string.random;
+              break;
+            case 1:
+              id = R.string.light1;
+              break;
+            case 2:
+              id = R.string.light2;
+              break;
+            case 3:
+              id = R.string.light3;
+              break;
+            case 4:
+              id = R.string.light4;
+              break;
+          }
+          break;
       }
 
       if (pauseCount >= PAUSE_MAX) {
@@ -640,8 +699,10 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           return 5;
         case R.string.functions:
           return 3;
+        case R.string.hue:
+          return 5;
         case NO_ID:
-          return 4;
+          return 5;
       }
       return 0;
     }
