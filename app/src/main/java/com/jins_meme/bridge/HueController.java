@@ -34,7 +34,6 @@ import java.util.Map;
 
 public class HueController {
 
-  private static final String DEBUG = "TEST";
   private static final String HUE_SHARED_PREFERENCES_STORE = "HueSharedPrefs";
   private static final String LAST_CONNECTED_USERNAME = "LastConnectedUsername";
   private static final String LAST_CONNECTED_IP = "LastConnectedIP";
@@ -52,12 +51,12 @@ public class HueController {
   private PHSDKListener phListener = new PHSDKListener() {
     @Override
     public void onCacheUpdated(List<Integer> list, PHBridge phBridge) {
-      Log.d(DEBUG, "Cache Updated...");
+      Log.d("HUE", "Cache Updated...");
     }
 
     @Override
     public void onBridgeConnected(PHBridge phBridge, String s) {
-      Log.d(DEBUG, "Bridge Connected...");
+      Log.d("HUE", "Bridge Connected...");
 
       hueSDK.setSelectedBridge(phBridge);
       hueSDK.enableHeartbeat(phBridge, PHHueSDK.HB_INTERVAL);
@@ -79,7 +78,7 @@ public class HueController {
 
       float[] xy = {currentLightState.getX(), currentLightState.getY()};
       int color = PHUtilities.colorFromXY(xy, currentLight.getModelNumber());
-      Log.d(DEBUG,
+      Log.d("HUE",
           currentLightState.isOn() + " (r,g,b) = (" + Color.red(color) + ", " + Color.green(color)
               + ", " + Color.blue(color) + ") ");
 
@@ -88,14 +87,14 @@ public class HueController {
 
     @Override
     public void onAuthenticationRequired(PHAccessPoint phAccessPoint) {
-      Log.d(DEBUG, "Authentication Required...");
+      Log.d("HUE", "Authentication Required...");
 
       hueSDK.startPushlinkAuthentication(phAccessPoint);
     }
 
     @Override
     public void onAccessPointsFound(List<PHAccessPoint> list) {
-      Log.d(DEBUG, "Access Point Found... " + list.size());
+      Log.d("HUE", "Access Point Found... " + list.size());
 
       if (list.size() > 0) {
         hueSDK.getAccessPointsFound().clear();
@@ -116,17 +115,17 @@ public class HueController {
 
     @Override
     public void onError(int i, String s) {
-      Log.d(DEBUG, "Error Called : " + i + ":" + s);
+      Log.d("HUE", "Error Called : " + i + ":" + s);
 
       if (i == PHHueError.NO_CONNECTION) {
-        Log.d(DEBUG, "No Connection...");
+        Log.d("HUE", "No Connection...");
       } else if (i == PHHueError.AUTHENTICATION_FAILED
           || i == PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
-        Log.d(DEBUG, "Authentication failed... / Pushlink Authentication failed...");
+        Log.d("HUE", "Authentication failed... / Pushlink Authentication failed...");
       } else if (i == PHHueError.BRIDGE_NOT_RESPONDING) {
-        Log.d(DEBUG, "Bridge Not Responding..");
+        Log.d("HUE", "Bridge Not Responding..");
       } else if (i == PHMessageType.BRIDGE_NOT_FOUND) {
-        Log.d(DEBUG, "Bridge Not Found...");
+        Log.d("HUE", "Bridge Not Found...");
 
         //if(!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
         //  phHueSDK = PHHueSDK.getInstance();
@@ -144,7 +143,7 @@ public class HueController {
 
     @Override
     public void onConnectionLost(PHAccessPoint phAccessPoint) {
-      Log.d(DEBUG, "onConnectionLost : " + phAccessPoint.getIpAddress());
+      Log.d("HUE", "onConnectionLost : " + phAccessPoint.getIpAddress());
 
       if (!hueSDK.getDisconnectedAccessPoint().contains(phAccessPoint)) {
         hueSDK.getDisconnectedAccessPoint().add(phAccessPoint);
@@ -154,7 +153,7 @@ public class HueController {
     @Override
     public void onParsingErrors(List<PHHueParsingError> list) {
       for (PHHueParsingError parsingError : list) {
-        Log.d(DEBUG, "ParsingError : " + parsingError.getMessage());
+        Log.d("HUE", "ParsingError : " + parsingError.getMessage());
       }
     }
   };
@@ -162,32 +161,32 @@ public class HueController {
   private PHLightListener lightListener = new PHLightListener() {
     @Override
     public void onReceivingLightDetails(PHLight phLight) {
-      Log.d(DEBUG, "Receiving Light Details...");
+      Log.d("HUE", "Receiving Light Details...");
     }
 
     @Override
     public void onReceivingLights(List<PHBridgeResource> list) {
-      Log.d(DEBUG, "Receiving Lights...");
+      Log.d("HUE", "Receiving Lights...");
     }
 
     @Override
     public void onSearchComplete() {
-      Log.d(DEBUG, "Search Complete...");
+      Log.d("HUE", "Search Complete...");
     }
 
     @Override
     public void onSuccess() {
-      Log.d(DEBUG, "Success...");
+      Log.d("HUE", "Success...");
     }
 
     @Override
     public void onError(int i, String s) {
-      Log.d(DEBUG, "Error...");
+      Log.d("HUE", "Error...");
     }
 
     @Override
     public void onStateUpdate(Map<String, String> map, List<PHHueError> list) {
-      Log.d(DEBUG, "State Update...");
+      Log.d("HUE", "State Update...");
     }
   };
 
@@ -246,7 +245,7 @@ public class HueController {
   }
 
   void turnOn() {
-    Log.d(DEBUG, "turn on...");
+    Log.d("HUE", "turn on...");
 
     PHLightState lightState = new PHLightState();
     lightState.setOn(true);
@@ -261,7 +260,7 @@ public class HueController {
   }
 
   void turnOff() {
-    Log.d(DEBUG, "turn off...");
+    Log.d("HUE", "turn off...");
 
     PHLightState lightState = new PHLightState();
     lightState.setOn(false);
@@ -271,7 +270,7 @@ public class HueController {
   }
 
   void changeColor(int r, int g, int b) {
-    Log.d(DEBUG, "change light color...");
+    Log.d("HUE", "change light color...");
 
     PHLightState lightState = new PHLightState();
     lightState.setOn(true);
