@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-      android:icon="@mipmap/ic_battery_unknown_white_24dp"
-      android:title="BATTERY"
-      app:showAsAction="always"/>
-    <item android:title="@string/basic_conf"/>
-    <item
-      android:checkable="false"
-      android:title="@string/osc_conf"/>
-    <item
-      android:title="@string/midi_conf"/>
-    <item android:title="@string/about"/>
-    <item android:title="@string/exit_app"/>
+  <item
+    android:icon="@mipmap/ic_battery_unknown_white_24dp"
+    android:title="BATTERY"
+    app:showAsAction="always"/>
+  <item android:title="@string/basic_conf"/>
+  <item
+    android:checkable="false"
+    android:title="@string/osc_conf"/>
+  <item
+    android:title="@string/midi_conf"/>
+  <item android:title="@string/hue_conf"/>
+  <item android:title="@string/about"/>
+  <item android:title="@string/exit_app"/>
 </menu>
