@@ -18,4 +18,10 @@
     <string name="functions">functions</string>
     <string name="blink_count">blink count</string>
     <string name="camera">camera</string>
+    <string name="hue">Hue</string>
+    <string name="random">Random</string>
+    <string name="light1">Light 1</string>
+    <string name="light2">Light 2</string>
+    <string name="light3">Light 3</string>
+    <string name="light4">Light 4</string>
 </resources>
