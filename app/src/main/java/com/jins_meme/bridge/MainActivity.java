@@ -190,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      */
     menu.add(0, index++, 0, R.string.osc_conf);
     menu.add(0, index++, 0, R.string.midi_conf);
+    menu.add(0, index++, 0, R.string.hue_conf);
 
     menu.add(0, index++, 0, R.string.about);
     menu.add(0, index, 0, R.string.exit_app);
@@ -312,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       return true;
     } else if (itemTitle.equals(getString(R.string.exit_app))) {
-      finish();
+      finishAndRemoveTask();
     }
 
     return super.onOptionsItemSelected(item);
@@ -376,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Bluetooth ON");
       } else {
-        finish();
+        finishAndRemoveTask();
       }
     } else {
       if (resultCode == RESULT_OK) {
@@ -723,7 +724,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       public void onClick(DialogInterface dialogInterface, int i) {
         Log.d("DEBUG", "Quit App...");
 
-        finish();
+        finishAndRemoveTask();
       }
     });
     alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -749,7 +750,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 500, pendingIntent);
 
-    finish();
+    finishAndRemoveTask();
   }
 
   void renewBatteryState(int status) {
