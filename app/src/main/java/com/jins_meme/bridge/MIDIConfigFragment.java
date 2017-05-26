@@ -1,5 +1,5 @@
 /**
- * SettingFragment.java
+ * MIDIConfigFragment.java
  *
  * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
