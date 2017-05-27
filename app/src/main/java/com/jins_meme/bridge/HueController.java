@@ -200,13 +200,13 @@ public class HueController {
     hueSDK = PHHueSDK.create();
     //hueSDK = PHHueSDK.getInstance();
 
-    hueSDK.setAppName("MemeBRIDGE");
+    hueSDK.setAppName("JINS MEME BRIDGE");
     hueSDK.setDeviceName(Build.MODEL);
 
     hueSDK.getNotificationManager().registerSDKListener(phListener);
 
     if (getLastConnectedIp() != null && !getLastConnectedIp().equals("")) {
-      Log.d("TEST", "connect... " + getLastConnectedIp() + " / " + getUsername());
+      Log.d("HUE", "connect... " + getLastConnectedIp() + " / " + getUsername());
 
       PHAccessPoint accessPoint = new PHAccessPoint();
       accessPoint.setIpAddress(getLastConnectedIp());
@@ -216,7 +216,7 @@ public class HueController {
         hueSDK.connect(accessPoint);
       }
     } else {
-      Log.d("TEST", "search...");
+      Log.d("HUE", "search...");
 
       PHBridgeSearchManager searchManager = (PHBridgeSearchManager) hueSDK
           .getSDKService(PHHueSDK.SEARCH_BRIDGE);
