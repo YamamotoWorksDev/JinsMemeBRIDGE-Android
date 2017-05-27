@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private OSCConfigFragment oscConfigFragment;
   private MIDIConfigFragment midiConfigFragment;
+  private HueConfigFragment hueConfigFragment;
   /*
    * MODIFY YOURSELF
    * Add your implemented function's configuration
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
     midiConfigFragment = new MIDIConfigFragment();
+    hueConfigFragment = new HueConfigFragment();
     aboutFragment = new AboutFragment();
     /*
      * MODIFY YOURSELF
@@ -291,6 +293,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transitToConfig(midiConfigFragment);
 
       return true;
+    } else if (itemTitle.equals(getString(R.string.hue_conf))) {
+      Log.d("DEBUG", "tap hue setting");
+
+      transitToConfig(hueConfigFragment);
+
+      return true;
     }
     /*
      * MODIFY YOURSELF
@@ -348,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     oscConfigFragment = null;
     midiConfigFragment = null;
+    hueConfigFragment = null;
     /*
      * MODIFY YOURSELF
      * Add your implemented function's configuration
