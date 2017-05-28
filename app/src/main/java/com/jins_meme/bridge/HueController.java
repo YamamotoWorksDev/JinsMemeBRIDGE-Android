@@ -38,7 +38,6 @@ public class HueController {
   private static final String LAST_CONNECTED_USERNAME = "LastConnectedUsername";
   private static final String LAST_CONNECTED_IP = "LastConnectedIP";
 
-  private Context context;
   private PHHueSDK hueSDK;
   private List<PHLight> allLights;// = phBridge.getResourceCache().getAllLights();
   private PHLight currentLight;// = allLights.get(0);
@@ -191,14 +190,10 @@ public class HueController {
   };
 
   HueController(Context context) {
-    this.context = context;
-
-    sharedPreferences = this.context.getSharedPreferences(HUE_SHARED_PREFERENCES_STORE, 0);
-    //sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context);
+    sharedPreferences = context.getSharedPreferences(HUE_SHARED_PREFERENCES_STORE, 0);
     sharedPreferencesEditor = sharedPreferences.edit();
 
     hueSDK = PHHueSDK.create();
-    //hueSDK = PHHueSDK.getInstance();
 
     hueSDK.setAppName("JINS MEME BRIDGE");
     hueSDK.setDeviceName(Build.MODEL);
@@ -225,8 +220,7 @@ public class HueController {
   }
 
   private String getUsername() {
-    String username = sharedPreferences.getString(LAST_CONNECTED_USERNAME, "");
-    return username;
+    return sharedPreferences.getString(LAST_CONNECTED_USERNAME, "");
   }
 
   private boolean setUsername(String username) {
@@ -235,8 +229,7 @@ public class HueController {
   }
 
   private String getLastConnectedIp() {
-    String ipAddress = sharedPreferences.getString(LAST_CONNECTED_IP, "");
-    return ipAddress;
+    return sharedPreferences.getString(LAST_CONNECTED_IP, "");
   }
 
   private boolean setLastConnectIp(String ipAddress) {
@@ -279,6 +272,7 @@ public class HueController {
 
     lightState.setX(xy[0]);
     lightState.setY(xy[1]);
+    //lightState.setBrightness();
 
     PHBridge bridge = hueSDK.getSelectedBridge();
     bridge.updateLightState(currentLight, lightState, lightListener);
