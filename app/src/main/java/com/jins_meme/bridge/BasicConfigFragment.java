@@ -107,7 +107,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     Log.d("BASIC", "onViewCreated");
 
     ((MainActivity) getActivity()).setActionBarTitle(R.string.basic_conf);
-    ((MainActivity) getActivity()).setActionBarBack(true);
+    //((MainActivity) getActivity()).setActionBarBack(true);
     getActivity().invalidateOptionsMenu();
 
     swScan = (Switch) view.findViewById(R.id.scan);

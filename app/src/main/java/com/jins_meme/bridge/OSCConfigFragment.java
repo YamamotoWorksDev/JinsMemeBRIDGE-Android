@@ -101,7 +101,7 @@ public class OSCConfigFragment extends ConfigFragmentBase {
     });
 
     ((MainActivity) getActivity()).setActionBarTitle(R.string.osc_conf);
-    ((MainActivity) getActivity()).setActionBarBack(true);
+    //((MainActivity) getActivity()).setActionBarBack(true);
     getActivity().invalidateOptionsMenu();
 
     InputFilter[] filters = new InputFilter[1];

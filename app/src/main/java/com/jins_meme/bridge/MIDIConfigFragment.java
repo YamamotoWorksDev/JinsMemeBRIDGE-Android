@@ -86,7 +86,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase {
     super.onViewCreated(view, savedInstanceState);
 
     ((MainActivity) getActivity()).setActionBarTitle(R.string.midi_conf);
-    ((MainActivity) getActivity()).setActionBarBack(true);
+    //((MainActivity) getActivity()).setActionBarBack(true);
     getActivity().invalidateOptionsMenu();
 
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(getContext()));
