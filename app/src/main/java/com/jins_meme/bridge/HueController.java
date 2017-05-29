@@ -259,7 +259,9 @@ public class HueController {
     lightState.setOn(false);
 
     PHBridge bridge = hueSDK.getSelectedBridge();
-    bridge.updateLightState(currentLight, lightState, lightListener);
+    if (bridge != null) {
+      bridge.updateLightState(currentLight, lightState, lightListener);
+    }
   }
 
   void changeColor(int r, int g, int b) {
