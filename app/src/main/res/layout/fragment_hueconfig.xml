@@ -90,11 +90,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp"
-    android:layout_alignEnd="@+id/hue_bri_bar"
-    android:layout_alignStart="@+id/hue_bri_bar"
+    android:layout_alignEnd="@+id/hue_bri_val"
     android:layout_below="@+id/hue_bri_val"
-    android:max="5000"
-    android:progress="1000"/>
+    android:layout_toEndOf="@+id/textView21"
+    android:max="50"
+    android:progress="10"/>
   <TextView
     android:id="@+id/textView18"
     android:layout_width="wrap_content"
@@ -131,7 +131,7 @@
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/hue_ttime_bar"
     android:layout_alignStart="@+id/textView20"
-    android:layout_toStartOf="@+id/hue_ttime_bar"
+    android:layout_toStartOf="@+id/hue_bri_bar"
     android:text="T. Time"
     android:textAlignment="textEnd"/>
   <TextView
@@ -168,5 +168,12 @@
     android:layout_height="wrap_content"
     android:layout_alignEnd="@+id/hue_ttime_bar"
     android:layout_below="@+id/hue_ttime_bar"
-    android:text="1000"/>
+    android:text="10"/>
+  <Button
+    android:id="@+id/hue_test"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignStart="@+id/textView21"
+    android:layout_below="@+id/hue_ttime_val"
+    android:text="test"/>
 </RelativeLayout>

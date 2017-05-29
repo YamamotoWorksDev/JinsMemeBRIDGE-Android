@@ -9,10 +9,13 @@
 
 package com.jins_meme.bridge;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.philips.lighting.hue.listener.PHLightListener;
@@ -38,14 +41,27 @@ public class HueController {
   private static final String LAST_CONNECTED_USERNAME = "LastConnectedUsername";
   private static final String LAST_CONNECTED_IP = "LastConnectedIP";
 
-  private PHHueSDK hueSDK;
+  private Handler handler;
+  private static PHHueSDK hueSDK;
   private List<PHLight> allLights;// = phBridge.getResourceCache().getAllLights();
-  private PHLight currentLight;// = allLights.get(0);
+  private static PHLight currentLight;// = allLights.get(0);
   private PHLightState currentLightState;// = light.getLastKnownLightState();
   //private HueSharedPreferences huePrefs;
   //private AccesPointListAdapter adapter;
+
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor sharedPreferencesEditor;
+
+  private ProgressDialog progressDialog;
+  private AlertDialog.Builder alert;
+  private AlertDialog alertDialog;
+
+  private boolean isAuthRequired = true;
+  static int connectionState = 0;
+
+  static int getConnectionState() {
+    return connectionState;
+  }
 
   private PHSDKListener phListener = new PHSDKListener() {
     @Override
@@ -81,6 +97,14 @@ public class HueController {
           currentLightState.isOn() + " (r,g,b) = (" + Color.red(color) + ", " + Color.green(color)
               + ", " + Color.blue(color) + ") ");
 
+      connectionState = 4;
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          progressDialog.dismiss();
+        }
+      });
+
       turnOn();
     }
 
@@ -89,11 +113,35 @@ public class HueController {
       Log.d("HUE", "Authentication Required...");
 
       hueSDK.startPushlinkAuthentication(phAccessPoint);
+
+      if (isAuthRequired) {
+        handler.post(new Runnable() {
+          @Override
+          public void run() {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("Found Hue Bridge.\nPlease push the LINK Button...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+          }
+        });
+
+        isAuthRequired = false;
+      }
     }
 
     @Override
     public void onAccessPointsFound(List<PHAccessPoint> list) {
       Log.d("HUE", "Access Point Found... " + list.size());
+
+      isAuthRequired = true;
+      connectionState = 2;
+
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          progressDialog.dismiss();
+        }
+      });
 
       if (list.size() > 0) {
         hueSDK.getAccessPointsFound().clear();
@@ -117,12 +165,24 @@ public class HueController {
       Log.d("HUE", "Error Called : " + i + ":" + s);
 
       if (i == PHHueError.NO_CONNECTION) {
+
         Log.d("HUE", "No Connection...");
       } else if (i == PHHueError.AUTHENTICATION_FAILED
           || i == PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
         Log.d("HUE", "Authentication failed... / Pushlink Authentication failed...");
+
+        connectionState = -1;
+
+        handler.post(new Runnable() {
+          @Override
+          public void run() {
+            progressDialog.dismiss();
+          }
+        });
       } else if (i == PHHueError.BRIDGE_NOT_RESPONDING) {
         Log.d("HUE", "Bridge Not Responding..");
+
+        setLastConnectIp("");
       } else if (i == PHMessageType.BRIDGE_NOT_FOUND) {
         Log.d("HUE", "Bridge Not Found...");
 
@@ -190,8 +250,13 @@ public class HueController {
   };
 
   HueController(Context context) {
+    handler = new Handler();
+
     sharedPreferences = context.getSharedPreferences(HUE_SHARED_PREFERENCES_STORE, 0);
     sharedPreferencesEditor = sharedPreferences.edit();
+
+    progressDialog = new ProgressDialog(context);
+    alert = new AlertDialog.Builder(context);
 
     hueSDK = PHHueSDK.create();
 
@@ -210,8 +275,36 @@ public class HueController {
       if (!hueSDK.isAccessPointConnected(accessPoint)) {
         hueSDK.connect(accessPoint);
       }
+    }
+  }
+
+  void connect() {
+    if (getLastConnectedIp() != null && !getLastConnectedIp().equals("")) {
+      connectionState = 3;
+
+      Log.d("HUE", "connect... " + getLastConnectedIp() + " / " + getUsername());
+
+      PHAccessPoint accessPoint = new PHAccessPoint();
+      accessPoint.setIpAddress(getLastConnectedIp());
+      accessPoint.setUsername(getUsername());
+
+      if (!hueSDK.isAccessPointConnected(accessPoint)) {
+        hueSDK.connect(accessPoint);
+      }
     } else {
       Log.d("HUE", "search...");
+
+      connectionState = 1;
+
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+          progressDialog.setMessage("Searching Hue Bridge...");
+          progressDialog.setCancelable(false);
+          progressDialog.show();
+        }
+      });
 
       PHBridgeSearchManager searchManager = (PHBridgeSearchManager) hueSDK
           .getSDKService(PHHueSDK.SEARCH_BRIDGE);
@@ -219,22 +312,33 @@ public class HueController {
     }
   }
 
+  void disconnect() {
+    turnOff();
+
+    PHBridge bridge = hueSDK.getSelectedBridge();
+    if (bridge != null) {
+      hueSDK.disconnect(bridge);
+    }
+  }
+
   private String getUsername() {
     return sharedPreferences.getString(LAST_CONNECTED_USERNAME, "");
   }
 
-  private boolean setUsername(String username) {
+  private void setUsername(String username) {
     sharedPreferencesEditor.putString(LAST_CONNECTED_USERNAME, username);
-    return (sharedPreferencesEditor.commit());
+    sharedPreferencesEditor.apply();
   }
 
   private String getLastConnectedIp() {
     return sharedPreferences.getString(LAST_CONNECTED_IP, "");
   }
 
-  private boolean setLastConnectIp(String ipAddress) {
+  private void setLastConnectIp(String ipAddress) {
+    Log.d("HUE", "setLastConnectIp");
+
     sharedPreferencesEditor.putString(LAST_CONNECTED_IP, ipAddress);
-    return (sharedPreferencesEditor.commit());
+    sharedPreferencesEditor.apply();
   }
 
   void turnOn() {
@@ -275,6 +379,23 @@ public class HueController {
     lightState.setX(xy[0]);
     lightState.setY(xy[1]);
     //lightState.setBrightness();
+
+    PHBridge bridge = hueSDK.getSelectedBridge();
+    bridge.updateLightState(currentLight, lightState, lightListener);
+  }
+
+  void changeColor(int r, int g, int b, int brightness, int time) {
+    Log.d("HUE", "change light color...");
+
+    PHLightState lightState = new PHLightState();
+    lightState.setOn(true);
+
+    float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, currentLight.getModelNumber());
+
+    lightState.setX(xy[0]);
+    lightState.setY(xy[1]);
+    lightState.setBrightness(brightness);
+    lightState.setTransitionTime(time);
 
     PHBridge bridge = hueSDK.getSelectedBridge();
     bridge.updateLightState(currentLight, lightState, lightListener);

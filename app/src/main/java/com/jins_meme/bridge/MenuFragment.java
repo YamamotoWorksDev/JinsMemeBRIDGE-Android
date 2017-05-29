@@ -340,19 +340,36 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       switch (id) {
         case R.string.random:
           Random rand = new Random();
-          hueController.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+          hueController
+              .changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), 255, 1);
           break;
         case R.string.light1:
-          hueController.changeColor(255, 0, 0);
+          hueController.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_G", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_B", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_TTIME", 10));
           break;
         case R.string.light2:
-          hueController.changeColor(0, 255, 0);
+          hueController.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L2_R", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_G", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_B", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_TTIME", 10));
           break;
         case R.string.light3:
-          hueController.changeColor(0, 0, 255);
+          hueController.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L3_R", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_G", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_B", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_TTIME", 10));
           break;
         case R.string.light4:
-          hueController.changeColor(255, 255, 255);
+          hueController.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L4_R", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_G", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_B", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10));
           break;
       }
     }
