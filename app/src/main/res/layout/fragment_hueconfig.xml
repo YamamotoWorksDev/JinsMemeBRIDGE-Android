@@ -81,7 +81,9 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="19dp"
     android:layout_alignBottom="@+id/hue_connect"
-    android:layout_toEndOf="@+id/hue_connect"/>
+    android:layout_toEndOf="@+id/hue_connect"
+    android:layout_toStartOf="@+id/space2"
+    android:entries="@array/hue_preset"/>
   <SeekBar
     android:id="@+id/hue_ttime_bar"
     android:layout_width="wrap_content"
