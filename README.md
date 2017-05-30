@@ -1,8 +1,15 @@
 # MemeBRIDGE_for_Android
 The repositorty for meme BRIDGE.
 
+### PROGRAMMER
+[Nariaki Iwatani](https://github.com/nariakiiwatani)([Anno Lab Inc.](http://annolab.com/annoentrance/)) and [Shunichi Yamamoto](https://github.com/tkrworks)([Yamamoto Works Ltd.](http://atelier.tkrworks.net))
+
+### DESIGNER
+Tsuyoshi Otabe([Invisible Designs Lab.](http://invisi.jp))
+
 ### LICENSE
-This software is released under the MIT License, see [LICENSE.txt](https://github.com/jins-meme/MemeBRIDGE_for_Android/blob/master/LICENSE.txt).
+This software's source codes are released under the MIT License, see [LICENSE.txt](https://github.com/jins-meme/MemeBRIDGE_for_Android/blob/master/LICENSE.txt).  
+And the drawable folder's PNGs by Tsuyoshi Otabe are licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).
 
 ### SUPPORT ANDROID VERSION
 Android 6.0(Marshmallow) or later.
