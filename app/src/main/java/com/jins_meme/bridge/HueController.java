@@ -353,7 +353,9 @@ public class HueController {
     lightState.setY(xy[1]);
 
     PHBridge bridge = hueSDK.getSelectedBridge();
-    bridge.updateLightState(currentLight, lightState, lightListener);
+    if (currentLight != null) {
+      bridge.updateLightState(currentLight, lightState, lightListener);
+    }
   }
 
   void turnOff() {
@@ -363,7 +365,7 @@ public class HueController {
     lightState.setOn(false);
 
     PHBridge bridge = hueSDK.getSelectedBridge();
-    if (bridge != null) {
+    if (currentLight != null) {
       bridge.updateLightState(currentLight, lightState, lightListener);
     }
   }
@@ -390,14 +392,16 @@ public class HueController {
     PHLightState lightState = new PHLightState();
     lightState.setOn(true);
 
-    float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, currentLight.getModelNumber());
+    if (currentLight != null) {
+      float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, currentLight.getModelNumber());
 
-    lightState.setX(xy[0]);
-    lightState.setY(xy[1]);
-    lightState.setBrightness(brightness);
-    lightState.setTransitionTime(time);
+      lightState.setX(xy[0]);
+      lightState.setY(xy[1]);
+      lightState.setBrightness(brightness);
+      lightState.setTransitionTime(time);
 
-    PHBridge bridge = hueSDK.getSelectedBridge();
-    bridge.updateLightState(currentLight, lightState, lightListener);
+      PHBridge bridge = hueSDK.getSelectedBridge();
+      bridge.updateLightState(currentLight, lightState, lightListener);
+    }
   }
 }
