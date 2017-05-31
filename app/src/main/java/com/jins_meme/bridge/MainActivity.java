@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MenuFragment.MenuFragmentListener {
+    MenuFragment.MenuFragmentListener, RootMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
+  private RootMenuFragment rootMenu;
   private MenuFragment menuFragment;
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
+    rootMenu = new RootMenuFragment();
     menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.add(R.id.container, menuFragment);
+    transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
     checkBluetoothEnable();
@@ -173,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.postDelayed(new Runnable() {
       @Override
       public void run() {
-        menuFragment.resetCard();
+//        menuFragment.resetCard();
       }
     }, 1000);
   }
@@ -379,6 +381,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   @Override
+  public void openNextMenu(int card_id) {
+  }
+
+  @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
@@ -447,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
     invalidateOptionsMenu();
 
-    memeLib.startDataReport(menuFragment);
+    memeLib.startDataReport(rootMenu);
   }
 
   @Override
@@ -766,4 +772,5 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     batteryStatus = status;
     invalidateOptionsMenu();
   }
+
 }
