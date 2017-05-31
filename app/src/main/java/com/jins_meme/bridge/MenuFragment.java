@@ -470,7 +470,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     //debug Log.d("DEBUG", "accel  = " + accelX + ", " + accelY + ", " + accelZ);
     //debug Log.d("DEBUG", "rotation  = " + yaw + ", " + pitch + ", " + roll);
 
-    if (memeOSC.initializedSocket()) {
+    if (memeOSC != null && memeOSC.initializedSocket()) {
       //debug Log.d("DEBUG", "osc bundle.");
 
       memeOSC.createBundle();
