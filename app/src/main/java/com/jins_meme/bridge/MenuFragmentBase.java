@@ -20,7 +20,6 @@ public class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter
     // Required empty public constructor
   }
 
-
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -28,6 +27,10 @@ public class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter
     mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.MATCH_PARENT));
     return mView;
+  }
+
+  public boolean menuBack() {
+    return mView.back();
   }
 
   @Override

@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MemeRealtimeListener, MenuFragment.MenuFragmentListener,
+    MemeRealtimeListener,
     RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener,
     OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener,
     CameraFragment.OnFragmentInteractionListener {
@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private OSCMenuFragment oscMenu;
   private HueMenuFragment hueMenu;
 
-  private MenuFragment menuFragment;
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
 
@@ -131,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     oscMenu = new OSCMenuFragment();
     hueMenu = new HueMenuFragment();
 
-    menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
     midiConfigFragment = new MIDIConfigFragment();
@@ -194,12 +192,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }, 10000);
     }
 
-    handler.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-//        menuFragment.resetCard();
-      }
-    }, 1000);
   }
 
   @Override
@@ -289,9 +281,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if (cs == null) {
       Log.d("DEBUG", "press actionbar back!");
-
-      transitToMain(0);
-
       return true;
     }
 
@@ -302,25 +291,25 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (itemTitle.equals(getString(R.string.basic_conf))) {
       Log.d("DEBUG", "tap basic setting");
 
-      transitToConfig(basicConfigFragment);
+      transitToFragment(basicConfigFragment);
 
       return true;
     } else if (itemTitle.equals(getString(R.string.osc_conf))) {
       Log.d("DEBUG", "tap osc setting");
 
-      transitToConfig(oscConfigFragment);
+      transitToFragment(oscConfigFragment);
 
       return true;
     } else if (itemTitle.equals(getString(R.string.midi_conf))) {
       Log.d("DEBUG", "tap midi setting");
 
-      transitToConfig(midiConfigFragment);
+      transitToFragment(midiConfigFragment);
 
       return true;
     } else if (itemTitle.equals(getString(R.string.hue_conf))) {
       Log.d("DEBUG", "tap hue setting");
 
-      transitToConfig(hueConfigFragment);
+      transitToFragment(hueConfigFragment);
 
       return true;
     }
@@ -341,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     else if (itemTitle.equals(getString(R.string.about))) {
       Log.d("DEBUG", "tap about");
 
-      transitToConfig(aboutFragment);
+      transitToFragment(aboutFragment);
 
       return true;
     } else if (itemTitle.equals(getString(R.string.exit_app))) {
@@ -374,7 +363,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       memeLib = null;
     }
 
-    menuFragment = null;
+    rootMenu = null;
+    midiMenu = null;
+    oscMenu = null;
+    hueMenu = null;
+
     basicConfigFragment = null;
     aboutFragment = null;
 
@@ -643,13 +636,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   }
 
-
-  // Fragmentからの通知イベント関連
-  @Override
-  public void onMenuFragmentEnd(MenuFragment.MenuFragmentEvent event) {
-    event.apply(this, menuFragment);
-  }
-
   public List<String> getScannedMemeList() {
     return scannedMemeList;
   }
@@ -680,7 +666,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     FragmentManager manager = getSupportFragmentManager();
     Fragment active = manager.findFragmentById(R.id.container);
 
-    if(active != menuFragment || !menuFragment.menuBack()) {
+    boolean processed = false;
+    if(active instanceof MenuFragmentBase) {
+      processed = ((MenuFragmentBase) active).menuBack();
+    }
+    if(!processed) {
       super.onBackPressed();
     }
     if(manager.getBackStackEntryCount() == 0) {
@@ -706,51 +696,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
   }
 
-  void transitToConfig(Fragment fragment) {
-    FragmentManager manager = getSupportFragmentManager();
-    Fragment active = manager.findFragmentById(R.id.container);
-
-    FragmentTransaction transaction = manager.beginTransaction();
-    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-    if(active == menuFragment) {
-      transaction.hide(menuFragment);
-      transaction.add(R.id.container, fragment);
-    }
-    else {
-      transaction.replace(R.id.container, fragment);
-    }
-    transaction.addToBackStack(null);
-    transaction.commit();
-  }
-
-  void transitToMain(final int direction) {
-    InputMethodManager imm = (InputMethodManager) getSystemService(
-        Context.INPUT_METHOD_SERVICE);
-    imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
-        InputMethodManager.HIDE_NOT_ALWAYS);
-
-    FragmentManager manager = getSupportFragmentManager();
-    FragmentTransaction transaction = manager.beginTransaction();
-
-    switch (direction) {
-      case 0:
-        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out);
-        break;
-      case 1:
-        transaction.setCustomAnimations(android.R.anim.fade_in, R.anim.config_out2);
-        break;
-      default:
-        break;
-    }
-    transaction.remove(manager.findFragmentById(R.id.container));
-    transaction.show(menuFragment);
-//    transaction.addToBackStack(null);
-    transaction.commit();
-
-    setActionBarTitle(R.string.actionbar_title);
-    setActionBarBack(false);
-    invalidateOptionsMenu();
-  }
   void transitToMenu(MenuFragmentBase next) {
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
@@ -871,7 +816,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       public void onClick(DialogInterface dialogInterface, int i) {
         Log.d("DEBUG", "Close Alert Dialog...");
 
-        transitToConfig(basicConfigFragment);
+        transitToFragment(basicConfigFragment);
       }
     });
     alert.setCancelable(false);
