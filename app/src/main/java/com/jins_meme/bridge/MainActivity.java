@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
+    transaction.add(R.id.container, midiMenu);
+    transaction.hide(midiMenu);
     transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
@@ -690,7 +692,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarBack(false);
     invalidateOptionsMenu();
   }
-  void transitToMenu(Fragment next) {
+  void transitToMenu(final MenuFragmentBase next) {
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
@@ -699,7 +701,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
 
-    transaction.replace(R.id.container, next);
+    Fragment active = manager.findFragmentById(R.id.container);
+    if(active instanceof MenuFragmentBase) {
+      transaction.hide(active);
+    }
+    else {
+      transaction.remove(active);
+    }
+    transaction.show(next);
     transaction.addToBackStack(null);
     transaction.commit();
 

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.jins_jp.meme.MemeFitStatus;
 import com.jins_jp.meme.MemeRealtimeData;
@@ -21,25 +20,14 @@ import com.jins_meme.bridge.BridgeUIView.IResultListener;
  * {@link RootMenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class RootMenuFragment extends Fragment implements IResultListener, MemeRealtimeListener {
+public class RootMenuFragment extends MenuFragmentBase implements IResultListener, MemeRealtimeListener {
 
   private OnFragmentInteractionListener mListener;
-  private BridgeUIView mView = null;
   private MemeRealtimeDataFilter mMemeDataFilter;
   private Handler mHandler = new Handler();
 
   public RootMenuFragment() {
     // Required empty public constructor
-  }
-
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    mView = new BridgeUIView(getContext());
-    mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-        LinearLayout.LayoutParams.MATCH_PARENT));
-    return mView;
   }
 
   @Override
@@ -117,7 +105,6 @@ public class RootMenuFragment extends Fragment implements IResultListener, MemeR
 
   @Override
   public void onEnterCard(int id) {
-    mListener.openNextMenu(id);
   }
 
   @Override
@@ -127,7 +114,7 @@ public class RootMenuFragment extends Fragment implements IResultListener, MemeR
 
   @Override
   public void onEndCardSelected(int id) {
-
+    mListener.openNextMenu(id);
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
@@ -155,7 +142,7 @@ public class RootMenuFragment extends Fragment implements IResultListener, MemeR
 
     @Override
     public CardFunction getCardFunction(int id) {
-      return CardFunction.ENTER_MENU;
+      return CardFunction.END;
     }
 
     @Override
