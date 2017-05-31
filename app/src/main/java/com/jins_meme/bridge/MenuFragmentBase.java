@@ -7,11 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import com.jins_jp.meme.MemeRealtimeListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MenuFragmentBase extends Fragment {
+public class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback {
 
   protected BridgeUIView mView = null;
 
@@ -29,13 +30,19 @@ public class MenuFragmentBase extends Fragment {
     return mView;
   }
 
-  public void enter() {
+  @Override
+  public void onMemeBlinked() {
     mView.enter();
   }
-  public void moveLeft() {
+
+  @Override
+  public void onMemeMoveLeft() {
     mView.move(-1);
   }
-  public void moveRight() {
+
+  @Override
+  public void onMemeMoveRight() {
     mView.move(1);
   }
+
 }

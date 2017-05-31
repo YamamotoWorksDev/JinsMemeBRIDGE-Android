@@ -51,7 +51,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, MenuFragment.MenuFragmentListener,
     RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener,
-    OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener {
+    OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener,
+    CameraFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -413,6 +414,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       case R.string.hue:
         transitToMenu(hueMenu);
         break;
+      case R.string.camera:
+        transitToFragment(new CameraFragment());
+        break;
     }
   }
 
@@ -611,27 +615,27 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
       FragmentManager manager = getSupportFragmentManager();
       Fragment active = manager.findFragmentById(R.id.container);
-      if(active instanceof MenuFragmentBase) {
-        final MenuFragmentBase menu = (MenuFragmentBase)active;
+      if(active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
+        final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback)active;
         if (mMemeDataFilter.isBlink()) {
           handler.post(new Runnable() {
             @Override
             public void run() {
-              menu.enter();
+              accepter.onMemeBlinked();
             }
           });
         } else if (mMemeDataFilter.isLeft()) {
           handler.post(new Runnable() {
             @Override
             public void run() {
-              menu.moveLeft();
+              accepter.onMemeMoveLeft();
             }
           });
         } else if (mMemeDataFilter.isRight()) {
           handler.post(new Runnable() {
             @Override
             public void run() {
-              menu.moveRight();
+              accepter.onMemeMoveRight();
             }
           });
         }
@@ -747,7 +751,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarBack(false);
     invalidateOptionsMenu();
   }
-  void transitToMenu(final MenuFragmentBase next) {
+  void transitToMenu(MenuFragmentBase next) {
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
@@ -764,6 +768,30 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transaction.remove(active);
     }
     transaction.show(next);
+    transaction.addToBackStack(null);
+    transaction.commit();
+
+    setActionBarTitle(R.string.actionbar_title);
+    setActionBarBack(false);
+    invalidateOptionsMenu();
+  }
+  void transitToFragment(Fragment next) {
+    InputMethodManager imm = (InputMethodManager) getSystemService(
+        Context.INPUT_METHOD_SERVICE);
+    imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
+        InputMethodManager.HIDE_NOT_ALWAYS);
+
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+
+    Fragment active = manager.findFragmentById(R.id.container);
+    if(active instanceof MenuFragmentBase) {
+      transaction.hide(active);
+    }
+    else {
+      transaction.remove(active);
+    }
+    transaction.add(R.id.container, next);
     transaction.addToBackStack(null);
     transaction.commit();
 
