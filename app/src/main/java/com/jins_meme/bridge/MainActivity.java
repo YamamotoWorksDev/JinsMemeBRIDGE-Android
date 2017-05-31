@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MenuFragment.MenuFragmentListener, RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener {
+    MenuFragment.MenuFragmentListener, RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener, OSCMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private RootMenuFragment rootMenu;
   private MIDIMenuFragment midiMenu;
+  private OSCMenuFragment oscMenu;
 
   private MenuFragment menuFragment;
   private BasicConfigFragment basicConfigFragment;
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     rootMenu = new RootMenuFragment();
     midiMenu = new MIDIMenuFragment();
+    oscMenu = new OSCMenuFragment();
 
     menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
@@ -137,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     FragmentTransaction transaction = manager.beginTransaction();
     transaction.add(R.id.container, midiMenu);
     transaction.hide(midiMenu);
+    transaction.add(R.id.container, oscMenu);
+    transaction.hide(oscMenu);
     transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
@@ -392,6 +396,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     switch(card_id) {
       case R.string.midi:
         transitToMenu(midiMenu);
+        break;
+      case R.string.osc:
+        transitToMenu(oscMenu);
         break;
     }
   }
