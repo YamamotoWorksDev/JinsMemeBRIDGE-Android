@@ -704,14 +704,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-
-    Fragment active = manager.findFragmentById(R.id.container);
-    if(active instanceof MenuFragmentBase) {
-      transaction.hide(active);
-    }
-    else {
-      transaction.remove(active);
-    }
+    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    hideVisibleMenuFragments(transaction);
     transaction.show(next);
     transaction.addToBackStack(null);
     transaction.commit();
@@ -728,14 +722,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-
-    Fragment active = manager.findFragmentById(R.id.container);
-    if(active instanceof MenuFragmentBase) {
-      transaction.hide(active);
-    }
-    else {
-      transaction.remove(active);
-    }
+    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    hideVisibleMenuFragments(transaction);
     transaction.add(R.id.container, next);
     transaction.addToBackStack(null);
     transaction.commit();
@@ -745,6 +733,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     invalidateOptionsMenu();
   }
 
+  public void hideVisibleMenuFragments(FragmentTransaction transaction) {
+    if(rootMenu.isVisible()) transaction.hide(rootMenu);
+    if(midiMenu.isVisible()) transaction.hide(midiMenu);
+    if(oscMenu.isVisible()) transaction.hide(oscMenu);
+    if(hueMenu.isVisible()) transaction.hide(hueMenu);
+  }
   String getSavedValue(String key) {
     return preferences.getString(key, null);
   }
