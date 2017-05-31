@@ -38,7 +38,10 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.jins_jp.meme.MemeConnectListener;
+import com.jins_jp.meme.MemeFitStatus;
 import com.jins_jp.meme.MemeLib;
+import com.jins_jp.meme.MemeRealtimeData;
+import com.jins_jp.meme.MemeRealtimeListener;
 import com.jins_jp.meme.MemeScanListener;
 import com.jins_jp.meme.MemeStatus;
 
@@ -46,9 +49,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MenuFragment.MenuFragmentListener, RootMenuFragment.OnFragmentInteractionListener,
-    MIDIMenuFragment.OnFragmentInteractionListener, OSCMenuFragment.OnFragmentInteractionListener,
-    HueMenuFragment.OnFragmentInteractionListener {
+    MemeRealtimeListener, MenuFragment.MenuFragmentListener,
+    RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener,
+    OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
+  private MemeRealtimeDataFilter mMemeDataFilter = new MemeRealtimeDataFilter();
 
   private RootMenuFragment rootMenu;
   private MIDIMenuFragment midiMenu;
@@ -486,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
     invalidateOptionsMenu();
 
-    memeLib.startDataReport(rootMenu);
+    memeLib.startDataReport(this);
   }
 
   @Override
@@ -600,6 +604,41 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       Log.d("MAIN", "scan stopped.");
     }
   }
+
+  @Override
+  public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
+    if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
+      mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
+      FragmentManager manager = getSupportFragmentManager();
+      Fragment active = manager.findFragmentById(R.id.container);
+      if(active instanceof MenuFragmentBase) {
+        final MenuFragmentBase menu = (MenuFragmentBase)active;
+        if (mMemeDataFilter.isBlink()) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              menu.enter();
+            }
+          });
+        } else if (mMemeDataFilter.isLeft()) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              menu.moveLeft();
+            }
+          });
+        } else if (mMemeDataFilter.isRight()) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              menu.moveRight();
+            }
+          });
+        }
+      }
+    }
+  }
+
 
   // Fragmentからの通知イベント関連
   @Override

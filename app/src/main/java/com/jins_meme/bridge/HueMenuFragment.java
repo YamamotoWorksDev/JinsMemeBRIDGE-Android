@@ -9,9 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.jins_jp.meme.MemeFitStatus;
-import com.jins_jp.meme.MemeRealtimeData;
-import com.jins_jp.meme.MemeRealtimeListener;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 import java.util.Random;
@@ -22,10 +19,9 @@ import java.util.Random;
  * {@link HueMenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class HueMenuFragment extends MenuFragmentBase implements IResultListener, MemeRealtimeListener {
+public class HueMenuFragment extends MenuFragmentBase implements IResultListener {
 
   private OnFragmentInteractionListener mListener;
-  private MemeRealtimeDataFilter mMemeDataFilter;
   private Handler mHandler = new Handler();
   private HueController mHue;
 
@@ -39,7 +35,6 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     CardAdapter myAdapter = new CardAdapter(getContext(), this);
     mView.setAdapter(myAdapter);
-    mMemeDataFilter = new MemeRealtimeDataFilter();
 
     mHue = new HueController(getContext());
   }
@@ -80,50 +75,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
     mListener = null;
   }
 
-  /**
-   * This interface must be implemented by activities that contain this
-   * fragment to allow an interaction in this fragment to be communicated
-   * to the activity and potentially other fragments contained in that
-   * activity.
-   * <p>
-   * See the Android Training lesson <a href=
-   * "http://developer.android.com/training/basics/fragments/communicating.html"
-   * >Communicating with Other Fragments</a> for more information.
-   */
   public interface OnFragmentInteractionListener {
     void backToPreviousMenu();
-  }
-  @Override
-  public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
-    if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
-      mMemeDataFilter.update(memeRealtimeData,
-          ((MainActivity) getActivity()).getBlinkThreshold(),
-          ((MainActivity) getActivity()).getUpDownThreshold(),
-          ((MainActivity) getActivity()).getLeftRightThreshold());
-
-      if (mMemeDataFilter.isBlink()) {
-        mHandler.post(new Runnable() {
-          @Override
-          public void run() {
-            mView.enter();
-          }
-        });
-      } else if (mMemeDataFilter.isLeft()) {
-        mHandler.post(new Runnable() {
-          @Override
-          public void run() {
-            mView.move(-1);
-          }
-        });
-      } else if (mMemeDataFilter.isRight()) {
-        mHandler.post(new Runnable() {
-          @Override
-          public void run() {
-            mView.move(1);
-          }
-        });
-      }
-    }
   }
 
   @Override

@@ -28,4 +28,14 @@ public class MenuFragmentBase extends Fragment {
         LinearLayout.LayoutParams.MATCH_PARENT));
     return mView;
   }
+
+  public void enter() {
+    mView.enter();
+  }
+  public void moveLeft() {
+    mView.move(-1);
+  }
+  public void moveRight() {
+    mView.move(1);
+  }
 }
