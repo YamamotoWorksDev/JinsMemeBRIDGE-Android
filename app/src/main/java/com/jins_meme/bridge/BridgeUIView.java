@@ -130,10 +130,10 @@ public class BridgeUIView extends RecyclerView {
     }
 
     boolean back() {
+      mListener.onExitCard(getSelectedCardId());
       if(mHistory.empty()) {
         return false;
       }
-      mListener.onExitCard(getSelectedCardId());
       mHistory.pop();
       notifyDataSetChanged();
       return true;

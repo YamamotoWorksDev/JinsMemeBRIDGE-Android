@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MenuFragment.MenuFragmentListener, RootMenuFragment.OnFragmentInteractionListener {
+    MenuFragment.MenuFragmentListener, RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -67,7 +67,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
+
   private RootMenuFragment rootMenu;
+  private MIDIMenuFragment midiMenu;
+
   private MenuFragment menuFragment;
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
@@ -115,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
     rootMenu = new RootMenuFragment();
+    midiMenu = new MIDIMenuFragment();
+
     menuFragment = new MenuFragment();
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -382,6 +387,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void openNextMenu(int card_id) {
+    switch(card_id) {
+      case R.string.midi:
+        transitToMenu(midiMenu);
+        break;
+    }
+  }
+
+  @Override
+  public void backToPreviousMenu() {
+    super.onBackPressed();
   }
 
   @Override
@@ -669,6 +684,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.remove(manager.findFragmentById(R.id.container));
     transaction.show(menuFragment);
 //    transaction.addToBackStack(null);
+    transaction.commit();
+
+    setActionBarTitle(R.string.actionbar_title);
+    setActionBarBack(false);
+    invalidateOptionsMenu();
+  }
+  void transitToMenu(Fragment next) {
+    InputMethodManager imm = (InputMethodManager) getSystemService(
+        Context.INPUT_METHOD_SERVICE);
+    imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
+        InputMethodManager.HIDE_NOT_ALWAYS);
+
+    FragmentManager manager = getSupportFragmentManager();
+    FragmentTransaction transaction = manager.beginTransaction();
+
+    transaction.replace(R.id.container, next);
+    transaction.addToBackStack(null);
     transaction.commit();
 
     setActionBarTitle(R.string.actionbar_title);
