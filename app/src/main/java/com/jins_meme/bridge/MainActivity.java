@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MIDIMenuFragment midiMenu;
   private OSCMenuFragment oscMenu;
   private HueMenuFragment hueMenu;
+  private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
 
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
@@ -129,6 +130,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     midiMenu = new MIDIMenuFragment();
     oscMenu = new OSCMenuFragment();
     hueMenu = new HueMenuFragment();
+    menus.add(rootMenu);
+    menus.add(midiMenu);
+    menus.add(oscMenu);
+    menus.add(hueMenu);
 
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -144,13 +149,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.add(R.id.container, midiMenu);
-    transaction.hide(midiMenu);
-    transaction.add(R.id.container, oscMenu);
-    transaction.hide(oscMenu);
-    transaction.add(R.id.container, hueMenu);
-    transaction.hide(hueMenu);
-    transaction.add(R.id.container, rootMenu);
+    for(Fragment m : menus) {
+      transaction.add(R.id.container, m);
+      transaction.hide(m);
+    }
+    transaction.show(rootMenu);
     transaction.commit();
 
     checkBluetoothEnable();
@@ -733,11 +736,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     invalidateOptionsMenu();
   }
 
-  public void hideVisibleMenuFragments(FragmentTransaction transaction) {
-    if(rootMenu.isVisible()) transaction.hide(rootMenu);
-    if(midiMenu.isVisible()) transaction.hide(midiMenu);
-    if(oscMenu.isVisible()) transaction.hide(oscMenu);
-    if(hueMenu.isVisible()) transaction.hide(hueMenu);
+  private void hideVisibleMenuFragments(FragmentTransaction transaction) {
+    for(Fragment m : menus) {
+      if(m.isVisible()) transaction.hide(m);
+    }
   }
   String getSavedValue(String key) {
     return preferences.getString(key, null);
