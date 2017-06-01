@@ -29,6 +29,16 @@ public class BridgeUIView extends RecyclerView {
     addItemDecoration(new CardDecoration());
   }
 
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    Adapter adapter = (Adapter) getAdapter();
+    int near = adapter.getItemCount() / 2;
+    int dx = (getWidth() - mLayoutManager.getItemWidth()) / 2;
+    mLayoutManager.scrollToPositionWithOffset(
+        near - near % adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
+  }
+
   public void move(int amount) {
     int toIndex = getCurrentCenteredItemPosition() + amount;
     if (0 <= toIndex && toIndex < getAdapter().getItemCount()) {
@@ -242,16 +252,6 @@ public class BridgeUIView extends RecyclerView {
       ret.height = getItemHeight() - CARD_MARGIN * 2;
       ret.setMargins(CARD_MARGIN, CARD_MARGIN, CARD_MARGIN, CARD_MARGIN);
       return ret;
-    }
-
-    @Override
-    public void onLayoutCompleted(State state) {
-      super.onLayoutCompleted(state);
-      Adapter adapter = (Adapter) getAdapter();
-      int near = adapter.getItemCount() / 2;
-      int dx = (getWidth() - getItemWidth()) / 2;
-      scrollToPositionWithOffset(
-          near - near % adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
     }
 
     private int getItemWidth() {
