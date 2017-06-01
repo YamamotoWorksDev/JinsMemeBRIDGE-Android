@@ -751,13 +751,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("MAIN", "press back!");
 
     FragmentManager manager = getSupportFragmentManager();
-    Fragment active = manager.findFragmentById(R.id.container);
+    MenuFragmentBase active = getVisibleMenuFragment();
 
-    boolean processed = false;
-    if(active instanceof MenuFragmentBase) {
-      processed = ((MenuFragmentBase) active).menuBack();
-    }
-    if(!processed) {
+    if(active == null || !active.menuBack()) {
       super.onBackPressed();
     }
     if(manager.getBackStackEntryCount() == 0) {
