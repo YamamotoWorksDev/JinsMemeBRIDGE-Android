@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private boolean pauseFlag = false;
   private int refractoryPeriod = 0;
 
+  private static final int BATTERY_CHECK_INTERVAL = 2000;
+  private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
+
   private RootMenuFragment rootMenu;
   private MIDIMenuFragment midiMenu;
   private OSCMenuFragment oscMenu;
@@ -620,6 +623,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
+    if (++batteryCheckCount > BATTERY_CHECK_INTERVAL) {
+      Log.d("DEBUG", "battery status = " + memeRealtimeData.getPowerLeft());
+      renewBatteryState(memeRealtimeData.getPowerLeft());
+
+      batteryCheckCount = 0;
+    }
     float accelX = memeRealtimeData.getAccX();
     float accelY = memeRealtimeData.getAccY();
     float accelZ = memeRealtimeData.getAccZ();
@@ -636,7 +645,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     float pitch = memeRealtimeData.getPitch();
     float roll = memeRealtimeData.getRoll();
     if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
-      Log.d("=========ROLL=========", String.format("%f", roll));
       if (Math.abs(roll) > getRollThreshold()) {
         cancelFlag = true;
         //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
@@ -667,7 +675,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         }
         if (refractoryPeriod > 0) {
           refractoryPeriod--;
-          Log.d("=========PAUSE=========", "refractorying");
         } else {
           mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
           if(pauseFlag) {
@@ -685,6 +692,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           else if(active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
             final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback)active;
             if (mMemeDataFilter.isBlink()) {
+              Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
               handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -692,6 +700,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 }
               });
             } else if (mMemeDataFilter.isLeft()) {
+              Log.d("EYE", "left = " + eyeLeft);
               handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -699,6 +708,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 }
               });
             } else if (mMemeDataFilter.isRight()) {
+              Log.d("EYE", "right = " + eyeRight);
               handler.post(new Runnable() {
                 @Override
                 public void run() {
