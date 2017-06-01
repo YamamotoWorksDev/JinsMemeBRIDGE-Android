@@ -460,7 +460,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
         invalidateOptionsMenu();
-        basicConfigFragment.setSwConnect(false);
+        if (basicConfigFragment != null) {
+          basicConfigFragment.setSwConnect(false);
+        }
 
         Toast.makeText(MainActivity.this, getString(R.string.meme_disconnected), Toast.LENGTH_SHORT)
             .show();
