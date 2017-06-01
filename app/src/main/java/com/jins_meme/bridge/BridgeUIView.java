@@ -50,7 +50,12 @@ public class BridgeUIView extends RecyclerView {
     ((Adapter) getAdapter()).reset();
   }
   public boolean back() {
-    return ((Adapter) getAdapter()).back();
+    Adapter adapter = (Adapter)getAdapter();
+    if(adapter.isAtTop()) {
+      return false;
+    }
+    adapter.back();
+    return true;
   }
 
   private int getCurrentCenteredItemPosition() {
@@ -129,14 +134,15 @@ public class BridgeUIView extends RecyclerView {
       mListener.onEndCardSelected(id);
     }
 
-    boolean back() {
+    boolean isAtTop() {
+      return mHistory.empty();
+    }
+    void back() {
       mListener.onExitCard(getSelectedCardId());
-      if(mHistory.empty()) {
-        return false;
+      if(!mHistory.empty()) {
+        mHistory.pop();
+        notifyDataSetChanged();
       }
-      mHistory.pop();
-      notifyDataSetChanged();
-      return true;
     }
 
     @Override
