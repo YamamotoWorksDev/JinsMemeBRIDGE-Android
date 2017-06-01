@@ -409,6 +409,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.logo4:
           ++note;
          */
+        case R.string.logo4:
+          ++note;
         case R.string.logo3:
           ++note;
         case R.string.logo2:
@@ -610,7 +612,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     handler.post(new Runnable() {
       @Override
       public void run() {
-        mView.reset();
+        mView.back();
       }
     });
   }
@@ -767,6 +769,11 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
+        case R.string.logo4:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
         default:
           //((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
@@ -916,6 +923,9 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
             case 2:
               id = R.string.logo3;
               break;
+            case 3:
+              id = R.string.logo4;
+              break;
           }
           currentSelectedItem = id;
           break;
@@ -942,7 +952,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.effect:
           return 6;
         case R.string.logo:
-          return 3;
+          return 4;
         case NO_ID:
           return 3;
       }
@@ -973,6 +983,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.logo1:
         case R.string.logo2:
         case R.string.logo3:
+        case R.string.logo4:
           return CARD_TYPE_LOGO_TITLE;
         default:
           return CARD_TYPE_ONLY_TITLE;

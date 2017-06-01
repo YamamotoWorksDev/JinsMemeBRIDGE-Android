@@ -30,7 +30,7 @@
     <string name="light4">Light 4</string>
 
     <!-- for Eye VDJ -->
-    <string name="vdj">VDJ</string>
+    <string name="vdj">EYE VDJ</string>
     <string name="track">TRACK</string>
     <string name="track14">TRACKS</string>
     <string name="track58">TRACKS</string>
@@ -56,4 +56,5 @@
     <string name="logo1">LOGO1</string>
     <string name="logo2">LOGO2</string>
     <string name="logo3">LOGO3</string>
+    <string name="logo4">LOGO4</string>
 </resources>
