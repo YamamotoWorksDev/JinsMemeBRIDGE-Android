@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -74,6 +76,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
   private MemeRealtimeDataFilter mMemeDataFilter = new MemeRealtimeDataFilter();
+  private static final int PAUSE_MAX = 50;
+  private static final int REFRACTORY_PERIOD_MAX = 20;
+  private boolean cancelFlag = false;
+  private int pauseCount = 0;
+  private boolean pauseFlag = false;
+  private int refractoryPeriod = 0;
 
   private RootMenuFragment rootMenu;
   private MIDIMenuFragment midiMenu;
@@ -134,6 +142,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     menus.add(midiMenu);
     menus.add(oscMenu);
     menus.add(hueMenu);
+
+    cancelFlag = false;
+    pauseCount = 0;
+    pauseFlag = false;
+    refractoryPeriod = 0;
 
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -607,34 +620,95 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
+    float accelX = memeRealtimeData.getAccX();
+    float accelY = memeRealtimeData.getAccY();
+    float accelZ = memeRealtimeData.getAccZ();
+
+    int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
+    int eyeBlinkSpeed = memeRealtimeData.getBlinkSpeed();
+
+    int eyeUp = memeRealtimeData.getEyeMoveUp();
+    int eyeDown = memeRealtimeData.getEyeMoveDown();
+    int eyeLeft = memeRealtimeData.getEyeMoveLeft();
+    int eyeRight = memeRealtimeData.getEyeMoveRight();
+
+    float yaw = memeRealtimeData.getYaw();
+    float pitch = memeRealtimeData.getPitch();
+    float roll = memeRealtimeData.getRoll();
     if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
-      mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
-      FragmentManager manager = getSupportFragmentManager();
-      Fragment active = manager.findFragmentById(R.id.container);
-      if(active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
-        final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback)active;
-        if (mMemeDataFilter.isBlink()) {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              accepter.onMemeBlinked();
-            }
-          });
-        } else if (mMemeDataFilter.isLeft()) {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              accepter.onMemeMoveLeft();
-            }
-          });
-        } else if (mMemeDataFilter.isRight()) {
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              accepter.onMemeMoveRight();
-            }
-          });
+      Log.d("=========ROLL=========", String.format("%f", roll));
+      if (Math.abs(roll) > getRollThreshold()) {
+        cancelFlag = true;
+        //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
+
+        if (!pauseFlag) {
+          if (++pauseCount >= PAUSE_MAX) {
+            pauseFlag = true;
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                findViewById(R.id.pauseView).setVisibility(View.VISIBLE);
+              }
+            });
+            Log.d("=========PAUSE=========", "pause");
+          }
         }
+      } else if (Math.abs(roll) <= getRollThreshold()) {
+        final MenuFragmentBase active = getVisibleMenuFragment();
+        if (!pauseFlag) {
+          if (cancelFlag && pauseCount < PAUSE_MAX) {
+            if(transitToRootMenu()) {
+              refractoryPeriod = REFRACTORY_PERIOD_MAX;
+              Log.d("=========PAUSE=========", "cancel");
+            }
+          }
+          cancelFlag = false;
+          pauseCount = 0;
+        }
+        if (refractoryPeriod > 0) {
+          refractoryPeriod--;
+          Log.d("=========PAUSE=========", "refractorying");
+        } else {
+          mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
+          if(pauseFlag) {
+            if(mMemeDataFilter.isBlink()) {
+              pauseFlag = false;
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  findViewById(R.id.pauseView).setVisibility(View.GONE);
+                }
+              });
+              Log.d("=========PAUSE=========", "pause clear");
+            }
+          }
+          else if(active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
+            final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback)active;
+            if (mMemeDataFilter.isBlink()) {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  accepter.onMemeBlinked();
+                }
+              });
+            } else if (mMemeDataFilter.isLeft()) {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  accepter.onMemeMoveLeft();
+                }
+              });
+            } else if (mMemeDataFilter.isRight()) {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  accepter.onMemeMoveRight();
+                }
+              });
+            }
+          }
+        }
+
       }
     }
   }
@@ -717,6 +791,34 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarBack(false);
     invalidateOptionsMenu();
   }
+  boolean transitToRootMenu() {
+    FragmentManager manager = getSupportFragmentManager();
+    if(manager.getBackStackEntryCount() > 0) {
+      InputMethodManager imm = (InputMethodManager) getSystemService(
+          Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
+          InputMethodManager.HIDE_NOT_ALWAYS);
+
+      BackStackEntry entry = manager.getBackStackEntryAt(0);
+      manager.popBackStack(entry.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      manager.executePendingTransactions();
+
+      FragmentTransaction transaction = manager.beginTransaction();
+      transaction
+          .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
+              R.anim.config_out2);
+      hideVisibleMenuFragments(transaction);
+      transaction.show(rootMenu);
+      //    transaction.addToBackStack(null);
+      transaction.commit();
+
+      setActionBarTitle(R.string.actionbar_title);
+      setActionBarBack(false);
+      invalidateOptionsMenu();
+      return true;
+    }
+    return false;
+  }
   void transitToFragment(Fragment next) {
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
@@ -736,6 +838,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     invalidateOptionsMenu();
   }
 
+  private MenuFragmentBase getVisibleMenuFragment() {
+    for(MenuFragmentBase m : menus) {
+      if(m.isVisible()) return m;
+    }
+    return null;
+  }
   private void hideVisibleMenuFragments(FragmentTransaction transaction) {
     for(Fragment m : menus) {
       if(m.isVisible()) transaction.hide(m);

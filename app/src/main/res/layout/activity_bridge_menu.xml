@@ -3,7 +3,20 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="#1976D2"
-             android:id="@+id/container"
              android:keepScreenOn="true"
              tools:context="com.jins_meme.bridge.BridgeMenu">
+  <FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/container"/>
+  <TextView
+    android:id="@+id/pauseView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:background="#30000000"
+    android:gravity="center"
+    android:text="@string/pause"
+    android:visibility="gone"/>
+
 </FrameLayout>
