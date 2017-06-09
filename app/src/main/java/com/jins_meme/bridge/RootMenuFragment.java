@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
+      Log.d("debug", "onBindCardHolder: " + getResources().getString(id));
       ((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
     }
 
@@ -117,6 +119,9 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
             case 4:
               id = R.string.hue;
               break;
+            case 5:
+              id = R.string.remo;
+              break;
           }
           break;
       }
@@ -128,7 +133,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
         case NO_ID:
-          return 5;
+          return 6;
       }
       return 0;
     }

@@ -13,6 +13,7 @@
   <item
     android:title="@string/midi_conf"/>
   <item android:title="@string/hue_conf"/>
+  <item android:title="@string/remo_conf"/>
   <item android:title="@string/about"/>
   <item android:title="@string/exit_app"/>
 </menu>

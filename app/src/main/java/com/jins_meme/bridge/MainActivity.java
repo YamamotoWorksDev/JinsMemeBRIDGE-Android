@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     MemeRealtimeListener,
     RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener,
     OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener,
-    CameraFragment.OnFragmentInteractionListener {
+    CameraFragment.OnFragmentInteractionListener, RemoMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MIDIMenuFragment midiMenu;
   private OSCMenuFragment oscMenu;
   private HueMenuFragment hueMenu;
+  private RemoMenuFragment remoMenu;
   private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
 
   private BasicConfigFragment basicConfigFragment;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private OSCConfigFragment oscConfigFragment;
   private MIDIConfigFragment midiConfigFragment;
   private HueConfigFragment hueConfigFragment;
+  private RemoConfigFragment remoConfigFragment;
   /*
    * MODIFY YOURSELF
    * Add your implemented function's configuration
@@ -141,10 +143,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     midiMenu = new MIDIMenuFragment();
     oscMenu = new OSCMenuFragment();
     hueMenu = new HueMenuFragment();
+    remoMenu = new RemoMenuFragment();
     menus.add(rootMenu);
     menus.add(midiMenu);
     menus.add(oscMenu);
     menus.add(hueMenu);
+    menus.add(remoMenu);
 
     cancelFlag = false;
     pauseCount = 0;
@@ -155,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     oscConfigFragment = new OSCConfigFragment();
     midiConfigFragment = new MIDIConfigFragment();
     hueConfigFragment = new HueConfigFragment();
+    remoConfigFragment = new RemoConfigFragment();
     aboutFragment = new AboutFragment();
     /*
      * MODIFY YOURSELF
@@ -228,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     menu.add(0, index++, 0, R.string.osc_conf);
     menu.add(0, index++, 0, R.string.midi_conf);
     menu.add(0, index++, 0, R.string.hue_conf);
+    menu.add(0, index++, 0, R.string.remo_conf);
 
     menu.add(0, index++, 0, R.string.about);
     menu.add(0, index, 0, R.string.exit_app);
@@ -331,6 +337,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transitToFragment(hueConfigFragment);
 
       return true;
+    } else if (itemTitle.equals(getString(R.string.remo_conf))) {
+      Log.d("DEBUG", "tap remo setting");
+
+      transitToFragment(remoConfigFragment);
+
+      return true;
     }
     /*
      * MODIFY YOURSELF
@@ -386,6 +398,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     midiMenu = null;
     oscMenu = null;
     hueMenu = null;
+    remoMenu = null;
 
     basicConfigFragment = null;
     aboutFragment = null;
@@ -393,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     oscConfigFragment = null;
     midiConfigFragment = null;
     hueConfigFragment = null;
+    remoConfigFragment = null;
     /*
      * MODIFY YOURSELF
      * Add your implemented function's configuration
@@ -428,6 +442,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
       case R.string.camera:
         transitToFragment(new CameraFragment());
+        break;
+      case R.string.remo:
+        transitToMenu(remoMenu);
         break;
     }
   }
