@@ -143,7 +143,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   public void onDestroyView() {
     super.onDestroyView();
 
-    Log.d("FRAGMENT", "onDestroyView");
+    //debug Log.d("FRAGMENT", "onDestroyView");
 
     if (hueController != null) {
       hueController.turnOff();
@@ -164,7 +164,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   @Override
   public void onStop() {
     super.onStop();
-    Log.d("FRAGMENT", "onStop...");
+    //debug Log.d("FRAGMENT", "onStop...");
   }
 
   @Override
@@ -186,12 +186,12 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       memeOSC = null;
     }
 
-    Log.d("FRAGMENT", "onDestroy...");
+    //debug Log.d("FRAGMENT", "onDestroy...");
   }
 
   @Override
   public void onEnterCard(int id) {
-    Log.d("ENTER", getResources().getString(id));
+    //debug Log.d("FRAGMENT", "ENTER " + getResources().getString(id));
 
     if (pauseCount >= PAUSE_MAX) {
       final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
@@ -795,6 +795,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
         case R.string.effect:
         case R.string.logo:
           if (pauseCount < PAUSE_MAX) {
+            //debug Log.d("FRAGMENT", "getCardFunction");
+
             return CardFunction.ENTER_MENU;
           }
       }
@@ -803,6 +805,8 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     @Override
     public int getCardId(int parent_id, int position) {
+      //debug Log.d("FRAGMENT", "getCardId " + parent_id + " " + position);
+
       int id = NO_ID;
       switch (parent_id) {
         case NO_ID:
@@ -854,6 +858,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
               id = R.string.logo;
               break;
           }
+          currentSelectedItem = id;
           break;
         case R.string.track14:
           switch (position) {
@@ -941,17 +946,17 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     @Override
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
+        case R.string.effect:
+          return 6;
         case R.string.hue:
           return 5;
-        case R.string.vdj:
+        case R.string.logo:
           return 4;
         case R.string.track14:
           return 4;
         case R.string.track58:
           return 4;
-        case R.string.effect:
-          return 6;
-        case R.string.logo:
+        case R.string.vdj:
           return 4;
         case NO_ID:
           return 3;
