@@ -49,6 +49,7 @@ public class BridgeUIView extends RecyclerView {
   public void reset() {
     ((Adapter) getAdapter()).reset();
   }
+
   public boolean back() {
     return ((Adapter) getAdapter()).back();
   }
@@ -121,16 +122,18 @@ public class BridgeUIView extends RecyclerView {
       mHistory.push(id);
       notifyDataSetChanged();
     }
+
     void reset() {
       mHistory.clear();
       notifyDataSetChanged();
     }
+
     void end(int id) {
       mListener.onEndCardSelected(id);
     }
 
     boolean back() {
-      if(mHistory.empty()) {
+      if (mHistory.empty()) {
         return false;
       }
       mListener.onExitCard(getSelectedCardId());
@@ -202,17 +205,17 @@ public class BridgeUIView extends RecyclerView {
 
   private class CardDecoration extends RecyclerView.ItemDecoration {
 
-    private View prev=null;
+    private View prev = null;
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, State state) {
       super.onDrawOver(c, parent, state);
       View view = ((BridgeUIView) (parent)).getCurrentCenteredItem();
-      if(prev != view) {
-        if(prev != null) {
+      if (prev != view) {
+        if (prev != null) {
           prev.setActivated(false);
         }
-        if(view != null) {
+        if (view != null) {
           view.setActivated(true);
         }
         prev = view;
