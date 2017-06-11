@@ -129,4 +129,10 @@ public class MemeRealtimeDataFilter {
   private boolean isCommand(int command) {
     return (mLastCommand & command) != 0;
   }
+
+  public interface MemeFilteredDataCallback {
+    void onMemeBlinked();
+    void onMemeMoveLeft();
+    void onMemeMoveRight();
+  }
 }

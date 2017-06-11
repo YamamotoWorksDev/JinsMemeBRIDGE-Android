@@ -107,7 +107,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase {
         public void onClick(DialogInterface dialogInterface, int i) {
           Log.d("DEBUG", "Close Alert Dialog...");
 
-          ((MainActivity) getActivity()).transitToMain(-1);
+          ((MainActivity) getActivity()).backToPreviousMenu();
         }
       });
       alert.setCancelable(false);
