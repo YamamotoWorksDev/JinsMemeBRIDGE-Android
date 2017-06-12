@@ -1,7 +1,7 @@
 /**
  * MainActivity.java
  *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
@@ -52,9 +52,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener,
-    RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener,
-    OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener,
-    CameraFragment.OnFragmentInteractionListener {
+    RootMenuFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener,
+    HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -87,8 +86,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
 
   private RootMenuFragment rootMenu;
-  private MIDIMenuFragment midiMenu;
-  private OSCMenuFragment oscMenu;
+  private VDJMenuFragment vdjMenu;
   private HueMenuFragment hueMenu;
   private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
 
@@ -138,12 +136,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
     rootMenu = new RootMenuFragment();
-    midiMenu = new MIDIMenuFragment();
-    oscMenu = new OSCMenuFragment();
+    vdjMenu = new VDJMenuFragment();
     hueMenu = new HueMenuFragment();
     menus.add(rootMenu);
-    menus.add(midiMenu);
-    menus.add(oscMenu);
+    menus.add(vdjMenu);
     menus.add(hueMenu);
 
     cancelFlag = false;
@@ -165,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    for(Fragment m : menus) {
+    for (Fragment m : menus) {
       transaction.add(R.id.container, m);
       transaction.hide(m);
     }
@@ -383,8 +379,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     rootMenu = null;
-    midiMenu = null;
-    oscMenu = null;
+    vdjMenu = null;
     hueMenu = null;
 
     basicConfigFragment = null;
@@ -416,12 +411,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void openNextMenu(int card_id) {
-    switch(card_id) {
-      case R.string.midi:
-        transitToMenu(midiMenu);
-        break;
-      case R.string.osc:
-        transitToMenu(oscMenu);
+    switch (card_id) {
+      case R.string.vdj:
+        transitToMenu(vdjMenu);
         break;
       case R.string.hue:
         transitToMenu(hueMenu);
@@ -667,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         final MenuFragmentBase active = getVisibleMenuFragment();
         if (!pauseFlag) {
           if (cancelFlag && pauseCount < PAUSE_MAX) {
-            if(transitToRootMenu()) {
+            if (transitToRootMenu()) {
               refractoryPeriod = REFRACTORY_PERIOD_MAX;
               Log.d("=========PAUSE=========", "cancel");
             }
@@ -678,9 +670,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         if (refractoryPeriod > 0) {
           refractoryPeriod--;
         } else {
-          mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
-          if(pauseFlag) {
-            if(mMemeDataFilter.isBlink()) {
+          mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
+              getLeftRightThreshold());
+          if (pauseFlag) {
+            if (mMemeDataFilter.isBlink()) {
               pauseFlag = false;
               handler.post(new Runnable() {
                 @Override
@@ -690,9 +683,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
               });
               Log.d("=========PAUSE=========", "pause clear");
             }
-          }
-          else if(active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
-            final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback)active;
+          } else if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
+            final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
             if (mMemeDataFilter.isBlink()) {
               Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
               handler.post(new Runnable() {
@@ -748,6 +740,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       memeLib.disconnect();
     }
   }
+
   @Override
   public void onBackPressed() {
     Log.d("MAIN", "press back!");
@@ -756,13 +749,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Fragment active = manager.findFragmentById(R.id.container);
 
     boolean processed = false;
-    if(active instanceof MenuFragmentBase) {
+    if (active instanceof MenuFragmentBase) {
       processed = ((MenuFragmentBase) active).menuBack();
     }
-    if(!processed) {
+    if (!processed) {
       super.onBackPressed();
     }
-    if(manager.getBackStackEntryCount() == 0) {
+    if (manager.getBackStackEntryCount() == 0) {
       setActionBarTitle(R.string.actionbar_title);
       setActionBarBack(false);
       invalidateOptionsMenu();
@@ -793,7 +786,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    transaction
+        .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
+            R.anim.config_out2);
     hideVisibleMenuFragments(transaction);
     transaction.show(next);
     transaction.addToBackStack(null);
@@ -803,9 +798,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarBack(false);
     invalidateOptionsMenu();
   }
+
   boolean transitToRootMenu() {
     FragmentManager manager = getSupportFragmentManager();
-    if(manager.getBackStackEntryCount() > 0) {
+    if (manager.getBackStackEntryCount() > 0) {
       InputMethodManager imm = (InputMethodManager) getSystemService(
           Context.INPUT_METHOD_SERVICE);
       imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
@@ -831,6 +827,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
     return false;
   }
+
   void transitToFragment(Fragment next) {
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
@@ -839,7 +836,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    transaction
+        .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
+            R.anim.config_out2);
     hideVisibleMenuFragments(transaction);
     transaction.add(R.id.container, next);
     transaction.addToBackStack(null);
@@ -851,16 +850,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   private MenuFragmentBase getVisibleMenuFragment() {
-    for(MenuFragmentBase m : menus) {
-      if(m.isVisible()) return m;
+    for (MenuFragmentBase m : menus) {
+      if (m.isVisible()) {
+        return m;
+      }
     }
     return null;
   }
+
   private void hideVisibleMenuFragments(FragmentTransaction transaction) {
-    for(Fragment m : menus) {
-      if(m.isVisible()) transaction.hide(m);
+    for (Fragment m : menus) {
+      if (m.isVisible()) {
+        transaction.hide(m);
+      }
     }
   }
+
   String getSavedValue(String key) {
     return preferences.getString(key, null);
   }
