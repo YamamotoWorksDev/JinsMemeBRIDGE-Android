@@ -1,3 +1,12 @@
+/**
+ * MenuFragment.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
@@ -7,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
@@ -79,16 +89,21 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
       mInflater = LayoutInflater.from(context);
     }
 
-    private final int CATD_TYPE_ONLY_TITLE = 0;
-
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-      return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
+      if (card_type == getResources().getInteger(R.integer.CARD_TYPE_LOGO_TITLE)) {
+        return new MyCardHolder(mInflater.inflate(R.layout.card_vdj, parent, false));
+      } else {
+        return new MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
+      }
+      //return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
     }
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-      ((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
+      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mSubtitle.setText("");
     }
 
     @Override
@@ -103,19 +118,13 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
         case NO_ID:
           switch (position) {
             case 0:
-              id = R.string.midi;
-              break;
-            case 1:
-              id = R.string.osc;
-              break;
-            case 2:
-              id = R.string.functions;
-              break;
-            case 3:
               id = R.string.camera;
               break;
-            case 4:
+            case 1:
               id = R.string.hue;
+              break;
+            case 2:
+              id = R.string.vdj;
               break;
           }
           break;
@@ -128,25 +137,31 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
         case NO_ID:
-          return 5;
+          return 3;
       }
       return 0;
     }
 
     @Override
     public int getCardType(int id) {
-      return CATD_TYPE_ONLY_TITLE;
+      return getResources().getInteger(R.integer.CARD_TYPE_ONLY_TITLE);
+      //return CARD_TYPE_ONLY_TITLE;
     }
 
     private class MyCardHolder extends CardHolder {
 
-      TextView mTextView;
+      ImageView mImageView;
+      TextView mTitle;
+      TextView mSubtitle;
       TextView mValue;
       Handler mHandler = new Handler();
 
       MyCardHolder(View itemView) {
         super(itemView);
-        mTextView = (TextView) itemView.findViewById(R.id.card_text);
+
+        mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
+        mTitle = (TextView) itemView.findViewById(R.id.card_text);
+        mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
         mValue = (TextView) itemView.findViewById(R.id.card_select);
       }
 
