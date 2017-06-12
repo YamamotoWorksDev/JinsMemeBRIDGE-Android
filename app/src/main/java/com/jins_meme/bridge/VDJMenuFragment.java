@@ -527,8 +527,40 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     private class MyCardHolder extends CardHolder {
 
+      ImageView mImageView;
+      TextView mTitle;
+      TextView mSubtitle;
+      TextView mValue;
+      Handler mHandler = new Handler();
+
       MyCardHolder(View itemView) {
         super(itemView);
+
+        mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
+        mTitle = (TextView) itemView.findViewById(R.id.card_text);
+        mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
+        mValue = (TextView) itemView.findViewById(R.id.card_select);
+      }
+
+      void setText(String text) {
+        //mValue.setText(getString(R.string.selected));
+        mValue.setText(text);
+      }
+
+      void setText(String text, int msec) {
+        //mValue.setText(getString(R.string.selected));
+        mValue.setText(text);
+
+        mHandler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            mValue.setText(" ");
+          }
+        }, msec);
+      }
+
+      void clearText() {
+        mValue.setText(" ");
       }
     }
 

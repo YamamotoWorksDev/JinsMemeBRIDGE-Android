@@ -165,12 +165,14 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
         mValue = (TextView) itemView.findViewById(R.id.card_select);
       }
 
-      void select() {
-        mValue.setText(getString(R.string.selected));
+      void setText(String text) {
+        //mValue.setText(getString(R.string.selected));
+        mValue.setText(text);
       }
 
-      void select(int msec) {
-        mValue.setText(getString(R.string.selected));
+      void setText(String text, int msec) {
+        //mValue.setText(getString(R.string.selected));
+        mValue.setText(text);
 
         mHandler.postDelayed(new Runnable() {
           @Override
@@ -180,11 +182,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
         }, msec);
       }
 
-      void pause() {
-        mValue.setText(getString(R.string.pause));
-      }
-
-      void reset() {
+      void clearText() {
         mValue.setText(" ");
       }
     }
