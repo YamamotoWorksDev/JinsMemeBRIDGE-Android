@@ -11,11 +11,14 @@ package com.jins_meme.bridge;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
+import android.widget.TextView;
 import java.util.Stack;
 
 public class BridgeUIView extends RecyclerView {
@@ -199,10 +202,42 @@ public class BridgeUIView extends RecyclerView {
 
   public static class CardHolder extends RecyclerView.ViewHolder {
 
+    ImageView mImageView;
+    TextView mTitle;
+    TextView mSubtitle;
+    TextView mValue;
+    Handler mHandler = new Handler();
+
     CardHolder(View itemView) {
       super(itemView);
       itemView.setLayoutParams(
           new ViewGroup.LayoutParams(-1, -1));    // LayoutManagerでLayoutParamsを再計算させるためのdirty hack
+
+      mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
+      mTitle = (TextView) itemView.findViewById(R.id.card_text);
+      mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
+      mValue = (TextView) itemView.findViewById(R.id.card_select);
+    }
+
+    void setText(String text) {
+      //mValue.setText(getString(R.string.selected));
+      mValue.setText(text);
+    }
+
+    void setText(String text, int msec) {
+      //mValue.setText(getString(R.string.selected));
+      mValue.setText(text);
+
+      mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          mValue.setText(" ");
+        }
+      }, msec);
+    }
+
+    void clearText() {
+      mValue.setText(" ");
     }
   }
 

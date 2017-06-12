@@ -137,7 +137,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
             ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10));
         break;
     }
-    mych.select(300);
+    mych.setText(getString(R.string.selected), 300);
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
@@ -216,47 +216,12 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
     @Override
     public int getCardType(int id) {
       return getResources().getInteger(R.integer.CARD_TYPE_LOGO_TITLE);
-      //return CATD_TYPE_ONLY_TITLE;
     }
 
     private class MyCardHolder extends CardHolder {
 
-      ImageView mImageView;
-      TextView mTitle;
-      TextView mSubtitle;
-      TextView mValue;
-      Handler mHandler = new Handler();
-
       MyCardHolder(View itemView) {
         super(itemView);
-
-        mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
-        mTitle = (TextView) itemView.findViewById(R.id.card_text);
-        mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
-        mValue = (TextView) itemView.findViewById(R.id.card_select);
-      }
-
-      void select() {
-        mValue.setText(getString(R.string.selected));
-      }
-
-      void select(int msec) {
-        mValue.setText(getString(R.string.selected));
-
-        mHandler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            mValue.setText(" ");
-          }
-        }, msec);
-      }
-
-      void pause() {
-        mValue.setText(getString(R.string.pause));
-      }
-
-      void reset() {
-        mValue.setText(" ");
       }
     }
   }
