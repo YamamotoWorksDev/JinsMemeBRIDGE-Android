@@ -1,3 +1,12 @@
+/**
+ * MenuFragment.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
