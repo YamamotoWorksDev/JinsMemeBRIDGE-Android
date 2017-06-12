@@ -88,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private RootMenuFragment rootMenu;
   private VDJMenuFragment vdjMenu;
   private HueMenuFragment hueMenu;
+  /*
+   * MODIFY YOURSELF
+   * Add your implemented function's configuration
+   *
+   */
+  // private ***Fragment ***Fragment;
   private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
 
   private BasicConfigFragment basicConfigFragment;
@@ -162,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
     for (Fragment m : menus) {
-      transaction.add(R.id.container, m);
+      String fullClassName = m.getClass().getName();
+      String className = fullClassName.substring(getPackageName().length() + 1, fullClassName.length());
+      transaction.add(R.id.container, m, className);
       transaction.hide(m);
     }
     transaction.show(rootMenu);
@@ -623,36 +631,54 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       batteryCheckCount = 0;
     }
-    float accelX = memeRealtimeData.getAccX();
-    float accelY = memeRealtimeData.getAccY();
-    float accelZ = memeRealtimeData.getAccZ();
 
     int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
     int eyeBlinkSpeed = memeRealtimeData.getBlinkSpeed();
 
-    int eyeUp = memeRealtimeData.getEyeMoveUp();
-    int eyeDown = memeRealtimeData.getEyeMoveDown();
+    //int eyeUp = memeRealtimeData.getEyeMoveUp();
+    //int eyeDown = memeRealtimeData.getEyeMoveDown();
     int eyeLeft = memeRealtimeData.getEyeMoveLeft();
     int eyeRight = memeRealtimeData.getEyeMoveRight();
 
-    float yaw = memeRealtimeData.getYaw();
-    float pitch = memeRealtimeData.getPitch();
+    //float accelX = memeRealtimeData.getAccX();
+    //float accelY = memeRealtimeData.getAccY();
+    //float accelZ = memeRealtimeData.getAccZ();
+
+    //float yaw = memeRealtimeData.getYaw();
+    //float pitch = memeRealtimeData.getPitch();
     float roll = memeRealtimeData.getRoll();
+
     if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
       if (Math.abs(roll) > getRollThreshold()) {
         cancelFlag = true;
         //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
 
-        if (!pauseFlag) {
-          if (++pauseCount >= PAUSE_MAX) {
-            pauseFlag = true;
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                findViewById(R.id.pauseView).setVisibility(View.VISIBLE);
-              }
-            });
-            Log.d("=========PAUSE=========", "pause");
+        //if (++pauseCount >= PAUSE_MAX) {
+        if (pauseCount < PAUSE_MAX) {
+          pauseCount++;
+
+          if (pauseCount == PAUSE_MAX) {
+
+            //pauseFlag = true;
+            pauseFlag = !pauseFlag;
+
+            if (pauseFlag) {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  findViewById(R.id.pauseView).setVisibility(View.VISIBLE);
+                }
+              });
+              Log.d("=========PAUSE=========", "pause");
+            } else {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  findViewById(R.id.pauseView).setVisibility(View.GONE);
+                }
+              });
+              Log.d("=========PAUSE=========", "pause clear");
+            }
           }
         }
       } else if (Math.abs(roll) <= getRollThreshold()) {
@@ -663,56 +689,46 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
               refractoryPeriod = REFRACTORY_PERIOD_MAX;
               Log.d("=========PAUSE=========", "cancel");
             }
-          }
-          cancelFlag = false;
-          pauseCount = 0;
-        }
-        if (refractoryPeriod > 0) {
-          refractoryPeriod--;
-        } else {
-          mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
-              getLeftRightThreshold());
-          if (pauseFlag) {
-            if (mMemeDataFilter.isBlink()) {
-              pauseFlag = false;
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  findViewById(R.id.pauseView).setVisibility(View.GONE);
+          } else {
+            if (refractoryPeriod > 0) {
+              refractoryPeriod--;
+            } else {
+              mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
+                  getLeftRightThreshold());
+              if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
+                final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
+                if (mMemeDataFilter.isBlink()) {
+                  Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeBlinked();
+                    }
+                  });
+                } else if (mMemeDataFilter.isLeft()) {
+                  Log.d("EYE", "left = " + eyeLeft);
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveLeft();
+                    }
+                  });
+                } else if (mMemeDataFilter.isRight()) {
+                  Log.d("EYE", "right = " + eyeRight);
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveRight();
+                    }
+                  });
                 }
-              });
-              Log.d("=========PAUSE=========", "pause clear");
-            }
-          } else if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
-            final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
-            if (mMemeDataFilter.isBlink()) {
-              Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  accepter.onMemeBlinked();
-                }
-              });
-            } else if (mMemeDataFilter.isLeft()) {
-              Log.d("EYE", "left = " + eyeLeft);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  accepter.onMemeMoveLeft();
-                }
-              });
-            } else if (mMemeDataFilter.isRight()) {
-              Log.d("EYE", "right = " + eyeRight);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  accepter.onMemeMoveRight();
-                }
-              });
+              }
             }
           }
         }
 
+        cancelFlag = false;
+        pauseCount = 0;
       }
     }
   }
