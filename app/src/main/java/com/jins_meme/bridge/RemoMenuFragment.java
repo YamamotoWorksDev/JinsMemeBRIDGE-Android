@@ -24,6 +24,8 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
     private OnFragmentInteractionListener mListener;
 
+    private RemoController remoController;
+
     public RemoMenuFragment() {
         // Required empty public constructor
     }
@@ -35,6 +37,8 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
         CardAdapter cardAdapter = new CardAdapter(getContext(), this);
         mView.setAdapter(cardAdapter);
+
+        remoController = new RemoController(getContext());
     }
 
 
@@ -85,9 +89,11 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
     public void onEndCardSelected(int id) {
         final RemoMenuFragment.CardAdapter.MyCardHolder mych = (RemoMenuFragment.CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
         switch (id) {
-            case R.string.random:
-                Random rand = new Random();
-//                mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), 255, 1);
+            case R.string.signal1:
+                String address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+                String messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_1");
+                remoController.sendMessages(address, messages);
+
                 break;
             case R.string.light1:
 //                mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),

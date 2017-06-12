@@ -1,8 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/remo_layout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:background="#FFFFFF"
+  android:focusableInTouchMode="true"
   tools:context="com.jins_meme.bridge.RemoConfigFragment">
 
   <!-- TODO: Update blank fragment layout -->
@@ -15,5 +17,91 @@
     android:layout_alignParentStart="true"
     android:layout_alignParentTop="true"
     android:text="CONNECT"/>
+
+  <TextView
+    android:id="@+id/remo_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_alignTop="@+id/remo_connect"
+    android:layout_toEndOf="@+id/remo_connect"
+    android:text="not found"/>
+  <TextView
+    android:id="@+id/remo_address"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_alignStart="@+id/remo_name"
+    android:layout_below="@+id/remo_name"
+    android:text="---"/>
+
+  <TextView
+    android:id="@+id/textView0"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:layout_alignStart="@+id/remo_connect"
+    android:layout_below="@+id/remo_connect"
+    android:text="Signals"/>
+
+  <TextView
+    android:id="@+id/textView1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_alignStart="@+id/textView0"
+    android:layout_below="@+id/textView0"
+    android:text="1"/>
+
+  <EditText
+    android:id="@+id/remo_signal_1_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:imeOptions="actionDone"
+    android:layout_alignStart="@+id/textView1"
+    android:layout_below="@+id/textView1"
+    android:ems="10"
+    android:inputType="text"
+    android:maxLength="24"
+    android:text=""/>
+
+  <Button
+    android:id="@+id/remo_signal_1_receive"
+    android:layout_width="80dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_alignBottom="@+id/remo_signal_1_name"
+    android:layout_alignTop="@+id/remo_signal_1_name"
+    android:layout_toEndOf="@+id/remo_signal_1_name"
+    android:text="SET"/>
+
+  <TextView
+    android:id="@+id/textView2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_alignStart="@+id/remo_signal_1_name"
+    android:layout_below="@+id/remo_signal_1_name"
+    android:text="2"/>
+  <EditText
+    android:id="@+id/remo_signal_2_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:imeOptions="actionDone"
+    android:layout_alignStart="@+id/textView2"
+    android:layout_below="@+id/textView2"
+    android:ems="10"
+    android:inputType="text"
+    android:maxLength="24"
+    android:text=""/>
+  <Button
+    android:id="@+id/remo_signal_2_receive"
+    android:layout_width="80dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_alignBottom="@+id/remo_signal_2_name"
+    android:layout_alignTop="@+id/remo_signal_2_name"
+    android:layout_toEndOf="@+id/remo_signal_2_name"
+    android:text="SET"/>
 
 </RelativeLayout>
