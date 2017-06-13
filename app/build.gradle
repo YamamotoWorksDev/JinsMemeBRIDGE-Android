@@ -39,7 +39,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:support-v13:25.3.1'
     compile 'com.google.android.gms:play-services:10.2.4'
-    //compile 'com.spotify.sdk:spotify-android-auth:1.0.0@aar'
+    compile 'com.spotify.android:auth:1.0.0-alpha'
     compile 'com.spotify.sdk:spotify-player:24-noconnect-2.20b@aar'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
     testCompile 'junit:junit:4.12'
 }
