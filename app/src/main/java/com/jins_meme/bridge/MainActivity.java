@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private OSCConfigFragment oscConfigFragment;
   private MIDIConfigFragment midiConfigFragment;
+  private SpotifyConfigFragment spotifyConfigFragment;
   private HueConfigFragment hueConfigFragment;
   /*
    * MODIFY YOURSELF
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
     midiConfigFragment = new MIDIConfigFragment();
+    spotifyConfigFragment = new SpotifyConfigFragment();
     hueConfigFragment = new HueConfigFragment();
     aboutFragment = new AboutFragment();
     /*
@@ -218,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         }
       }, 10000);
     }
-
   }
 
   @Override
@@ -337,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     } else if (itemTitle.equals(getString(R.string.spotify_conf))) {
       Log.d("DEBUG", "tap spotify setting");
 
-      //transitToFragment(spotifyConfigFragment);
+      transitToFragment(spotifyConfigFragment);
 
       return true;
     } else if (itemTitle.equals(getString(R.string.hue_conf))) {
@@ -456,12 +457,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
+    Log.d("DEBUG", "MAIN:: onActivityResult -> " + requestCode);
+
     if (requestCode == 0) {
       if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Bluetooth ON");
       } else {
         finishAndRemoveTask();
       }
+    } else if (requestCode == 1337) {
+      spotifyMenu.processRequestToken(requestCode, resultCode, data);
     } else {
       if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Auth OK");
@@ -551,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("MAIN", "APP_ID: " + appID + " APP_SECRET: " + appSecret);
 
     if (appID != null && appID.length() > 0 && appSecret != null && appSecret.length() > 0) {
-      Log.d("MAIN", "Initialized MemeLib with " + appID + " and " + appSecret);
+      Log.d("MAIN", "Initialized MemeLib with " + appID + " / and " + appSecret);
 
       MemeLib.setAppClientID(this, appID, appSecret);
       memeLib = MemeLib.getInstance();
