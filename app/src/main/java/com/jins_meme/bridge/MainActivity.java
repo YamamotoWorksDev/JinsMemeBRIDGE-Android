@@ -51,8 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MemeRealtimeListener,
-    RootMenuFragment.OnFragmentInteractionListener, CameraFragment.OnFragmentInteractionListener,
+    MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
+    CameraFragment.OnFragmentInteractionListener, SpotifyMenuFragment.OnFragmentInteractionListener,
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
@@ -86,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
 
   private RootMenuFragment rootMenu;
-  private VDJMenuFragment vdjMenu;
+  private SpotifyMenuFragment spotifyMenu;
   private HueMenuFragment hueMenu;
+  private VDJMenuFragment vdjMenu;
   /*
    * MODIFY YOURSELF
    * Add your implemented function's configuration
@@ -142,11 +143,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
     rootMenu = new RootMenuFragment();
-    vdjMenu = new VDJMenuFragment();
+    spotifyMenu = new SpotifyMenuFragment();
     hueMenu = new HueMenuFragment();
+    vdjMenu = new VDJMenuFragment();
     menus.add(rootMenu);
-    menus.add(vdjMenu);
+    menus.add(spotifyMenu);
     menus.add(hueMenu);
+    menus.add(vdjMenu);
 
     cancelFlag = false;
     pauseCount = 0;
@@ -169,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     FragmentTransaction transaction = manager.beginTransaction();
     for (Fragment m : menus) {
       String fullClassName = m.getClass().getName();
-      String className = fullClassName.substring(getPackageName().length() + 1, fullClassName.length());
+      String className = fullClassName
+          .substring(getPackageName().length() + 1, fullClassName.length());
       transaction.add(R.id.container, m, className);
       transaction.hide(m);
     }
@@ -231,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      */
     menu.add(0, index++, 0, R.string.osc_conf);
     menu.add(0, index++, 0, R.string.midi_conf);
+    menu.add(0, index++, 0, R.string.spotify_conf);
     menu.add(0, index++, 0, R.string.hue_conf);
 
     menu.add(0, index++, 0, R.string.about);
@@ -329,6 +334,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transitToFragment(midiConfigFragment);
 
       return true;
+    } else if (itemTitle.equals(getString(R.string.spotify_conf))) {
+      Log.d("DEBUG", "tap spotify setting");
+
+      //transitToFragment(spotifyConfigFragment);
+
+      return true;
     } else if (itemTitle.equals(getString(R.string.hue_conf))) {
       Log.d("DEBUG", "tap hue setting");
 
@@ -387,8 +398,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     rootMenu = null;
-    vdjMenu = null;
+    spotifyMenu = null;
     hueMenu = null;
+    vdjMenu = null;
 
     basicConfigFragment = null;
     aboutFragment = null;
@@ -422,6 +434,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     switch (card_id) {
       case R.string.vdj:
         transitToMenu(vdjMenu);
+        break;
+      case R.string.spotify:
+        transitToMenu(spotifyMenu);
         break;
       case R.string.hue:
         transitToMenu(hueMenu);

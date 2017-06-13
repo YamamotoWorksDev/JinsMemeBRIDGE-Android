@@ -29,6 +29,12 @@
     <string name="light3">Light 3</string>
     <string name="light4">Light 4</string>
 
+    <string name="spotify">Spotify</string>
+    <string name="playlist1">Playlist 1</string>
+    <string name="playlist2">Playlist 2</string>
+    <string name="playlist3">Playlist 3</string>
+    <string name="playlist4">Playlist 4</string>
+
     <!-- for Eye VDJ -->
     <string name="vdj">EYE VDJ</string>
     <string name="track">TRACK</string>
