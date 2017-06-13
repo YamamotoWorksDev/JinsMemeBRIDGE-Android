@@ -41,6 +41,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
+    Log.d("DEBUG", "HUE:: onViewCreated");
+
     super.onViewCreated(view, savedInstanceState);
 
     CardAdapter myAdapter = new CardAdapter(getContext(), this);
@@ -72,6 +74,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onAttach(Context context) {
+    Log.d("DEBUG", "HUE:: onAttach");
+
     super.onAttach(context);
     if (context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener) context;
@@ -93,10 +97,13 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
+    Log.d("DEBUG", "HUE:: onEnterCard");
   }
 
   @Override
   public void onExitCard(int id) {
+    Log.d("DEBUG", "HUE:: onEnterCard");
+
     mListener.backToPreviousMenu();
   }
 
@@ -154,7 +161,6 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
       return new CardAdapter.MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
-      //return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
     }
 
     @Override
@@ -162,7 +168,6 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
       ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
       ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
       ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
-      //((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
     }
 
     @Override

@@ -44,6 +44,8 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
+    Log.d("DEBUG", "VDJ:: onViewCreated");
+
     super.onViewCreated(view, savedInstanceState);
 
     CardAdapter myAdapter = new CardAdapter(getContext(), this);
@@ -93,6 +95,8 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onAttach(Context context) {
+    Log.d("DEBUG", "VDJ:: onAttach");
+
     super.onAttach(context);
     if (context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener) context;
@@ -114,10 +118,13 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
+    Log.d("DEBUG", "VDJ:: onEnterCard");
   }
 
   @Override
   public void onExitCard(int id) {
+    Log.d("DEBUG", "VDJ:: onExitCard");
+
     mListener.backToPreviousMenu();
   }
 
