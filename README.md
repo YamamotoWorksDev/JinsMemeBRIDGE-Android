@@ -2,7 +2,9 @@
 The repositorty for meme BRIDGE.
 
 ### PROGRAMMER
-[Nariaki Iwatani](https://github.com/nariakiiwatani)([Anno Lab Inc.](http://annolab.com/annoentrance/)) and [Shunichi Yamamoto](https://github.com/tkrworks)([Yamamoto Works Ltd.](http://atelier.tkrworks.net))
+[Nariaki Iwatani](https://github.com/nariakiiwatani)([Anno Lab Inc.](http://annolab.com/annoentrance/))  
+[Shunichi Yamamoto](https://github.com/tkrworks)([Yamamoto Works Ltd.](http://atelier.tkrworks.net))  
+[Taiki Niimi](https://github.com/niimi)
 
 ### DESIGNER
 Tsuyoshi Otabe([Invisible Designs Lab.](http://invisi.jp))
