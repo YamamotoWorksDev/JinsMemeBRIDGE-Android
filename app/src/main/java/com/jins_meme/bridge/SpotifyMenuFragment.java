@@ -251,7 +251,20 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
   @Override
   public void onEndCardSelected(int id) {
-
+    final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
+    switch (id) {
+      case R.string.playlist1:
+        String uri = "spotify:user:spotify:playlist:2yLXxKhhziG2xzy7eyD4TD";
+        mPlayer.playUri(mOperationCallback, uri , 0, 0);
+        break;
+      case R.string.playlist2:
+        break;
+      case R.string.playlist3:
+        break;
+      case R.string.playlist4:
+        break;
+    }
+    mych.setText(getString(R.string.selected), 300);
   }
 
   @Override
