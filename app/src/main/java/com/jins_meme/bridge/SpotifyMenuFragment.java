@@ -53,8 +53,9 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   private Player mPlayer;
   private PlaybackState mCurrentPlaybackState;
   private BroadcastReceiver mNetworkStateReceiver;
+  private AsyncSpotifyApi mAsyncSpotifyApi;
 
-  private String myRequestToken = null;
+  private String myAccessToken = null;
 
   private final Player.OperationCallback mOperationCallback = new OperationCallback() {
     @Override
@@ -73,7 +74,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   }
 
   void setRequestToken(String token) {
-    myRequestToken = token;
+    myAccessToken = token;
   }
 
   IntentFilter getFilter() {
@@ -125,7 +126,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     }
   }
 
-  private static Connectivity getNetworkConnectivity(Context context) {
+  private Connectivity getNetworkConnectivity(Context context) {
     ConnectivityManager connectivityManager;
     connectivityManager = (ConnectivityManager) context
         .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -145,6 +146,11 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   @Override
   public void onLoggedIn() {
     Log.d("DEBUG", "SPOTIFY:: User logged in.");
+
+    //mAsyncSpotifyApi.execute("me");
+    //mAsyncSpotifyApi.execute("search_artist");
+    mAsyncSpotifyApi.execute("user_playlist");
+    //Log.d("DEBUG", "SPOTIFY:: Country -> " + userPrivate.country);
   }
 
   @Override
@@ -385,22 +391,25 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   String processRequestToken(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_CODE) {
       final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-      myRequestToken = response.getAccessToken();
+      myAccessToken = response.getAccessToken();
 
       switch (response.getType()) {
         case TOKEN:
+          Log.d("DEBUG", "Spotify Token: " + response.getAccessToken());
+
           onAuthenticationComplete(response, getString(R.string.spotify_client_id));
+          mAsyncSpotifyApi = new AsyncSpotifyApi(myAccessToken);
           break;
         case ERROR:
+          Log.d("DEBUG", "Spotify Error: " + response.getError());
           break;
         default:
+          Log.d("DEBUG", "Spotify Other: " + response.getState());
           break;
       }
-
-      Log.d("DEBUG", "Spotify Token: " + response.getAccessToken());
     }
 
-    return myRequestToken;
+    return myAccessToken;
   }
 
   @Override
