@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back">back</string>
-    <!--
-    <string name="midi">midi</string>
-    <string name="osc">osc</string>
-    <string name="noteon_60">C4</string>
-    <string name="noteon_61">D4</string>
-    <string name="noteon_62">E4</string>
-    <string name="noteon_63">F4</string>
-    <string name="noteon_64">G4</string>
-    <string name="noteon_65">A4</string>
-    <string name="noteon_66">B4</string>
-    <string name="noteon_67">C5</string>
-    <string name="osc_220hz">220Hz</string>
-    <string name="osc_440hz">440Hz</string>
-    <string name="osc_mute_on">mute on</string>
-    <string name="osc_mute_off">mute off</string>
-    <string name="functions">functions</string>
-    <string name="blink_count">blink count</string>
-    -->
+
+    <!-- for Camera -->
     <string name="camera">camera</string>
     <string name="photoshoot">take a picture</string>
     <string name="switch_fr">Front/Rear</string>
@@ -31,6 +15,7 @@
     <string name="light3">Light 3</string>
     <string name="light4">Light 4</string>
 
+    <!-- for Spotify -->
     <string name="spotify">Spotify</string>
     <string name="playlist1">Playlist 1</string>
     <string name="playlist2">Playlist 2</string>
@@ -38,7 +23,7 @@
     <string name="playlist4">Playlist 4</string>
 
     <!-- for IRKit / NatureRemo -->
-    <string name="remo">IRKit/NatureRemo</string>
+    <string name="remo">IRKit/Nature Remo</string>
     <string name="signal1">signal 1</string>
     <string name="signal2">signal 2</string>
     <string name="signal3">signal 3</string>
