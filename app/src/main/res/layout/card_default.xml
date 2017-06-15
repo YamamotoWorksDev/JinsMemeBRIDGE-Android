@@ -38,7 +38,7 @@
       android:textAlignment="center"
       android:textAppearance="@android:style/TextAppearance.Material.Widget.Button"
       android:textColor="#FFFFFF"
-      android:textSize="50sp"/>
+      android:textSize="32sp"/>
     <TextView
       android:id="@+id/card_subtext"
       android:textStyle="italic"
