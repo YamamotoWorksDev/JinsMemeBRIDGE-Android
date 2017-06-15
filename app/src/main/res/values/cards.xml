@@ -20,6 +20,8 @@
     <string name="blink_count">blink count</string>
     -->
     <string name="camera">camera</string>
+    <string name="photoshoot">take a picture</string>
+    <string name="switch_fr">Front/Rear</string>
 
     <!-- for Philips Hue -->
     <string name="hue">Hue</string>
