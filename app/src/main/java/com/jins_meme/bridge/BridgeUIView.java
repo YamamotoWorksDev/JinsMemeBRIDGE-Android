@@ -254,11 +254,7 @@ public class BridgeUIView extends RecyclerView {
     }
 
     private int getItemWidth() {
-      int w = getWidth(), h = getHeight();
-      if (w > h) {
-        w = h * h / w;
-      }
-      return w;
+      return getWidth();
     }
 
     private int getItemHeight() {

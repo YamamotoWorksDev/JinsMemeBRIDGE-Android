@@ -2,41 +2,11 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              tools:context="com.jins_meme.bridge.CameraFragment"
+              tools:context="com.jins_meme.bridge.CameraMenuFragment"
               android:orientation="vertical">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-
-        <Button
-            android:text="BACK"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/back"
-            android:layout_weight="1"/>
-
-        <Button
-            android:text="TAKE"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/take"
-            android:layout_weight="1"/>
-
-        <Button
-            android:text="SWITCH"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/toggle"
-            android:layout_weight="1"/>
-    </LinearLayout>
-
-    <com.example.android.camera2basic.AutoFitTextureView
-        android:id="@+id/texture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
-
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="3"
+      android:id="@+id/camera"/>
 </LinearLayout>

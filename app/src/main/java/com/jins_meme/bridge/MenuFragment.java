@@ -66,7 +66,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
         activity.getSupportFragmentManager().beginTransaction()
             .addToBackStack(null)
-            .replace(R.id.container, new CameraFragment())
+            .replace(R.id.container, new CameraMenuFragment())
             .commit();
       }
     };
