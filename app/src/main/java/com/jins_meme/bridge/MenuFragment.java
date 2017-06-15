@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,17 +42,21 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   private HueController hueController;
   private MemeMIDI memeMIDI;
   private MemeOSC memeOSC;
-  private MemeBTSPP memeBTSPP;
+  //private MemeBTSPP memeBTSPP;
 
   private MemeRealtimeDataFilter memeFilter;
 
   private int midiChannel = 1;
+  private int lastNote = 0;
 
   private boolean cancelFlag = false;
   private int pauseCount = 0;
   private boolean pauseFlag = false;
   private int refractoryPeriod = 0;
   private int batteryCheckCount = 2000;
+
+  private int currentEnteredMenu = 0;
+  private int currentSelectedItem = 0;
 
   // MenuFragmentからactivityへの通知イベント関連
   enum MenuFragmentEvent {
@@ -128,7 +133,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     memeOSC.initSocket();
 
     // Initialize BTSPP
-    memeBTSPP = new MemeBTSPP();
+    //memeBTSPP = new MemeBTSPP();
 
     memeFilter = new MemeRealtimeDataFilter();
 //        memeFilter.setMoveType(MemeRealtimeDataFilter.MoveType.HEAD);
@@ -138,7 +143,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   public void onDestroyView() {
     super.onDestroyView();
 
-    Log.d("FRAGMENT", "onDestroyView");
+    //debug Log.d("FRAGMENT", "onDestroyView");
 
     if (hueController != null) {
       hueController.turnOff();
@@ -159,7 +164,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
   @Override
   public void onStop() {
     super.onStop();
-    Log.d("FRAGMENT", "onStop...");
+    //debug Log.d("FRAGMENT", "onStop...");
   }
 
   @Override
@@ -181,12 +186,12 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       memeOSC = null;
     }
 
-    Log.d("FRAGMENT", "onDestroy...");
+    //debug Log.d("FRAGMENT", "onDestroy...");
   }
 
   @Override
   public void onEnterCard(int id) {
-    Log.d("ENTER", getResources().getString(id));
+    //debug Log.d("FRAGMENT", "ENTER " + getResources().getString(id));
 
     if (pauseCount >= PAUSE_MAX) {
       final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
@@ -231,104 +236,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
 
     {
-      // MIDI?
-      int note = 60;
-      switch (id) {
-        case R.string.noteon_67:
-          ++note;
-        case R.string.noteon_66:
-          ++note;
-        case R.string.noteon_65:
-          ++note;
-        case R.string.noteon_64:
-          ++note;
-        case R.string.noteon_63:
-          ++note;
-        case R.string.noteon_62:
-          ++note;
-        case R.string.noteon_61:
-          ++note;
-        case R.string.noteon_60:
-          mych.select();
-
-          final int finalNote = note;
-          new Thread(new Runnable() {
-            @Override
-            public void run() {
-              Log.d("DEBUG", "note on " + finalNote);
-              memeMIDI.sendNote(midiChannel, finalNote, 127);
-              try {
-                Thread.sleep(500);
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              } finally {
-                Log.d("DEBUG", "note off " + finalNote);
-                memeMIDI.sendNote(midiChannel, finalNote, 0);
-
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    mych.reset();
-                  }
-                });
-              }
-            }
-          }).start();
-          break;
-      }
-    }
-    {
-      // OSC?
-      switch (id) {
-        case R.string.osc_220hz:
-          Log.d("DEBUG", "set freq 220");
-          memeOSC.setAddress(MemeOSC.PREFIX, "/frequency");
-          memeOSC.setTypeTag("i");
-          memeOSC.addArgument(220);
-          memeOSC.flushMessage();
-
-          mych.select(500);
-          break;
-        case R.string.osc_440hz:
-          Log.d("DEBUG", "set freq 440");
-          memeOSC.setAddress(MemeOSC.PREFIX, "/frequency");
-          memeOSC.setTypeTag("i");
-          memeOSC.addArgument(440);
-          memeOSC.flushMessage();
-
-          mych.select(500);
-          break;
-        case R.string.osc_mute_on:
-          Log.d("DEBUG", "mute on");
-          memeOSC.setAddress(MemeOSC.PREFIX, "/volume");
-          memeOSC.setTypeTag("f");
-          memeOSC.addArgument(0.);
-          memeOSC.flushMessage();
-
-          mych.select(500);
-          break;
-        case R.string.osc_mute_off:
-          Log.d("DEBUG", "mute off");
-          memeOSC.setAddress(MemeOSC.PREFIX, "/volume");
-          memeOSC.setTypeTag("f");
-          memeOSC.addArgument(1.);
-          memeOSC.flushMessage();
-
-          mych.select(500);
-          break;
-      }
-    }
-    {
-      // functions?
-      switch (id) {
-        case R.string.blink_count:
-          CountCardHolder ch = (CountCardHolder) mView.findViewHolderForItemId(id);
-          ch.countUp();
-          break;
-      }
-    }
-    {
-      // camera?
+      // camera
       switch (id) {
         case R.string.camera:
           mListener.onMenuFragmentEnd(MenuFragmentEvent.LAUNCH_CAMERA);
@@ -372,6 +280,171 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
               ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10));
           break;
       }
+      mych.select();
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Thread.sleep(500);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          } finally {
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                mych.reset();
+              }
+            });
+          }
+        }
+      }).start();
+    }
+    {
+      // VDJ
+      int note = 24;
+      switch (id) {
+        case R.string.track8:
+          ++note;
+        case R.string.track7:
+          ++note;
+        case R.string.track6:
+          ++note;
+        case R.string.track5:
+          ++note;
+        case R.string.track4:
+          ++note;
+        case R.string.track3:
+          ++note;
+        case R.string.track2:
+          ++note;
+        case R.string.track1:
+          final int finalNote = note > 27 ? note + 8 : note;
+
+          //final MyCardHolder mych = (MyCardHolder) mView.findViewHolderForItemId(id);
+          mych.select();
+
+          new Thread(new Runnable() {
+            @Override
+            public void run() {
+              if (finalNote != lastNote) {
+                Log.d("DEBUG", "note on " + finalNote);
+                memeMIDI.sendNote(midiChannel, finalNote, 127);
+              }
+
+              try {
+                Thread.sleep(500);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              } finally {
+                if (finalNote != lastNote) {
+                  Log.d("DEBUG", "note off " + finalNote);
+                  memeMIDI.sendNote(midiChannel, finalNote, 0);
+                  lastNote = finalNote;
+                }
+
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mych.reset();
+                  }
+                });
+              }
+            }
+          }).start();
+          break;
+      }
+
+      int noteFx = 48;
+      final int finalNoteFx;
+      final MyCardHolder mych_fx;
+
+      switch (id) {
+        case R.string.effect6:
+          ++noteFx;
+        case R.string.effect5:
+          ++noteFx;
+        case R.string.effect4:
+          ++noteFx;
+        case R.string.effect3:
+          ++noteFx;
+        case R.string.effect2:
+          ++noteFx;
+        case R.string.effect1:
+          finalNoteFx = noteFx;
+
+          mych_fx = (MyCardHolder) mView.findViewHolderForItemId(id);
+          mych_fx.select();
+
+          new Thread(new Runnable() {
+            @Override
+            public void run() {
+              Log.d("DEBUG", "note on " + finalNoteFx);
+              memeMIDI.sendNote(midiChannel, finalNoteFx, 127);
+
+              try {
+                Thread.sleep(500);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              } finally {
+                Log.d("DEBUG", "note off " + finalNoteFx);
+                memeMIDI.sendNote(midiChannel, finalNoteFx, 0);
+
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mych_fx.reset();
+                  }
+                });
+              }
+            }
+          }).start();
+          break;
+      }
+
+      note = 60;
+      switch (id) {
+        /*
+        case R.string.logo5:
+          ++note;
+        case R.string.logo4:
+          ++note;
+         */
+        case R.string.logo4:
+          ++note;
+        case R.string.logo3:
+          ++note;
+        case R.string.logo2:
+          ++note;
+        case R.string.logo1:
+          final int finalNote = note;
+
+          final MyCardHolder mych_lg = (MyCardHolder) mView.findViewHolderForItemId(id);
+          mych_lg.select();
+
+          new Thread(new Runnable() {
+            @Override
+            public void run() {
+              Log.d("DEBUG", "note on " + finalNote);
+              memeMIDI.sendNote(midiChannel, finalNote, 127);
+              try {
+                Thread.sleep(500);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              } finally {
+                Log.d("DEBUG", "note off " + finalNote);
+                memeMIDI.sendNote(midiChannel, finalNote, 0);
+
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    mych_lg.reset();
+                  }
+                });
+              }
+            }
+          }).start();
+          break;
+      }
     }
   }
 
@@ -393,13 +466,13 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     float pitch = memeRealtimeData.getPitch();
     float roll = memeRealtimeData.getRoll();
 
-    memeBTSPP.sendAccel(accelX, accelY, accelZ);
-    memeBTSPP.sendAngle(yaw, pitch, roll);
+    //memeBTSPP.sendAccel(accelX, accelY, accelZ);
+    //memeBTSPP.sendAngle(yaw, pitch, roll);
 
     //debug Log.d("DEBUG", "accel  = " + accelX + ", " + accelY + ", " + accelZ);
     //debug Log.d("DEBUG", "rotation  = " + yaw + ", " + pitch + ", " + roll);
 
-    if (memeOSC.initializedSocket()) {
+    if (memeOSC != null && memeOSC.initializedSocket()) {
       //debug Log.d("DEBUG", "osc bundle.");
 
       memeOSC.createBundle();
@@ -523,7 +596,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     if (eyeBlinkStrength > 0 || eyeBlinkSpeed > 0) {
       Log.d("EYE", String.format("meme: BLINK = %d/%d", eyeBlinkStrength, eyeBlinkSpeed));
 
-      memeBTSPP.sendEyeBlink(eyeBlinkStrength, eyeBlinkSpeed);
+      //memeBTSPP.sendEyeBlink(eyeBlinkStrength, eyeBlinkSpeed);
     }
 
     if (eyeUp > 0 || eyeDown > 0 || eyeLeft > 0 || eyeRight > 0) {
@@ -531,7 +604,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
           .format("meme: UP = %d, DOWN = %d, LEFT = %d, RIGHT = %d", eyeUp, eyeDown, eyeLeft,
               eyeRight));
 
-      memeBTSPP.sendEyeMove(eyeUp, eyeDown, eyeLeft, eyeRight);
+      //memeBTSPP.sendEyeMove(eyeUp, eyeDown, eyeLeft, eyeRight);
     }
   }
 
@@ -539,7 +612,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     handler.post(new Runnable() {
       @Override
       public void run() {
-        mView.reset();
+        mView.back();
       }
     });
   }
@@ -574,28 +647,138 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       mInflater = LayoutInflater.from(context);
     }
 
-    private final int CATD_TYPE_ONLY_TITLE = 0;
-    private final int CATD_TYPE_COUNTER = 1;
+    private final int CARD_TYPE_ONLY_TITLE = 0;
+    private final int CARD_TYPE_LOGO_TITLE = 1;
+    private final int CARD_TYPE_ONLY_LOGO  = 2;
 
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
       switch (card_type) {
-        case CATD_TYPE_COUNTER:
-          return new CountCardHolder(mInflater.inflate(R.layout.card_count, parent, false));
+        case CARD_TYPE_LOGO_TITLE:
+          return new MyCardHolder(mInflater.inflate(R.layout.card_vdj, parent, false));
         default:
-          return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
+          return new MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
       }
     }
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
       switch (id) {
-        case R.string.blink_count:
-          ((CountCardHolder) (cardHolder)).mTitle.setText(getResources().getString(id));
-          ((CountCardHolder) (cardHolder)).reset();
+        case R.string.track14:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("1-4");
+          break;
+        case R.string.track58:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("5-8");
+          break;
+        case R.string.track1:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track1);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track2:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track2);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track3:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track3);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track4:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track4);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track5:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track5);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track6:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track6);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track7:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track7);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.track8:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track8);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect1:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect1);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect2:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect2);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect3:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect3);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect4:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect4);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect5:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect5);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.effect6:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.logo:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.logo1:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo1);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.logo2:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo2);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.logo3:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo3);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.logo4:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         default:
-          ((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
+          //((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
       }
     }
@@ -605,11 +788,15 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
       switch (id) {
         case R.string.back:
           return CardFunction.BACK;
-        case R.string.midi:
-        case R.string.osc:
-        case R.string.functions:
         case R.string.hue:
+        case R.string.vdj:
+        case R.string.track14:
+        case R.string.track58:
+        case R.string.effect:
+        case R.string.logo:
           if (pauseCount < PAUSE_MAX) {
+            //debug Log.d("FRAGMENT", "getCardFunction");
+
             return CardFunction.ENTER_MENU;
           }
       }
@@ -618,66 +805,23 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
 
     @Override
     public int getCardId(int parent_id, int position) {
+      //debug Log.d("FRAGMENT", "getCardId " + parent_id + " " + position);
+
       int id = NO_ID;
       switch (parent_id) {
         case NO_ID:
           switch (position) {
             case 0:
-              id = R.string.midi;
-              break;
-            case 1:
-              id = R.string.osc;
-              break;
-            case 2:
-              id = R.string.functions;
-              break;
-            case 3:
               id = R.string.camera;
               break;
-            case 4:
+            case 1:
               id = R.string.hue;
               break;
-          }
-          break;
-        case R.string.midi:
-          if (position < 8) {
-            id = getResources()
-                .getIdentifier("noteon_6" + position, "string", mContext.getPackageName());
-          } else {
-            id = R.string.back;
-          }
-          break;
-        case R.string.osc:
-          switch (position) {
-            case 0:
-              id = R.string.osc_220hz;
-              break;
-            case 1:
-              id = R.string.osc_440hz;
-              break;
             case 2:
-              id = R.string.osc_mute_on;
-              break;
-            case 3:
-              id = R.string.osc_mute_off;
-              break;
-            case 4:
-              id = R.string.back;
+              id = R.string.vdj;
               break;
           }
-          break;
-        case R.string.functions:
-          switch (position) {
-            case 0:
-              id = R.string.blink_count;
-              break;
-            case 1:
-              id = R.string.back;
-              break;
-            case 2:
-              id = R.string.back;
-              break;
-          }
+          currentSelectedItem = id;
           break;
         case R.string.hue:
           switch (position) {
@@ -697,6 +841,98 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
               id = R.string.light4;
               break;
           }
+          currentSelectedItem = id;
+          break;
+        case R.string.vdj:
+          switch (position) {
+            case 0:
+              id = R.string.track14;
+              break;
+            case 1:
+              id = R.string.track58;
+              break;
+            case 2:
+              id = R.string.effect;
+              break;
+            case 3:
+              id = R.string.logo;
+              break;
+          }
+          currentSelectedItem = id;
+          break;
+        case R.string.track14:
+          switch (position) {
+            case 0:
+              id = R.string.track1;
+              break;
+            case 1:
+              id = R.string.track2;
+              break;
+            case 2:
+              id = R.string.track3;
+              break;
+            case 3:
+              id = R.string.track4;
+              break;
+          }
+          currentSelectedItem = id;
+          break;
+        case R.string.track58:
+          switch (position) {
+            case 0:
+              id = R.string.track5;
+              break;
+            case 1:
+              id = R.string.track6;
+              break;
+            case 2:
+              id = R.string.track7;
+              break;
+            case 3:
+              id = R.string.track8;
+              break;
+          }
+          currentSelectedItem = id;
+          break;
+        case R.string.effect:
+          switch (position) {
+            case 0:
+              id = R.string.effect1;
+              break;
+            case 1:
+              id = R.string.effect2;
+              break;
+            case 2:
+              id = R.string.effect3;
+              break;
+            case 3:
+              id = R.string.effect4;
+              break;
+            case 4:
+              id = R.string.effect5;
+              break;
+            case 5:
+              id = R.string.effect6;
+              break;
+          }
+          currentSelectedItem = id;
+          break;
+        case R.string.logo:
+          switch (position) {
+            case 0:
+              id = R.string.logo1;
+              break;
+            case 1:
+              id = R.string.logo2;
+              break;
+            case 2:
+              id = R.string.logo3;
+              break;
+            case 3:
+              id = R.string.logo4;
+              break;
+          }
+          currentSelectedItem = id;
           break;
       }
 
@@ -710,16 +946,20 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     @Override
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
-        case R.string.midi:
-          return 9;
-        case R.string.osc:
-          return 5;
-        case R.string.functions:
-          return 3;
+        case R.string.effect:
+          return 6;
         case R.string.hue:
           return 5;
+        case R.string.logo:
+          return 4;
+        case R.string.track14:
+          return 4;
+        case R.string.track58:
+          return 4;
+        case R.string.vdj:
+          return 4;
         case NO_ID:
-          return 5;
+          return 3;
       }
       return 0;
     }
@@ -727,69 +967,63 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     @Override
     public int getCardType(int id) {
       switch (id) {
-        case R.string.blink_count:
-          return CATD_TYPE_COUNTER;
+        case R.string.track1:
+        case R.string.track14:
+        case R.string.track2:
+        case R.string.track3:
+        case R.string.track4:
+        case R.string.track5:
+        case R.string.track58:
+        case R.string.track6:
+        case R.string.track7:
+        case R.string.track8:
+        case R.string.effect:
+        case R.string.effect1:
+        case R.string.effect2:
+        case R.string.effect3:
+        case R.string.effect4:
+        case R.string.effect5:
+        case R.string.effect6:
+        case R.string.logo:
+        case R.string.logo1:
+        case R.string.logo2:
+        case R.string.logo3:
+        case R.string.logo4:
+          return CARD_TYPE_LOGO_TITLE;
         default:
-          return CATD_TYPE_ONLY_TITLE;
+          return CARD_TYPE_ONLY_TITLE;
       }
     }
   }
 
   private class MyCardHolder extends CardHolder {
 
-    TextView mTextView;
+    ImageView mImageView;
+    TextView mTitle;
+    TextView mSubtitle;
     TextView mValue;
 
     MyCardHolder(View itemView) {
       super(itemView);
-      mTextView = (TextView) itemView.findViewById(R.id.card_text);
+      mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
+      mTitle = (TextView) itemView.findViewById(R.id.card_text);
+      mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
       mValue = (TextView) itemView.findViewById(R.id.card_select);
     }
 
     void select() {
+      //mValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25);
       mValue.setText(getString(R.string.selected));
-    }
-
-    void select(int msec) {
-      mValue.setText(getString(R.string.selected));
-
-      handler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          mValue.setText(" ");
-        }
-      }, msec);
     }
 
     void pause() {
+      //mValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25);
       mValue.setText(getString(R.string.pause));
     }
 
     void reset() {
+      //mValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 48);
       mValue.setText(" ");
-    }
-  }
-
-  private class CountCardHolder extends CardHolder {
-
-    TextView mTitle;
-    TextView mValue;
-    int count = 0;
-
-    CountCardHolder(View itemView) {
-      super(itemView);
-      mTitle = (TextView) itemView.findViewById(R.id.count_title);
-      mValue = (TextView) itemView.findViewById(R.id.count);
-    }
-
-    private void reset() {
-      count = 0;
-      mValue.setText(getString(R.string.count, count));
-    }
-
-    private void countUp() {
-      ++count;
-      mValue.setText(getString(R.string.count, count));
     }
   }
 }

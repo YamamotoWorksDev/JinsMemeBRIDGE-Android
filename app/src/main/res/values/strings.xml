@@ -6,6 +6,14 @@
   <string name="meme_app_id"></string>
   <string name="meme_app_secret"></string>
 
+  <string name="spotify_client_id">92d6b9906bd54b3dbc60c646ca4f5017</string>
+  <string name="spotify_client_secret">71807167c3594c9993cc4a42497e599a</string>
+  <string name="spotify_client_uri">jins-meme-bridge-login://callback</string>
+
+  <string name="com_spotify_sdk_login_progress">Loading…</string>
+  <string name="com_spotify_sdk_redirect_scheme"></string>
+  <string name="com_spotify_sdk_redirect_host"></string>
+
   <string name="ok">OK</string>
   <string name="exit">EXIT</string>
   <string name="succeeded">SUCCEEDED</string>

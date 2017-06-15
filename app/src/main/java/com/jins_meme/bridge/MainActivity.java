@@ -1,7 +1,7 @@
 /**
  * MainActivity.java
  *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
@@ -51,10 +51,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
-    MemeRealtimeListener,
-    RootMenuFragment.OnFragmentInteractionListener, MIDIMenuFragment.OnFragmentInteractionListener,
-    OSCMenuFragment.OnFragmentInteractionListener, HueMenuFragment.OnFragmentInteractionListener,
-    CameraFragment.OnFragmentInteractionListener {
+    MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
+    CameraFragment.OnFragmentInteractionListener, SpotifyMenuFragment.OnFragmentInteractionListener,
+    HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -87,9 +86,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
 
   private RootMenuFragment rootMenu;
-  private MIDIMenuFragment midiMenu;
-  private OSCMenuFragment oscMenu;
+  private SpotifyMenuFragment spotifyMenu;
   private HueMenuFragment hueMenu;
+  private VDJMenuFragment vdjMenu;
+  /*
+   * MODIFY YOURSELF
+   * Add your implemented function's configuration
+   *
+   */
+  // private ***Fragment ***Fragment;
   private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
 
   private BasicConfigFragment basicConfigFragment;
@@ -97,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private OSCConfigFragment oscConfigFragment;
   private MIDIConfigFragment midiConfigFragment;
+  private SpotifyConfigFragment spotifyConfigFragment;
   private HueConfigFragment hueConfigFragment;
   /*
    * MODIFY YOURSELF
@@ -138,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
     rootMenu = new RootMenuFragment();
-    midiMenu = new MIDIMenuFragment();
-    oscMenu = new OSCMenuFragment();
+    spotifyMenu = new SpotifyMenuFragment();
     hueMenu = new HueMenuFragment();
+    vdjMenu = new VDJMenuFragment();
     menus.add(rootMenu);
-    menus.add(midiMenu);
-    menus.add(oscMenu);
+    menus.add(spotifyMenu);
     menus.add(hueMenu);
+    menus.add(vdjMenu);
 
     cancelFlag = false;
     pauseCount = 0;
@@ -154,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
     midiConfigFragment = new MIDIConfigFragment();
+    spotifyConfigFragment = new SpotifyConfigFragment();
     hueConfigFragment = new HueConfigFragment();
     aboutFragment = new AboutFragment();
     /*
@@ -165,8 +172,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    for(Fragment m : menus) {
-      transaction.add(R.id.container, m);
+    for (Fragment m : menus) {
+      String fullClassName = m.getClass().getName();
+      String className = fullClassName
+          .substring(getPackageName().length() + 1, fullClassName.length());
+      transaction.add(R.id.container, m, className);
       transaction.hide(m);
     }
     transaction.show(rootMenu);
@@ -210,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         }
       }, 10000);
     }
-
   }
 
   @Override
@@ -227,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      */
     menu.add(0, index++, 0, R.string.osc_conf);
     menu.add(0, index++, 0, R.string.midi_conf);
+    menu.add(0, index++, 0, R.string.spotify_conf);
     menu.add(0, index++, 0, R.string.hue_conf);
 
     menu.add(0, index++, 0, R.string.about);
@@ -325,6 +335,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transitToFragment(midiConfigFragment);
 
       return true;
+    } else if (itemTitle.equals(getString(R.string.spotify_conf))) {
+      Log.d("DEBUG", "tap spotify setting");
+
+      transitToFragment(spotifyConfigFragment);
+
+      return true;
     } else if (itemTitle.equals(getString(R.string.hue_conf))) {
       Log.d("DEBUG", "tap hue setting");
 
@@ -383,9 +399,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     rootMenu = null;
-    midiMenu = null;
-    oscMenu = null;
+    spotifyMenu = null;
     hueMenu = null;
+    vdjMenu = null;
 
     basicConfigFragment = null;
     aboutFragment = null;
@@ -416,12 +432,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void openNextMenu(int card_id) {
-    switch(card_id) {
-      case R.string.midi:
-        transitToMenu(midiMenu);
+    switch (card_id) {
+      case R.string.vdj:
+        transitToMenu(vdjMenu);
         break;
-      case R.string.osc:
-        transitToMenu(oscMenu);
+      case R.string.spotify:
+        transitToMenu(spotifyMenu);
         break;
       case R.string.hue:
         transitToMenu(hueMenu);
@@ -434,12 +450,21 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void backToPreviousMenu() {
-    super.onBackPressed();
+    if(hasBackStackEntryCount()) {
+      FragmentManager manager = getSupportFragmentManager();
+      Fragment active = manager.findFragmentById(R.id.container);
+      if (active instanceof MenuFragmentBase) {
+        ((MenuFragmentBase) active).menuReset();
+      }
+      super.onBackPressed();
+    }
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
+
+    Log.d("DEBUG", "MAIN:: onActivityResult -> " + requestCode);
 
     if (requestCode == 0) {
       if (resultCode == RESULT_OK) {
@@ -447,6 +472,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       } else {
         finishAndRemoveTask();
       }
+    } else if (requestCode == 1337) {
+      spotifyMenu.processRequestToken(requestCode, resultCode, data);
     } else {
       if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Auth OK");
@@ -519,7 +546,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
 
         invalidateOptionsMenu();
-        basicConfigFragment.setSwConnect(false);
+        if (basicConfigFragment != null) {
+          basicConfigFragment.setSwConnect(false);
+        }
 
         Toast.makeText(MainActivity.this, getString(R.string.meme_disconnected), Toast.LENGTH_SHORT)
             .show();
@@ -534,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("MAIN", "APP_ID: " + appID + " APP_SECRET: " + appSecret);
 
     if (appID != null && appID.length() > 0 && appSecret != null && appSecret.length() > 0) {
-      Log.d("MAIN", "Initialized MemeLib with " + appID + " and " + appSecret);
+      Log.d("MAIN", "Initialized MemeLib with " + appID + " / and " + appSecret);
 
       MemeLib.setAppClientID(this, appID, appSecret);
       memeLib = MemeLib.getInstance();
@@ -629,57 +658,46 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       batteryCheckCount = 0;
     }
-    float accelX = memeRealtimeData.getAccX();
-    float accelY = memeRealtimeData.getAccY();
-    float accelZ = memeRealtimeData.getAccZ();
 
     int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
     int eyeBlinkSpeed = memeRealtimeData.getBlinkSpeed();
 
-    int eyeUp = memeRealtimeData.getEyeMoveUp();
-    int eyeDown = memeRealtimeData.getEyeMoveDown();
+    //int eyeUp = memeRealtimeData.getEyeMoveUp();
+    //int eyeDown = memeRealtimeData.getEyeMoveDown();
     int eyeLeft = memeRealtimeData.getEyeMoveLeft();
     int eyeRight = memeRealtimeData.getEyeMoveRight();
 
-    float yaw = memeRealtimeData.getYaw();
-    float pitch = memeRealtimeData.getPitch();
+    //float accelX = memeRealtimeData.getAccX();
+    //float accelY = memeRealtimeData.getAccY();
+    //float accelZ = memeRealtimeData.getAccZ();
+
+    //float yaw = memeRealtimeData.getYaw();
+    //float pitch = memeRealtimeData.getPitch();
     float roll = memeRealtimeData.getRoll();
+
     if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
       if (Math.abs(roll) > getRollThreshold()) {
         cancelFlag = true;
         //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
 
-        if (!pauseFlag) {
-          if (++pauseCount >= PAUSE_MAX) {
-            pauseFlag = true;
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                findViewById(R.id.pauseView).setVisibility(View.VISIBLE);
-              }
-            });
-            Log.d("=========PAUSE=========", "pause");
-          }
-        }
-      } else if (Math.abs(roll) <= getRollThreshold()) {
-        final MenuFragmentBase active = getVisibleMenuFragment();
-        if (!pauseFlag) {
-          if (cancelFlag && pauseCount < PAUSE_MAX) {
-            if(transitToRootMenu()) {
-              refractoryPeriod = REFRACTORY_PERIOD_MAX;
-              Log.d("=========PAUSE=========", "cancel");
-            }
-          }
-          cancelFlag = false;
-          pauseCount = 0;
-        }
-        if (refractoryPeriod > 0) {
-          refractoryPeriod--;
-        } else {
-          mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(), getLeftRightThreshold());
-          if(pauseFlag) {
-            if(mMemeDataFilter.isBlink()) {
-              pauseFlag = false;
+        //if (++pauseCount >= PAUSE_MAX) {
+        if (pauseCount < PAUSE_MAX) {
+          pauseCount++;
+
+          if (pauseCount == PAUSE_MAX) {
+
+            //pauseFlag = true;
+            pauseFlag = !pauseFlag;
+
+            if (pauseFlag) {
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  findViewById(R.id.pauseView).setVisibility(View.VISIBLE);
+                }
+              });
+              Log.d("=========PAUSE=========", "pause");
+            } else {
               handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -689,36 +707,55 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
               Log.d("=========PAUSE=========", "pause clear");
             }
           }
-          else if(active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
-            final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback)active;
-            if (mMemeDataFilter.isBlink()) {
-              Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  accepter.onMemeBlinked();
+        }
+      } else if (Math.abs(roll) <= getRollThreshold()) {
+        final MenuFragmentBase active = getVisibleMenuFragment();
+        if (!pauseFlag) {
+          if (cancelFlag && pauseCount < PAUSE_MAX) {
+            if (cancel(false)) {
+              refractoryPeriod = REFRACTORY_PERIOD_MAX;
+              Log.d("=========PAUSE=========", "cancel");
+            }
+          } else {
+            if (refractoryPeriod > 0) {
+              refractoryPeriod--;
+            } else {
+              mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
+                  getLeftRightThreshold());
+              if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
+                final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
+                if (mMemeDataFilter.isBlink()) {
+                  Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeBlinked();
+                    }
+                  });
+                } else if (mMemeDataFilter.isLeft()) {
+                  Log.d("EYE", "left = " + eyeLeft);
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveLeft();
+                    }
+                  });
+                } else if (mMemeDataFilter.isRight()) {
+                  Log.d("EYE", "right = " + eyeRight);
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveRight();
+                    }
+                  });
                 }
-              });
-            } else if (mMemeDataFilter.isLeft()) {
-              Log.d("EYE", "left = " + eyeLeft);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  accepter.onMemeMoveLeft();
-                }
-              });
-            } else if (mMemeDataFilter.isRight()) {
-              Log.d("EYE", "right = " + eyeRight);
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  accepter.onMemeMoveRight();
-                }
-              });
+              }
             }
           }
         }
 
+        cancelFlag = false;
+        pauseCount = 0;
       }
     }
   }
@@ -746,21 +783,33 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       memeLib.disconnect();
     }
   }
+
   @Override
   public void onBackPressed() {
     Log.d("MAIN", "press back!");
+    cancel(true);
+  }
 
+  public boolean cancel(boolean allow_finish) {
     FragmentManager manager = getSupportFragmentManager();
-    MenuFragmentBase active = getVisibleMenuFragment();
+    Fragment active = manager.findFragmentById(R.id.container);
 
-    if(active == null || !active.menuBack()) {
-      super.onBackPressed();
+    boolean processed = false;
+    if (active instanceof MenuFragmentBase) {
+      processed = ((MenuFragmentBase) active).menuBack();
     }
-    if(manager.getBackStackEntryCount() == 0) {
+    if (!processed) {
+      if(allow_finish || hasBackStackEntryCount()) {
+        super.onBackPressed();
+        processed = true;
+      }
+    }
+    if (!hasBackStackEntryCount()) {
       setActionBarTitle(R.string.actionbar_title);
       setActionBarBack(false);
       invalidateOptionsMenu();
     }
+    return processed;
   }
 
   void setActionBarTitle(int resId) {
@@ -787,7 +836,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    transaction
+        .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
+            R.anim.config_out2);
     hideVisibleMenuFragments(transaction);
     transaction.show(next);
     transaction.addToBackStack(null);
@@ -797,9 +848,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarBack(false);
     invalidateOptionsMenu();
   }
+
   boolean transitToRootMenu() {
-    FragmentManager manager = getSupportFragmentManager();
-    if(manager.getBackStackEntryCount() > 0) {
+    if (hasBackStackEntryCount()) {
+      FragmentManager manager = getSupportFragmentManager();
       InputMethodManager imm = (InputMethodManager) getSystemService(
           Context.INPUT_METHOD_SERVICE);
       imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
@@ -825,6 +877,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
     return false;
   }
+
   void transitToFragment(Fragment next) {
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
@@ -833,7 +886,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    transaction.setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in, R.anim.config_out2);
+    transaction
+        .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
+            R.anim.config_out2);
     hideVisibleMenuFragments(transaction);
     transaction.add(R.id.container, next);
     transaction.addToBackStack(null);
@@ -844,17 +899,27 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     invalidateOptionsMenu();
   }
 
+  private boolean hasBackStackEntryCount() {
+    return getSupportFragmentManager().getBackStackEntryCount()>0;
+  }
+
   private MenuFragmentBase getVisibleMenuFragment() {
-    for(MenuFragmentBase m : menus) {
-      if(m.isVisible()) return m;
+    for (MenuFragmentBase m : menus) {
+      if (m.isVisible()) {
+        return m;
+      }
     }
     return null;
   }
+
   private void hideVisibleMenuFragments(FragmentTransaction transaction) {
-    for(Fragment m : menus) {
-      if(m.isVisible()) transaction.hide(m);
+    for (Fragment m : menus) {
+      if (m.isVisible()) {
+        transaction.hide(m);
+      }
     }
   }
+
   String getSavedValue(String key) {
     return preferences.getString(key, null);
   }

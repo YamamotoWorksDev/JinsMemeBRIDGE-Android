@@ -1,3 +1,12 @@
+/**
+ * MenuFragment.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
@@ -8,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
@@ -31,6 +41,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
+    Log.d("DEBUG", "HUE:: onViewCreated");
+
     super.onViewCreated(view, savedInstanceState);
 
     CardAdapter myAdapter = new CardAdapter(getContext(), this);
@@ -49,6 +61,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
   }
   @Override
   public void onDestroyView() {
+    super.onDestroyView();
+
     super.onDestroy();
     this.destroy();
   }
@@ -60,6 +74,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onAttach(Context context) {
+    Log.d("DEBUG", "HUE:: onAttach");
+
     super.onAttach(context);
     if (context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener) context;
@@ -81,11 +97,12 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
+    Log.d("DEBUG", "HUE:: onEnterCard");
   }
 
   @Override
   public void onExitCard(int id) {
-    mListener.backToPreviousMenu();
+    Log.d("DEBUG", "HUE:: onExitCard");
   }
 
   @Override
@@ -125,6 +142,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
             ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10));
         break;
     }
+    mych.setText(getString(R.string.selected), 300);
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
@@ -138,16 +156,16 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
       mInflater = LayoutInflater.from(context);
     }
 
-    private final int CATD_TYPE_ONLY_TITLE = 0;
-
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-      return new MyCardHolder(mInflater.inflate(R.layout.card_sample, parent, false));
+      return new CardAdapter.MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
     }
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-      ((MyCardHolder) (cardHolder)).mTextView.setText(getResources().getString(id));
+      ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
+      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
     }
 
     @Override
@@ -179,9 +197,11 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
         case 4:
           id = R.string.light4;
           break;
+        /*
         case 5:
           id = R.string.back;
           break;
+         */
       }
       return id;
     }
@@ -190,34 +210,42 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
         case NO_ID:
-          return 6;
+          return 5;
+          //return 6;
       }
       return 0;
     }
 
     @Override
     public int getCardType(int id) {
-      return CATD_TYPE_ONLY_TITLE;
+      return getResources().getInteger(R.integer.CARD_TYPE_LOGO_TITLE);
     }
 
     private class MyCardHolder extends CardHolder {
 
-      TextView mTextView;
+      ImageView mImageView;
+      TextView mTitle;
+      TextView mSubtitle;
       TextView mValue;
       Handler mHandler = new Handler();
 
       MyCardHolder(View itemView) {
         super(itemView);
-        mTextView = (TextView) itemView.findViewById(R.id.card_text);
+
+        mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
+        mTitle = (TextView) itemView.findViewById(R.id.card_text);
+        mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
         mValue = (TextView) itemView.findViewById(R.id.card_select);
       }
 
-      void select() {
-        mValue.setText(getString(R.string.selected));
+      void setText(String text) {
+        //mValue.setText(getString(R.string.selected));
+        mValue.setText(text);
       }
 
-      void select(int msec) {
-        mValue.setText(getString(R.string.selected));
+      void setText(String text, int msec) {
+        //mValue.setText(getString(R.string.selected));
+        mValue.setText(text);
 
         mHandler.postDelayed(new Runnable() {
           @Override
@@ -227,15 +255,10 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
         }, msec);
       }
 
-      void pause() {
-        mValue.setText(getString(R.string.pause));
-      }
-
-      void reset() {
+      void clearText() {
         mValue.setText(" ");
       }
     }
-
   }
 
 }

@@ -5,6 +5,7 @@
     <string name="osc_conf">OSC</string>
     <string name="midi_conf">MIDI</string>
     <string name="hue_conf">HUE</string>
+    <string name="spotify_conf">SPOTIFY</string>
     <string name="about">ABOUT</string>
     <string name="exit_app">EXIT APP</string>
 </resources>
