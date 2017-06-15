@@ -46,7 +46,15 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private RemoController remoController;
   private Switch swConnect;
   private Button bSignal1;
+  private Button bSignal2;
+  private Button bSignal3;
+  private Button bSignal4;
+  private Button bSignal5;
   private EditText etSignal1;
+  private EditText etSignal2;
+  private EditText etSignal3;
+  private EditText etSignal4;
+  private EditText etSignal5;
   private TextView tvName;
   private TextView tvAddress;
   private ProgressDialog progressDialog;
@@ -157,35 +165,29 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       }
     });
     remoController.setMessagesListener(new OnMessagesListener() {
+
       @Override
       public void onReciveMessages(final String messages) {
         if (state == State.RECEIVEING) {
           receiveHandler.post(new Runnable() {
             @Override
             public void run() {
+
               switch (slotIndex) {
                 case 1:
-                  progressDialog.dismiss();
-
-
-
-                  mainActivity.autoSaveValue("REMO_SIGNAL_1", messages);
-                  state = State.EXIST;
-                  Handler handler = new Handler();
-                  handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                      etSignal1.requestFocus();
-                      InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
-                          .getSystemService(Context.INPUT_METHOD_SERVICE);
-                      inputMethodManager.showSoftInput(etSignal1, InputMethodManager.RESULT_UNCHANGED_SHOWN);
-                    }
-                  }, 100);
-
+                  receivedMessages(messages, "REMO_SIGNAL_1", etSignal1);
                   break;
                 case 2:
-                  mainActivity.autoSaveValue("REMO_SIGNAL_2", messages);
+                  receivedMessages(messages, "REMO_SIGNAL_2", etSignal2);
+                  break;
+                case 3:
+                  receivedMessages(messages, "REMO_SIGNAL_3", etSignal3);
+                  break;
+                case 4:
+                  receivedMessages(messages, "REMO_SIGNAL_4", etSignal4);
+                  break;
+                case 5:
+                  receivedMessages(messages, "REMO_SIGNAL_5", etSignal5);
                   break;
               }
               return;
@@ -206,6 +208,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (state != State.CHECK_EXIST) {
           if (b) {
+            state = State.FOUNDING;
             remoController.startDiscovery();
 
             adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, new ArrayList<String>());
@@ -226,8 +229,9 @@ public class RemoConfigFragment extends ConfigFragmentBase {
               public void onCancel(DialogInterface dialogInterface) {
                 Log.d(TAG, "onCancel: ");
                 remoController.stopDiscovery();
-                if (state == State.LOST) {
+                if (state == State.FOUNDING) {
                   swConnect.setChecked(false);
+                  state = State.LOST;
                 }
               }
             });
@@ -241,28 +245,35 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     bSignal1.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (state == State.EXIST) {
-          state = State.RECEIVEING;
-          slotIndex = 1;
-          String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
-          remoController.recevieMessages(address);
-          progressDialog = new ProgressDialog(mainActivity);
-          progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              progressDialog.cancel();
-            }
-          });
-          progressDialog.setOnCancelListener(new OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-              Log.d(TAG, "onCancel: ");
-              state = State.EXIST;
-              remoController.cancelReceiveMessages();
-            }
-          });
-          progressDialog.show();
-        }
+        receiveMessages(1);
+      }
+    });
+    bSignal2 = (Button) view.findViewById(R.id.remo_signal_2_receive);
+    bSignal2.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        receiveMessages(2);
+      }
+    });
+    bSignal3 = (Button) view.findViewById(R.id.remo_signal_3_receive);
+    bSignal3.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        receiveMessages(3);
+      }
+    });
+    bSignal4 = (Button) view.findViewById(R.id.remo_signal_4_receive);
+    bSignal4.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        receiveMessages(4);
+      }
+    });
+    bSignal5 = (Button) view.findViewById(R.id.remo_signal_5_receive);
+    bSignal5.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        receiveMessages(5);
       }
     });
 
@@ -272,7 +283,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
         Log.d(TAG, "onEditorAction: " + i);
         if (i == EditorInfo.IME_ACTION_DONE) {
-//          mainActivity.autoSaveValue("REMO_SIGNAL_1_NAME", textView.getText().toString());
           layout.requestFocus();
         }
         return false;
@@ -282,17 +292,112 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onFocusChange(View view, boolean b) {
         Log.d(TAG, "onFocusChange: " + b);
-        if (b) {
-
-        } else {
+        if (!b) {
           mainActivity.autoSaveValue("REMO_SIGNAL_1_NAME", ((TextView)view).getText().toString());
           InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
               .getSystemService(Context.INPUT_METHOD_SERVICE);
           inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
         }
       }
     });
+
+    etSignal2 = (EditText) view.findViewById(R.id.remo_signal_2_name);
+    etSignal2.setOnEditorActionListener(new OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        Log.d(TAG, "onEditorAction: " + i);
+        if (i == EditorInfo.IME_ACTION_DONE) {
+          layout.requestFocus();
+        }
+        return false;
+      }
+    });
+    etSignal2.setOnFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View view, boolean b) {
+        Log.d(TAG, "onFocusChange: " + b);
+        if (!b) {
+          mainActivity.autoSaveValue("REMO_SIGNAL_2_NAME", ((TextView)view).getText().toString());
+          InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
+              .getSystemService(Context.INPUT_METHOD_SERVICE);
+          inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+      }
+    });
+
+    etSignal3 = (EditText) view.findViewById(R.id.remo_signal_3_name);
+    etSignal3.setOnEditorActionListener(new OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        Log.d(TAG, "onEditorAction: " + i);
+        if (i == EditorInfo.IME_ACTION_DONE) {
+          layout.requestFocus();
+        }
+        return false;
+      }
+    });
+    etSignal3.setOnFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View view, boolean b) {
+        Log.d(TAG, "onFocusChange: " + b);
+        if (!b) {
+          mainActivity.autoSaveValue("REMO_SIGNAL_3_NAME", ((TextView)view).getText().toString());
+          InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
+              .getSystemService(Context.INPUT_METHOD_SERVICE);
+          inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+      }
+    });
+
+    etSignal4 = (EditText) view.findViewById(R.id.remo_signal_4_name);
+    etSignal4.setOnEditorActionListener(new OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        Log.d(TAG, "onEditorAction: " + i);
+        if (i == EditorInfo.IME_ACTION_DONE) {
+          layout.requestFocus();
+        }
+        return false;
+      }
+    });
+    etSignal4.setOnFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View view, boolean b) {
+        Log.d(TAG, "onFocusChange: " + b);
+        if (!b) {
+          mainActivity.autoSaveValue("REMO_SIGNAL_4_NAME", ((TextView)view).getText().toString());
+          InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
+              .getSystemService(Context.INPUT_METHOD_SERVICE);
+          inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+      }
+    });
+
+    etSignal5 = (EditText) view.findViewById(R.id.remo_signal_5_name);
+    etSignal5.setOnEditorActionListener(new OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        Log.d(TAG, "onEditorAction: " + i);
+        if (i == EditorInfo.IME_ACTION_DONE) {
+          layout.requestFocus();
+        }
+        return false;
+      }
+    });
+    etSignal5.setOnFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View view, boolean b) {
+        Log.d(TAG, "onFocusChange: " + b);
+        if (!b) {
+          mainActivity.autoSaveValue("REMO_SIGNAL_5_NAME", ((TextView)view).getText().toString());
+          InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
+              .getSystemService(Context.INPUT_METHOD_SERVICE);
+          inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+      }
+    });
+
+
 
     layout = (RelativeLayout) view.findViewById(R.id.remo_layout);
     layout.setOnTouchListener(new OnTouchListener() {
@@ -304,8 +409,12 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       }
     });
 
-    String signal1Name = mainActivity.getSavedValue("REMO_SIGNAL_1_NAME");
-    etSignal1.setText(signal1Name);
+
+    etSignal1.setText(mainActivity.getSavedValue("REMO_SIGNAL_1_NAME"));
+    etSignal2.setText(mainActivity.getSavedValue("REMO_SIGNAL_2_NAME"));
+    etSignal3.setText(mainActivity.getSavedValue("REMO_SIGNAL_3_NAME"));
+    etSignal4.setText(mainActivity.getSavedValue("REMO_SIGNAL_4_NAME"));
+    etSignal5.setText(mainActivity.getSavedValue("REMO_SIGNAL_5_NAME"));
 
     String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
     String name = mainActivity.getSavedValue("REMO_DEVICE_NAME");
@@ -324,4 +433,44 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     tvAddress.setText(address);
   }
 
+  private void receiveMessages(int i) {
+    if (state == State.EXIST) {
+      state = State.RECEIVEING;
+      slotIndex = i;
+      String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
+      remoController.recevieMessages(address);
+      progressDialog = new ProgressDialog(mainActivity);
+      progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+          progressDialog.cancel();
+        }
+      });
+      progressDialog.setOnCancelListener(new OnCancelListener() {
+        @Override
+        public void onCancel(DialogInterface dialogInterface) {
+          Log.d(TAG, "onCancel: ");
+          state = State.EXIST;
+          remoController.cancelReceiveMessages();
+        }
+      });
+      progressDialog.show();
+    }
+  }
+  private void receivedMessages(String messages, String key, final EditText etSignal) {
+    progressDialog.dismiss();
+    mainActivity.autoSaveValue(key, messages);
+    state = State.EXIST;
+
+    Handler handler = new Handler();
+    handler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        etSignal.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
+            .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(etSignal1, InputMethodManager.RESULT_UNCHANGED_SHOWN);
+      }
+    }, 100);
+  }
 }

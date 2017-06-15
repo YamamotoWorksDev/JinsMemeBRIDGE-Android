@@ -87,42 +87,35 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public void onEndCardSelected(int id) {
+      String address;
+      String messages;
         final RemoMenuFragment.CardAdapter.MyCardHolder mych = (RemoMenuFragment.CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
         switch (id) {
             case R.string.signal1:
-                String address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
-                String messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_1");
+                address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+                messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_1");
                 remoController.sendMessages(address, messages);
-
                 break;
-            case R.string.light1:
-//                mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L1_G", 0),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L1_B", 0),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L1_BRI", 127),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L1_TTIME", 10));
-                break;
-            case R.string.light2:
-//                mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L2_R", 0),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L2_G", 255),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L2_B", 0),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L2_BRI", 127),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L2_TTIME", 10));
-                break;
-            case R.string.light3:
-//                mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L3_R", 0),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L3_G", 0),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L3_B", 255),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L3_BRI", 127),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L3_TTIME", 10));
-                break;
-            case R.string.light4:
-//                mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L4_R", 255),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L4_G", 255),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L4_B", 255),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L4_BRI", 127),
-//                    ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10));
-                break;
+          case R.string.signal2:
+            address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+            messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_2");
+            remoController.sendMessages(address, messages);
+            break;
+          case R.string.signal3:
+            address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+            messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_3");
+            remoController.sendMessages(address, messages);
+            break;
+          case R.string.signal4:
+            address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+            messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_4");
+            remoController.sendMessages(address, messages);
+            break;
+          case R.string.signal5:
+            address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+            messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_5");
+            remoController.sendMessages(address, messages);
+            break;
         }
     }
 
