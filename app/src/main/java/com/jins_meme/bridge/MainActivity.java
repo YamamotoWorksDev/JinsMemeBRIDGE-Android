@@ -52,7 +52,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
-    CameraFragment.OnFragmentInteractionListener, SpotifyMenuFragment.OnFragmentInteractionListener,
+    CameraMenuFragment.OnFragmentInteractionListener, SpotifyMenuFragment.OnFragmentInteractionListener,
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
     RemoMenuFragment.OnFragmentInteractionListener{
 
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private SpotifyMenuFragment spotifyMenu;
   private HueMenuFragment hueMenu;
   private RemoMenuFragment remoMenu;
+  private CameraMenuFragment cameraMenu;
 
   private VDJMenuFragment vdjMenu;
   /*
@@ -153,12 +154,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     hueMenu = new HueMenuFragment();
     vdjMenu = new VDJMenuFragment();
     remoMenu = new RemoMenuFragment();
+    cameraMenu = new CameraMenuFragment();
 
     menus.add(rootMenu);
     menus.add(spotifyMenu);
     menus.add(hueMenu);
     menus.add(vdjMenu);
     menus.add(remoMenu);
+    menus.add(cameraMenu);
 
     cancelFlag = false;
     pauseCount = 0;
@@ -461,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         transitToMenu(hueMenu);
         break;
       case R.string.camera:
-        transitToFragment(new CameraFragment());
+        transitToMenu(cameraMenu);
         break;
       case R.string.remo:
         transitToMenu(remoMenu);
