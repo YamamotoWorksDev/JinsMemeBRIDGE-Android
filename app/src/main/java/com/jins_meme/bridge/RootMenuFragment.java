@@ -122,13 +122,13 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
               id = R.string.spotify;
               break;
             case 2:
-              id = R.string.hue;
+              id = R.string.remo;
               break;
             case 3:
-              id = R.string.vdj;
+              id = R.string.hue;
               break;
             case 4:
-              id = R.string.remo;
+              id = R.string.vdj;
               break;
           }
           break;
