@@ -202,7 +202,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     };
 
     IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-    ((MainActivity) getActivity()).registerReceiver(mNetworkStateReceiver, filter);
+    getActivity().registerReceiver(mNetworkStateReceiver, filter);
 
     authenticate();
   }
@@ -211,8 +211,13 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     //if (mSpotify != null) {
     //  mSpotify = null;
     //}
+    if(mPlayer != null) {
+      mPlayer.destroy();
+    }
 
-    ((MainActivity) getActivity()).unregisterReceiver(mNetworkStateReceiver);
+
+
+    getActivity().unregisterReceiver(mNetworkStateReceiver);
 
     Log.d("FRAGMENT", "onDestroy...");
   }
