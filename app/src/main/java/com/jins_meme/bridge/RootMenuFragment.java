@@ -13,6 +13,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,9 +97,11 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
+
       ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
       ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
       ((MyCardHolder) cardHolder).mSubtitle.setText("");
+
     }
 
     @Override
@@ -124,6 +127,9 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
             case 3:
               id = R.string.vdj;
               break;
+            case 4:
+              id = R.string.remo;
+              break;
           }
           break;
       }
@@ -135,7 +141,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
         case NO_ID:
-          return 4;
+          return 5;
       }
       return 0;
     }

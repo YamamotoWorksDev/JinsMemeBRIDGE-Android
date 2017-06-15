@@ -53,7 +53,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
     CameraFragment.OnFragmentInteractionListener, SpotifyMenuFragment.OnFragmentInteractionListener,
-    HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener {
+    HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
+    RemoMenuFragment.OnFragmentInteractionListener{
 
   private String appID = null;
   private String appSecret = null;
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private RootMenuFragment rootMenu;
   private SpotifyMenuFragment spotifyMenu;
   private HueMenuFragment hueMenu;
+  private RemoMenuFragment remoMenu;
+
   private VDJMenuFragment vdjMenu;
   /*
    * MODIFY YOURSELF
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
    *
    */
   // private ***Fragment ***Fragment;
+
   private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
 
   private BasicConfigFragment basicConfigFragment;
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MIDIConfigFragment midiConfigFragment;
   private SpotifyConfigFragment spotifyConfigFragment;
   private HueConfigFragment hueConfigFragment;
+  private RemoConfigFragment remoConfigFragment;
   /*
    * MODIFY YOURSELF
    * Add your implemented function's configuration
@@ -147,10 +152,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     spotifyMenu = new SpotifyMenuFragment();
     hueMenu = new HueMenuFragment();
     vdjMenu = new VDJMenuFragment();
+    remoMenu = new RemoMenuFragment();
+
     menus.add(rootMenu);
     menus.add(spotifyMenu);
     menus.add(hueMenu);
     menus.add(vdjMenu);
+    menus.add(remoMenu);
 
     cancelFlag = false;
     pauseCount = 0;
@@ -162,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     midiConfigFragment = new MIDIConfigFragment();
     spotifyConfigFragment = new SpotifyConfigFragment();
     hueConfigFragment = new HueConfigFragment();
+    remoConfigFragment = new RemoConfigFragment();
     aboutFragment = new AboutFragment();
     /*
      * MODIFY YOURSELF
@@ -238,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     menu.add(0, index++, 0, R.string.midi_conf);
     menu.add(0, index++, 0, R.string.spotify_conf);
     menu.add(0, index++, 0, R.string.hue_conf);
+    menu.add(0, index++, 0, R.string.remo_conf);
 
     menu.add(0, index++, 0, R.string.about);
     menu.add(0, index, 0, R.string.exit_app);
@@ -347,6 +357,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transitToFragment(hueConfigFragment);
 
       return true;
+    } else if (itemTitle.equals(getString(R.string.remo_conf))) {
+      Log.d("DEBUG", "tap remo setting");
+
+      transitToFragment(remoConfigFragment);
+
+      return true;
     }
     /*
      * MODIFY YOURSELF
@@ -402,6 +418,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     spotifyMenu = null;
     hueMenu = null;
     vdjMenu = null;
+    remoMenu = null;
 
     basicConfigFragment = null;
     aboutFragment = null;
@@ -409,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     oscConfigFragment = null;
     midiConfigFragment = null;
     hueConfigFragment = null;
+    remoConfigFragment = null;
     /*
      * MODIFY YOURSELF
      * Add your implemented function's configuration
@@ -444,6 +462,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
       case R.string.camera:
         transitToFragment(new CameraFragment());
+        break;
+      case R.string.remo:
+        transitToMenu(remoMenu);
         break;
     }
   }
