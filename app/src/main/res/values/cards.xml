@@ -35,6 +35,14 @@
     <string name="playlist3">Playlist 3</string>
     <string name="playlist4">Playlist 4</string>
 
+    <!-- for IRKit / NatureRemo -->
+    <string name="remo">IRKit/NatureRemo</string>
+    <string name="signal1">signal 1</string>
+    <string name="signal2">signal 2</string>
+    <string name="signal3">signal 3</string>
+    <string name="signal4">signal 4</string>
+    <string name="signal5">signal 5</string>
+
     <!-- for Eye VDJ -->
     <string name="vdj">EYE VDJ</string>
     <string name="track">TRACK</string>
@@ -63,12 +71,5 @@
     <string name="logo2">LOGO2</string>
     <string name="logo3">LOGO3</string>
     <string name="logo4">LOGO4</string>
-
-    <string name="remo">IRKit/NatureRemo</string>
-    <string name="signal1">signal 1</string>
-    <string name="signal2">signal 2</string>
-    <string name="signal3">signal 3</string>
-    <string name="signal4">signal 4</string>
-    <string name="signal5">signal 5</string>
 
 </resources>
