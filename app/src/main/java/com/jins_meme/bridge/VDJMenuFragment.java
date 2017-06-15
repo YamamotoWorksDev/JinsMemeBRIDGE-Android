@@ -124,8 +124,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
   @Override
   public void onExitCard(int id) {
     Log.d("DEBUG", "VDJ:: onExitCard");
-
-    mListener.backToPreviousMenu();
   }
 
   @Override
