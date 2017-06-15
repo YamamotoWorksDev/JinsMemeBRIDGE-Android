@@ -148,9 +148,10 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     Log.d("DEBUG", "SPOTIFY:: User logged in.");
 
     //mAsyncSpotifyApi.execute("me");
-    //mAsyncSpotifyApi.execute("search_artist");
-    mAsyncSpotifyApi.execute("user_playlist");
-    //Log.d("DEBUG", "SPOTIFY:: Country -> " + userPrivate.country);
+    //mAsyncSpotifyApi.execute("search_artist", "hoge");
+    //mAsyncSpotifyApi.execute("search_album", "hoge");
+    //mAsyncSpotifyApi.execute("user_playlist");
+    mAsyncSpotifyApi.execute("featured_playlist");
   }
 
   @Override
@@ -260,7 +261,9 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
     switch (id) {
       case R.string.playlist1:
-        String uri = "spotify:user:spotify:playlist:2yLXxKhhziG2xzy7eyD4TD";
+        //String uri = "spotify:user:spotify:playlist:2yLXxKhhziG2xzy7eyD4TD";
+        String uri = "spotify:artist:3VwKSHAfgzV1DOHV0aANCI";
+        mPlayer.setShuffle(mOperationCallback, true);
         mPlayer.playUri(mOperationCallback, uri , 0, 0);
         break;
       case R.string.playlist2:
