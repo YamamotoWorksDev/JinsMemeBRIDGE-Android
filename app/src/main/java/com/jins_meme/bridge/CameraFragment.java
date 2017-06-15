@@ -12,7 +12,8 @@ package com.jins_meme.bridge;
 import android.content.Context;
 import android.hardware.camera2.CameraCharacteristics;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,9 @@ import com.example.android.camera2basic.Camera2BasicFragment;
  * Use the {@link CameraFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraFragment extends Camera2BasicFragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback {
+public class CameraFragment extends Fragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback {
 
+    Camera2BasicFragment mCamera;
     private OnFragmentInteractionListener mListener;
 
     public CameraFragment() {
@@ -40,7 +42,7 @@ public class CameraFragment extends Camera2BasicFragment implements MemeRealtime
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isCameraProcessing()) {
+                if(mCamera.isCameraProcessing()) {
                     return;
                 }
                 switch(v.getId()) {
@@ -48,7 +50,7 @@ public class CameraFragment extends Camera2BasicFragment implements MemeRealtime
                         mListener.backToPreviousMenu();
                         break;
                     case R.id.take:
-                        takePicture();
+                        mCamera.takePicture();
                         break;
                     case R.id.toggle:
                         toggleCamera();
@@ -76,25 +78,29 @@ public class CameraFragment extends Camera2BasicFragment implements MemeRealtime
             throw new RuntimeException(context.toString()
                 + " must implement OnFragmentInteractionListener");
         }
+        mCamera = new Camera2BasicFragment();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.camera, mCamera).commit();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mCamera = null;
         mListener = null;
     }
 
     @Override
     public void onMemeBlinked() {
-        if(isCameraProcessing()) {
+        if(mCamera.isCameraProcessing()) {
             return;
         }
-        takePicture();
+        mCamera.takePicture();
     }
 
     @Override
     public void onMemeMoveLeft() {
-        if(isCameraProcessing()) {
+        if(mCamera.isCameraProcessing()) {
             return;
         }
         mListener.backToPreviousMenu();
@@ -102,7 +108,7 @@ public class CameraFragment extends Camera2BasicFragment implements MemeRealtime
 
     @Override
     public void onMemeMoveRight() {
-        if(isCameraProcessing()) {
+        if(mCamera.isCameraProcessing()) {
             return;
         }
         toggleCamera();
@@ -110,13 +116,13 @@ public class CameraFragment extends Camera2BasicFragment implements MemeRealtime
 
 
     private void toggleCamera() {
-        Integer lens = getCurrentLensFacing();
+        Integer lens = mCamera.getCurrentLensFacing();
         switch(lens) {
             case CameraCharacteristics.LENS_FACING_FRONT:
-                openCamera(CameraCharacteristics.LENS_FACING_BACK);
+                mCamera.openCamera(CameraCharacteristics.LENS_FACING_BACK);
                 break;
             case CameraCharacteristics.LENS_FACING_BACK:
-                openCamera(CameraCharacteristics.LENS_FACING_FRONT);
+                mCamera.openCamera(CameraCharacteristics.LENS_FACING_FRONT);
                 break;
         }
     }

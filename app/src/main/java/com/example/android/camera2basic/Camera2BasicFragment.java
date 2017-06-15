@@ -64,9 +64,11 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.jins_meme.bridge.R;
@@ -436,6 +438,13 @@ public class Camera2BasicFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        // 先ほどのレイアウトをここでViewとして作成します
+        return inflater.inflate(R.layout.fragment_camera_inner, container, false);
+    }
+
+    @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
 //        view.findViewById(R.id.picture).setOnClickListener(this);
 //        view.findViewById(R.id.info).setOnClickListener(this);
@@ -606,7 +615,7 @@ public class Camera2BasicFragment extends Fragment {
     /**
      * Opens the camera specified by {@link CameraCharacteristics#LENS_FACING}.
      */
-    protected void openCamera(Integer lensFacing) {
+    public void openCamera(Integer lensFacing) {
         if(mCurrentLensFacing == lensFacing) {
             return;
         }
@@ -620,7 +629,7 @@ public class Camera2BasicFragment extends Fragment {
             mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
         }
     }
-    protected Integer getCurrentLensFacing() { return mCurrentLensFacing; }
+    public Integer getCurrentLensFacing() { return mCurrentLensFacing; }
     /**
      * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
      */
@@ -790,12 +799,12 @@ public class Camera2BasicFragment extends Fragment {
     /**
      * Check camera status.
      */
-    protected boolean isCameraProcessing() { return mState != STATE_PREVIEW; }
+    public boolean isCameraProcessing() { return mState != STATE_PREVIEW; }
 
     /**
      * Initiate a still image capture.
      */
-    protected void takePicture() {
+    public void takePicture() {
         lockFocus();
     }
 
