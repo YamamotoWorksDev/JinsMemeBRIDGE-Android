@@ -283,7 +283,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
   @Override
   public void onExitCard(int id) {
-    mListener.backToPreviousMenu();
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {

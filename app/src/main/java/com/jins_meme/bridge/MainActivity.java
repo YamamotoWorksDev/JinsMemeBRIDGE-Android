@@ -450,7 +450,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void backToPreviousMenu() {
-    super.onBackPressed();
+    if(hasBackStackEntryCount()) {
+      FragmentManager manager = getSupportFragmentManager();
+      Fragment active = manager.findFragmentById(R.id.container);
+      if (active instanceof MenuFragmentBase) {
+        ((MenuFragmentBase) active).menuReset();
+      }
+      super.onBackPressed();
+    }
   }
 
   @Override
@@ -705,7 +712,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         final MenuFragmentBase active = getVisibleMenuFragment();
         if (!pauseFlag) {
           if (cancelFlag && pauseCount < PAUSE_MAX) {
-            if (transitToRootMenu()) {
+            if (cancel(false)) {
               refractoryPeriod = REFRACTORY_PERIOD_MAX;
               Log.d("=========PAUSE=========", "cancel");
             }
@@ -780,7 +787,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void onBackPressed() {
     Log.d("MAIN", "press back!");
+    cancel(true);
+  }
 
+  public boolean cancel(boolean allow_finish) {
     FragmentManager manager = getSupportFragmentManager();
     Fragment active = manager.findFragmentById(R.id.container);
 
@@ -789,13 +799,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       processed = ((MenuFragmentBase) active).menuBack();
     }
     if (!processed) {
-      super.onBackPressed();
+      if(allow_finish || hasBackStackEntryCount()) {
+        super.onBackPressed();
+        processed = true;
+      }
     }
-    if (manager.getBackStackEntryCount() == 0) {
+    if (!hasBackStackEntryCount()) {
       setActionBarTitle(R.string.actionbar_title);
       setActionBarBack(false);
       invalidateOptionsMenu();
     }
+    return processed;
   }
 
   void setActionBarTitle(int resId) {
@@ -836,8 +850,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   boolean transitToRootMenu() {
-    FragmentManager manager = getSupportFragmentManager();
-    if (manager.getBackStackEntryCount() > 0) {
+    if (hasBackStackEntryCount()) {
+      FragmentManager manager = getSupportFragmentManager();
       InputMethodManager imm = (InputMethodManager) getSystemService(
           Context.INPUT_METHOD_SERVICE);
       imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
@@ -883,6 +897,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     setActionBarTitle(R.string.actionbar_title);
     setActionBarBack(false);
     invalidateOptionsMenu();
+  }
+
+  private boolean hasBackStackEntryCount() {
+    return getSupportFragmentManager().getBackStackEntryCount()>0;
   }
 
   private MenuFragmentBase getVisibleMenuFragment() {

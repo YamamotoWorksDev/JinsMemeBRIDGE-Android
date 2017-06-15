@@ -102,9 +102,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onExitCard(int id) {
-    Log.d("DEBUG", "HUE:: onEnterCard");
-
-    mListener.backToPreviousMenu();
+    Log.d("DEBUG", "HUE:: onExitCard");
   }
 
   @Override

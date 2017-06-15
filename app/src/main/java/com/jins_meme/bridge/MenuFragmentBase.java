@@ -32,6 +32,9 @@ public class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter
   public boolean menuBack() {
     return mView.back();
   }
+  public void menuReset() {
+    mView.reset();
+  }
 
   @Override
   public void onMemeBlinked() {
