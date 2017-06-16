@@ -208,7 +208,7 @@ public class RemoController {
     return inetAddress;
   }
   private void getExist(String address) {
-    String urlString = "http:/" + address + "/";
+    String urlString = "http://" + address + "/";
     URL url;
     try {
       url = new URL(urlString);
@@ -261,7 +261,7 @@ public class RemoController {
     }.execute(url);
   }
   private void getIRMessages(final String address) {
-    String urlString = "http:/" + address + "/messages";
+    String urlString = "http://" + address + "/messages";
     URL url;
     if (!isGetMessages) {
       return;
@@ -349,7 +349,7 @@ public class RemoController {
   }
 
   private void postIRMessages(String address, final String messages) {
-    String urlString = "http:/" + address + "/messages";
+    String urlString = "http://" + address + "/messages";
     URL url;
     try {
       url = new URL(urlString);
