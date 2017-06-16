@@ -53,9 +53,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   private Player mPlayer;
   private PlaybackState mCurrentPlaybackState;
   private BroadcastReceiver mNetworkStateReceiver;
-  private AsyncSpotifyApi mAsyncSpotifyApi;
-
-  private String myAccessToken = null;
+  //private AsyncSpotifyApi mAsyncSpotifyApi;
 
   private final Player.OperationCallback mOperationCallback = new OperationCallback() {
     @Override
@@ -71,10 +69,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
   public SpotifyMenuFragment() {
     // Required empty public constructor
-  }
-
-  void setRequestToken(String token) {
-    myAccessToken = token;
   }
 
   IntentFilter getFilter() {
@@ -151,7 +145,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     //mAsyncSpotifyApi.execute("search_artist", "hoge");
     //mAsyncSpotifyApi.execute("search_album", "hoge");
     //mAsyncSpotifyApi.execute("user_playlist");
-    mAsyncSpotifyApi.execute("featured_playlist");
+    //mAsyncSpotifyApi.execute("featured_playlist");
   }
 
   @Override
@@ -263,21 +257,32 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
   @Override
   public void onEndCardSelected(int id) {
+    String uri = null;
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
     switch (id) {
       case R.string.playlist1:
-        //String uri = "spotify:user:spotify:playlist:2yLXxKhhziG2xzy7eyD4TD";
-        String uri = "spotify:artist:3VwKSHAfgzV1DOHV0aANCI";
-        mPlayer.setShuffle(mOperationCallback, true);
-        mPlayer.playUri(mOperationCallback, uri , 0, 0);
+        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI1");
         break;
       case R.string.playlist2:
+        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI2");
         break;
       case R.string.playlist3:
+        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI3");
         break;
       case R.string.playlist4:
+        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI4");
         break;
     }
+
+    if (uri != null) {
+      mPlayer.setShuffle(mOperationCallback, true);
+      if (!mPlayer.getPlaybackState().isPlaying) {
+        mPlayer.playUri(mOperationCallback, uri, 0, 0);
+      } else {
+        mPlayer.pause(mOperationCallback);
+      }
+    }
+
     mych.setText(getString(R.string.selected), 300);
   }
 
@@ -398,14 +403,16 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   String processRequestToken(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_CODE) {
       final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-      myAccessToken = response.getAccessToken();
+      //AsyncSpotifyApi.setAccessToken(response.getAccessToken());
+      SpotifyConfigFragment.setAccessToken(response.getAccessToken());
 
       switch (response.getType()) {
         case TOKEN:
           Log.d("DEBUG", "Spotify Token: " + response.getAccessToken());
 
           onAuthenticationComplete(response, getString(R.string.spotify_client_id));
-          mAsyncSpotifyApi = new AsyncSpotifyApi(myAccessToken);
+          //mAsyncSpotifyApi = new AsyncSpotifyApi(AsyncSpotifyApi.getAccessToken());
+          SpotifyConfigFragment.setIsLoggedIn(true);
           break;
         case ERROR:
           Log.d("DEBUG", "Spotify Error: " + response.getError());
@@ -416,7 +423,8 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
       }
     }
 
-    return myAccessToken;
+    //return AsyncSpotifyApi.getAccessToken();
+    return SpotifyConfigFragment.getAccessToken();
   }
 
   @Override
