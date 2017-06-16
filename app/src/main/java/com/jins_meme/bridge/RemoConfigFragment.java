@@ -83,6 +83,9 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+    ((MainActivity) getActivity()).setActionBarTitle(R.string.remo_conf);
+    getActivity().invalidateOptionsMenu();
+
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_remoconfig, container, false);
   }
