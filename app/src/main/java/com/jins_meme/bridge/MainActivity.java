@@ -246,11 +246,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      * Add your implemented function's configuration
      *
      */
-    menu.add(0, index++, 0, R.string.osc_conf);
-    menu.add(0, index++, 0, R.string.midi_conf);
     menu.add(0, index++, 0, R.string.spotify_conf);
-    menu.add(0, index++, 0, R.string.hue_conf);
     menu.add(0, index++, 0, R.string.remo_conf);
+    menu.add(0, index++, 0, R.string.hue_conf);
+    menu.add(0, index++, 0, getString(R.string.osc_conf) + " (for Eye VDJ)");
+    menu.add(0, index++, 0, getString(R.string.midi_conf) + " (for Eye VDJ)");
 
     menu.add(0, index++, 0, R.string.about);
     menu.add(0, index, 0, R.string.exit_app);
@@ -336,18 +336,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transitToFragment(basicConfigFragment);
 
       return true;
-    } else if (itemTitle.equals(getString(R.string.osc_conf))) {
-      Log.d("DEBUG", "tap osc setting");
-
-      transitToFragment(oscConfigFragment);
-
-      return true;
-    } else if (itemTitle.equals(getString(R.string.midi_conf))) {
-      Log.d("DEBUG", "tap midi setting");
-
-      transitToFragment(midiConfigFragment);
-
-      return true;
     } else if (itemTitle.equals(getString(R.string.spotify_conf))) {
       Log.d("DEBUG", "tap spotify setting");
 
@@ -364,6 +352,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       Log.d("DEBUG", "tap remo setting");
 
       transitToFragment(remoConfigFragment);
+
+      return true;
+    } else if (itemTitle.contains(getString(R.string.osc_conf))) {
+      Log.d("DEBUG", "tap osc setting");
+
+      transitToFragment(oscConfigFragment);
+
+      return true;
+    } else if (itemTitle.contains(getString(R.string.midi_conf))) {
+      Log.d("DEBUG", "tap midi setting");
+
+      transitToFragment(midiConfigFragment);
 
       return true;
     }
@@ -419,17 +419,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     rootMenu = null;
     spotifyMenu = null;
+    remoMenu = null;
     hueMenu = null;
     vdjMenu = null;
-    remoMenu = null;
 
     basicConfigFragment = null;
     aboutFragment = null;
 
+    spotifyConfigFragment = null;
+    remoConfigFragment = null;
+    hueConfigFragment = null;
     oscConfigFragment = null;
     midiConfigFragment = null;
-    hueConfigFragment = null;
-    remoConfigFragment = null;
     /*
      * MODIFY YOURSELF
      * Add your implemented function's configuration
