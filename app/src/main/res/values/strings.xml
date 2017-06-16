@@ -41,7 +41,8 @@
   <string-array name="spotify_category">
     <item>USER PLAYLIST</item>
     <item>FEATURED PLAYLIST</item>
-    <item>SAVED ALBUM</item>
+    <!--<item>SAVED ALBUM</item>-->
+    <!--<item>FOLLOWED ARTIST</item>-->
   </string-array>
 
   <string-array name="hue_preset">
