@@ -38,6 +38,19 @@
   <string name="pause">pause</string>
   <string name="count">%1$d</string>
 
+  <string-array name="spotify_category">
+    <item>USER PLAYLIST</item>
+    <item>FEATURED PLAYLIST</item>
+    <item>SAVED ALBUM</item>
+  </string-array>
+
+  <string-array name="hue_preset">
+    <item>LIGHT 1</item>
+    <item>LIGHT 2</item>
+    <item>LIGHT 3</item>
+    <item>LIGHT 4</item>
+  </string-array>
+
   <string-array name="midi_ch">
     <item>1</item>
     <item>2</item>
@@ -56,14 +69,4 @@
     <item>15</item>
     <item>16</item>
   </string-array>
-
-  <string-array name="hue_preset">
-    <item>LIGHT 1</item>
-    <item>LIGHT 2</item>
-    <item>LIGHT 3</item>
-    <item>LIGHT 4</item>
-  </string-array>
-
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
