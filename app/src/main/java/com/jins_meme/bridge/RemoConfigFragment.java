@@ -67,6 +67,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private ArrayAdapter<String> adapter;
   private HashMap<String, String> deviceMap;
 
+
   enum  State {
     CHECK_EXIST,
     EXIST,
@@ -421,10 +422,13 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 
     String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
     String name = mainActivity.getSavedValue("REMO_DEVICE_NAME");
-    tvName.setText(name);
-    tvAddress.setText(address);
-    if (!address.equals("")) {
+
+    if (address != null) {
+      tvName.setText(name);
+      tvAddress.setText(address);
       remoController.checkExist(address);
+    } else {
+      state = State.LOST;
     }
   }
 
