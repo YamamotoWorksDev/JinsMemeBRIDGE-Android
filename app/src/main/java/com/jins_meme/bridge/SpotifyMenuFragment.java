@@ -208,22 +208,32 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
         }
       }
     };
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    Log.d("DEBUG", "SPOTIFY:: onResume");
 
     IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     getActivity().registerReceiver(mNetworkStateReceiver, filter);
   }
 
-  public void destroy() {
-    //if (mSpotify != null) {
-    //  mSpotify = null;
-    //}
-    if(mPlayer != null) {
-      mPlayer.destroy();
-    }
+  @Override
+  public void onPause() {
+    super.onPause();
 
-
+    Log.d("DEBUG", "SPOTIFY:: onPause");
 
     getActivity().unregisterReceiver(mNetworkStateReceiver);
+  }
+
+  public void destroy() {
+    if (mPlayer != null) {
+      mPlayer.logout();
+      mPlayer.destroy();
+    }
 
     Log.d("FRAGMENT", "onDestroy...");
   }
