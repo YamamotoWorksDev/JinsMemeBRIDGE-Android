@@ -499,6 +499,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     } else if (requestCode == 1337) {
       spotifyMenu.processRequestToken(requestCode, resultCode, data);
+
+      spotifyMenu.setAuthenticated(true);
     } else {
       if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Auth OK");
@@ -953,12 +955,21 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     return preferences.getString(key, initValue);
   }
 
+  boolean getSavedValue(String key, boolean flag) {
+    return preferences.getBoolean(key, flag);
+  }
+
   int getSavedValue(String key, int initValue) {
     return preferences.getInt(key, initValue);
   }
 
   void autoSaveValue(String key, String text) {
     editor.putString(key, text);
+    editor.apply();
+  }
+
+  void autoSaveValue(String key, boolean flag) {
+    editor.putBoolean(key, flag);
     editor.apply();
   }
 
