@@ -13,9 +13,11 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
 
+  private ProgressDialog memeConnectProgressDialog;
   private Handler handler;
   private FrameLayout mainLayout;
 
@@ -203,7 +206,24 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
     if (lastConnectedMemeID != null) {
       Log.d("MAIN", "SCAN Start");
-      Toast.makeText(this, getString(R.string.meme_scanning), Toast.LENGTH_SHORT).show();
+      //Toast.makeText(this, getString(R.string.meme_scanning), Toast.LENGTH_SHORT).show();
+
+      memeConnectProgressDialog = new ProgressDialog(MainActivity.this);
+      memeConnectProgressDialog.setMax(100);
+      memeConnectProgressDialog.setMessage("Scannig...");
+      memeConnectProgressDialog.setTitle("SCAN & CONNECT");
+      memeConnectProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+      memeConnectProgressDialog.setCancelable(false);
+      memeConnectProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+          new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+              stopScan();
+
+              handler.removeCallbacksAndMessages(null);
+            }
+          });
+      memeConnectProgressDialog.show();
 
       handler.postDelayed(new Runnable() {
         @Override
@@ -226,11 +246,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                         Toast.LENGTH_SHORT).show();
                   }
                 });
+              } else {
+                memeConnectProgressDialog.dismiss();
+
+                showNotFoundMeme();
               }
             }
-          }, 3000);
+          }, 30000);
         }
-      }, 10000);
+      }, 1000);
     }
   }
 
@@ -544,6 +568,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void memeConnectCallback(boolean b) {
     Log.d("MAIN", "meme connected. " + b + " " + lastConnectedMemeID);
 
+    memeConnectProgressDialog.dismiss();
+
     if (b) {
       autoSaveValue("LAST_CONNECTED_MEME_ID", lastConnectedMemeID);
     }
@@ -625,6 +651,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         public void memeFoundCallback(String s) {
           Log.d("MAIN", getString(R.string.meme_found, s));
 
+          memeConnectProgressDialog.setMessage("Found: " + s);
+
           /*
           final String s2 = s;
           handler.post(new Runnable() {
@@ -635,8 +663,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           });
           */
 
+          scannedMemeList.add(s);
+
           if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
+            stopScan();
+
             handler.removeCallbacksAndMessages(null);
+
+            Log.d("MAIN", "connect and stop callbacks");
+            memeConnectProgressDialog.setMessage("Connect to: " + s);
 
             connectToMeme(lastConnectedMemeID);
 
@@ -649,8 +684,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
             });
             */
           }
-
-          scannedMemeList.add(s);
         }
       });
 
@@ -1008,6 +1041,30 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (intent != null) {
       startActivityForResult(intent, 1);
     }
+  }
+
+  void showNotFoundMeme() {
+    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    alert.setTitle(getString(R.string.not_found_meme_title));
+    alert.setMessage(getString(R.string.not_found_meme_explain));
+    alert.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d("DEBUG", "Quit App...");
+
+        finishAndRemoveTask();
+      }
+    });
+    alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d("DEBUG", "Close Alert Dialog...");
+
+        transitToFragment(basicConfigFragment);
+      }
+    });
+    alert.setCancelable(false);
+    alert.create().show();
   }
 
   void showAppIDandSecretWarning() {
