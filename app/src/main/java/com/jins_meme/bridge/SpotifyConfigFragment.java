@@ -160,6 +160,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
     }
 
     swUse = (Switch) view.findViewById(R.id.spotify_use);
+    swUse.setChecked(((MainActivity) getActivity()).getSavedValue("SPOTIFY_USE", false));
     swUse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -174,10 +175,13 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
           //((MainActivity) getActivity()).stopScan();
         }
+
+        ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_USE", b);
       }
     });
 
     swShuffle = (Switch) view.findViewById(R.id.enable_shuffle);
+    swShuffle.setChecked(((MainActivity) getActivity()).getSavedValue("SPOTIFY_SHUFFLE", false));
     swShuffle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -192,6 +196,8 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
           //((MainActivity) getActivity()).stopScan();
         }
+
+        ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_SHUFFLE", b);
       }
     });
 

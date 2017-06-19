@@ -50,10 +50,21 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
 
+  private boolean isAuthenticated = false;
+
   private Player mPlayer;
   private PlaybackState mCurrentPlaybackState;
   private BroadcastReceiver mNetworkStateReceiver;
   //private AsyncSpotifyApi mAsyncSpotifyApi;
+
+
+  public void setAuthenticated(boolean authenticated) {
+    isAuthenticated = authenticated;
+  }
+
+  public boolean isAuthenticated() {
+    return isAuthenticated;
+  }
 
   private final Player.OperationCallback mOperationCallback = new OperationCallback() {
     @Override
@@ -78,14 +89,17 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   void authenticate() {
     //Log.d("DEBUG", "SPOTIFY:: authenticate " + getRedirectUri().toString());
 
-    AuthenticationRequest.Builder builder = new Builder(getString(R.string.spotify_client_id), Type.TOKEN,
-        "jins-meme-bridge-login://callback");
-    //builder.setShowDialog(false).setScopes(new String[]{"user-read-email"});
-    builder.setShowDialog(false).setScopes(
-        new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
-    final AuthenticationRequest request = builder.build();
+    if (!isAuthenticated && ((MainActivity) getActivity()).getSavedValue("SPOTIFY_USE", false)) {
+      AuthenticationRequest.Builder builder = new Builder(getString(R.string.spotify_client_id),
+          Type.TOKEN,
+          "jins-meme-bridge-login://callback");
+      //builder.setShowDialog(false).setScopes(new String[]{"user-read-email"});
+      builder.setShowDialog(false).setScopes(
+          new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
+      final AuthenticationRequest request = builder.build();
 
-    AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
+      AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
+    }
   }
 
   private void onAuthenticationComplete(AuthenticationResponse authResponse, String clientID) {
@@ -197,8 +211,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
     IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     getActivity().registerReceiver(mNetworkStateReceiver, filter);
-
-    authenticate();
   }
 
   public void destroy() {
@@ -256,34 +268,57 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   }
 
   @Override
+  public void onHiddenChanged(boolean hidden) {
+    super.onHiddenChanged(hidden);
+
+    Log.d("DEBUG", "SPOTIFY:: SpotifyMenuFragment Hidden -> " + hidden);
+
+    if (!hidden) {
+      authenticate();
+    }
+  }
+
+  @Override
   public void onEndCardSelected(int id) {
-    String uri = null;
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
-    switch (id) {
-      case R.string.playlist1:
-        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI1");
-        break;
-      case R.string.playlist2:
-        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI2");
-        break;
-      case R.string.playlist3:
-        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI3");
-        break;
-      case R.string.playlist4:
-        uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI4");
-        break;
-    }
 
-    if (uri != null) {
-      mPlayer.setShuffle(mOperationCallback, true);
-      if (!mPlayer.getPlaybackState().isPlaying) {
-        mPlayer.playUri(mOperationCallback, uri, 0, 0);
-      } else {
-        mPlayer.pause(mOperationCallback);
+    if (isAuthenticated) {
+      String uri = null;
+      switch (id) {
+        case R.string.playlist1:
+          uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI1");
+          break;
+        case R.string.playlist2:
+          uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI2");
+          break;
+        case R.string.playlist3:
+          uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI3");
+          break;
+        case R.string.playlist4:
+          uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI4");
+          break;
       }
-    }
 
-    mych.setText(getString(R.string.selected), 300);
+      if (uri != null) {
+        if (((MainActivity) getActivity()).getSavedValue("SPOTIFY_SHUFFLE", false)) {
+          Log.d("DEBUG", "SPOTIFY:: SHUFFLE ON");
+
+          mPlayer.setShuffle(mOperationCallback, true);
+        } else {
+          Log.d("DEBUG", "SPOTIFY:: SHUFFLE OFF");
+
+          mPlayer.setShuffle(mOperationCallback, false);
+        }
+        if (!mPlayer.getPlaybackState().isPlaying) {
+          mPlayer.playUri(mOperationCallback, uri, 0, 0);
+        } else {
+          mPlayer.pause(mOperationCallback);
+        }
+      }
+      mych.setText(getString(R.string.selected), 300);
+    } else {
+      mych.setText("not authenticated", 300);
+    }
   }
 
   @Override
