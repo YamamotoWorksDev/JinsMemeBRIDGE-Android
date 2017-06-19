@@ -25,6 +25,8 @@
   <string name="meme_connected">JINS MEME CONNECTED</string>
   <string name="meme_disconnected">JINS MEME DISCONNECTED</string>
 
+  <string name="not_found_meme_title">NOT FOUND MEME</string>
+  <string name="not_found_meme_explain">Please go to the BASIC SETTING and rescan.</string>
   <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
   <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
 
