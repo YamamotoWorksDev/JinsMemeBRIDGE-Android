@@ -401,8 +401,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       }
     });
 
-
-
     layout = (RelativeLayout) view.findViewById(R.id.remo_layout);
     layout.setOnTouchListener(new OnTouchListener() {
       @Override
@@ -412,7 +410,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         return false;
       }
     });
-
 
     etSignal1.setText(mainActivity.getSavedValue("REMO_SIGNAL_1_NAME"));
     etSignal2.setText(mainActivity.getSavedValue("REMO_SIGNAL_2_NAME"));
@@ -432,8 +429,9 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     }
   }
 
-
   private void setDevice(String name, String address) {
+    Log.d(TAG, "setDevice: " + name + " " + address);
+    address = address.replaceAll("/","");
     ((MainActivity) getActivity()).autoSaveValue("REMO_DEVICE_NAME", name);
     ((MainActivity) getActivity()).autoSaveValue("REMO_DEVICE_ADDRESS", address);
     tvName.setText(name);
