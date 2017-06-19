@@ -586,6 +586,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
     invalidateOptionsMenu();
 
+    memeLib.setAutoConnect(true);
     memeLib.startDataReport(this);
   }
 
