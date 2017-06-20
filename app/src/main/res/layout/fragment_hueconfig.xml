@@ -74,7 +74,7 @@
     android:layout_alignEnd="@+id/hue_b_bar"
     android:layout_alignStart="@+id/hue_b_bar"
     android:layout_below="@+id/hue_b_val"
-    android:max="255"
+    android:max="254"
     android:progress="127"/>
   <Spinner
     android:id="@+id/hue_presets"
