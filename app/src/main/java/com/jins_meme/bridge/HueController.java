@@ -12,7 +12,6 @@ package com.jins_meme.bridge;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -82,28 +81,18 @@ public class HueController {
       setLastConnectIp(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress());
       setUsername(s);
 
-      /*
-      List<PHLight> allLights = phBridge.getResourceCache().getAllLights();
-      PHLight light = allLights.get(0);
-      PHLightState lightState = light.getLastKnownLightState();
-      */
       allLights = phBridge.getResourceCache().getAllLights();
-      currentLight = allLights.get(0);
-      currentLightState = currentLight.getLastKnownLightState();
 
-      float[] xy = {currentLightState.getX(), currentLightState.getY()};
-      int color = PHUtilities.colorFromXY(xy, currentLight.getModelNumber());
-      Log.d("HUE",
-          currentLightState.isOn() + " (r,g,b) = (" + Color.red(color) + ", " + Color.green(color)
-              + ", " + Color.blue(color) + ") ");
+      for (PHLight light : allLights) {
+        PHLightState lightState = light.getLastKnownLightState();
 
-      connectionState = 4;
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
-          progressDialog.dismiss();
-        }
-      });
+        Log.d("HUE", "id = " + light.getIdentifier() + " " + light.getModelNumber() + " " + light.getUniqueId() + " " + lightState.getBrightness() + " " + lightState.getSaturation());
+        Log.d("HUE", "type = " + light.getLightType().name() + " " + light.getLightType().ordinal());
+      }
+
+      if (progressDialog.isShowing()) {
+        progressDialog.dismiss();
+      }
 
       turnOn();
     }
@@ -136,12 +125,7 @@ public class HueController {
       isAuthRequired = true;
       connectionState = 2;
 
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
-          progressDialog.dismiss();
-        }
-      });
+      progressDialog.dismiss();
 
       if (list.size() > 0) {
         hueSDK.getAccessPointsFound().clear();
@@ -173,12 +157,7 @@ public class HueController {
 
         connectionState = -1;
 
-        handler.post(new Runnable() {
-          @Override
-          public void run() {
-            progressDialog.dismiss();
-          }
-        });
+        progressDialog.dismiss();
       } else if (i == PHHueError.BRIDGE_NOT_RESPONDING) {
         Log.d("HUE", "Bridge Not Responding..");
 
@@ -225,7 +204,7 @@ public class HueController {
 
     @Override
     public void onReceivingLights(List<PHBridgeResource> list) {
-      Log.d("HUE", "Receiving Lights...");
+      Log.d("HUE", "Receiving Lights... " + list.toString());
     }
 
     @Override
@@ -240,7 +219,7 @@ public class HueController {
 
     @Override
     public void onError(int i, String s) {
-      Log.d("HUE", "Error...");
+      Log.d("HUE", "Error... " + i + " " + s);
     }
 
     @Override
@@ -296,15 +275,10 @@ public class HueController {
 
       connectionState = 1;
 
-      handler.post(new Runnable() {
-        @Override
-        public void run() {
-          progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-          progressDialog.setMessage("Searching Hue Bridge...");
-          progressDialog.setCancelable(false);
-          progressDialog.show();
-        }
-      });
+      progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+      progressDialog.setMessage("Searching Hue Bridge...");
+      progressDialog.setCancelable(false);
+      progressDialog.show();
 
       PHBridgeSearchManager searchManager = (PHBridgeSearchManager) hueSDK
           .getSDKService(PHHueSDK.SEARCH_BRIDGE);
@@ -342,19 +316,23 @@ public class HueController {
   }
 
   void turnOn() {
-    Log.d("HUE", "turn on...");
-
-    PHLightState lightState = new PHLightState();
-    lightState.setOn(true);
-
-    float[] xy = PHUtilities.calculateXYFromRGB(255, 255, 255, currentLight.getModelNumber());
-
-    lightState.setX(xy[0]);
-    lightState.setY(xy[1]);
-
     PHBridge bridge = hueSDK.getSelectedBridge();
-    if (currentLight != null) {
-      bridge.updateLightState(currentLight, lightState, lightListener);
+
+    for (PHLight light : allLights) {
+      PHLightState lightState = new PHLightState();
+      lightState.setOn(true);
+
+      if (light.getModelNumber().equals("LWB014")) {
+        lightState.setBrightness(50);
+      } else {
+        float[] xy = PHUtilities.calculateXYFromRGB(255, 255, 255, light.getModelNumber());
+
+        lightState.setX(xy[0]);
+        lightState.setY(xy[1]);
+        lightState.setBrightness(50);
+      }
+
+      bridge.updateLightState(light, lightState, lightListener);
     }
   }
 
@@ -364,44 +342,56 @@ public class HueController {
     PHLightState lightState = new PHLightState();
     lightState.setOn(false);
 
-    PHBridge bridge = hueSDK.getSelectedBridge();
-    if (currentLight != null) {
-      bridge.updateLightState(currentLight, lightState, lightListener);
+    for (PHLight light : allLights) {
+      PHBridge bridge = hueSDK.getSelectedBridge();
+
+      if (light != null) {
+        bridge.updateLightState(light, lightState, lightListener);
+      }
     }
   }
 
   void changeColor(int r, int g, int b) {
     Log.d("HUE", "change light color...");
 
-    PHLightState lightState = new PHLightState();
-    lightState.setOn(true);
-
-    float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, currentLight.getModelNumber());
-
-    lightState.setX(xy[0]);
-    lightState.setY(xy[1]);
-    //lightState.setBrightness();
-
     PHBridge bridge = hueSDK.getSelectedBridge();
-    bridge.updateLightState(currentLight, lightState, lightListener);
+
+    for (PHLight light : allLights) {
+      PHLightState lightState = new PHLightState();
+      lightState.setOn(true);
+
+      float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, light.getModelNumber());
+
+      if (!light.getModelNumber().equals("LWB014")) {
+        lightState.setX(xy[0]);
+        lightState.setY(xy[1]);
+      }
+
+      bridge.updateLightState(light, lightState, lightListener);
+    }
   }
 
   void changeColor(int r, int g, int b, int brightness, int time) {
     Log.d("HUE", "change light color...");
 
-    PHLightState lightState = new PHLightState();
-    lightState.setOn(true);
+    PHBridge bridge = hueSDK.getSelectedBridge();
 
-    if (currentLight != null) {
-      float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, currentLight.getModelNumber());
+    for (PHLight light : allLights) {
+      PHLightState lightState = new PHLightState();
+      lightState.setOn(true);
 
-      lightState.setX(xy[0]);
-      lightState.setY(xy[1]);
-      lightState.setBrightness(brightness);
-      lightState.setTransitionTime(time);
+      if (light != null) {
+        float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, light.getModelNumber());
 
-      PHBridge bridge = hueSDK.getSelectedBridge();
-      bridge.updateLightState(currentLight, lightState, lightListener);
+        if (!light.getModelNumber().equals("LWB014")) {
+          lightState.setX(xy[0]);
+          lightState.setY(xy[1]);
+        }
+        lightState.setBrightness(brightness);
+        lightState.setTransitionTime(time);
+
+        bridge.updateLightState(light, lightState, lightListener);
+      }
     }
   }
 }
