@@ -180,31 +180,36 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onReciveMessages(final String messages, boolean isSuccess) {
         Log.d(TAG, "onReciveMessages: " + messages + " " + isSuccess);
-        if (state == State.RECEIVEING) {
-          receiveHandler.post(new Runnable() {
-            @Override
-            public void run() {
+        if (isSuccess) {
+          if (state == State.RECEIVEING) {
+            receiveHandler.post(new Runnable() {
+              @Override
+              public void run() {
 
-              switch (slotIndex) {
-                case 1:
-                  receivedMessages(messages, "REMO_SIGNAL_1", etSignal1);
-                  break;
-                case 2:
-                  receivedMessages(messages, "REMO_SIGNAL_2", etSignal2);
-                  break;
-                case 3:
-                  receivedMessages(messages, "REMO_SIGNAL_3", etSignal3);
-                  break;
-                case 4:
-                  receivedMessages(messages, "REMO_SIGNAL_4", etSignal4);
-                  break;
-                case 5:
-                  receivedMessages(messages, "REMO_SIGNAL_5", etSignal5);
-                  break;
+                switch (slotIndex) {
+                  case 1:
+                    receivedMessages(messages, "REMO_SIGNAL_1", etSignal1);
+                    break;
+                  case 2:
+                    receivedMessages(messages, "REMO_SIGNAL_2", etSignal2);
+                    break;
+                  case 3:
+                    receivedMessages(messages, "REMO_SIGNAL_3", etSignal3);
+                    break;
+                  case 4:
+                    receivedMessages(messages, "REMO_SIGNAL_4", etSignal4);
+                    break;
+                  case 5:
+                    receivedMessages(messages, "REMO_SIGNAL_5", etSignal5);
+                    break;
+                }
+                return;
               }
-              return;
-            }
-          });
+            });
+          }
+        } else {
+          swConnect.setChecked(false);
+          progressDialog.dismiss();
         }
       }
       @Override
@@ -568,11 +573,12 @@ public class RemoConfigFragment extends ConfigFragmentBase {
           remoController.cancelReceiveMessages();
         }
       });
+      progressDialog.setMessage("Aim your remote at IRKit and press a button briefly");
       progressDialog.show();
     }
   }
   private void receivedMessages(String messages, String key, final EditText etSignal) {
-    progressDialog.dismiss();
+    progressDialog.setMessage("Receveing...");
     mainActivity.autoSaveValue(key, messages);
     state = State.EXIST;
 
@@ -580,11 +586,12 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     handler.postDelayed(new Runnable() {
       @Override
       public void run() {
+        progressDialog.dismiss();
         etSignal.requestFocus();
         InputMethodManager inputMethodManager = (InputMethodManager) mainActivity
             .getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.showSoftInput(etSignal1, InputMethodManager.RESULT_UNCHANGED_SHOWN);
       }
-    }, 100);
+    }, 1000);
   }
 }

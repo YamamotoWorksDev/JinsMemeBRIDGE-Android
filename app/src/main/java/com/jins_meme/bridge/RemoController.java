@@ -46,6 +46,8 @@ public class RemoController {
   private boolean isExist;
   private boolean isError;
 
+  private boolean isFirstReceive;
+
   RemoController(Context context) {
     this.context = context;
   }
@@ -70,12 +72,8 @@ public class RemoController {
   }
   public void recevieMessages(final String address) {
     isGetMessages = true;
-    Handler handler = new Handler();
-    handler.postDelayed(new Runnable() {
-      public void run() {
-        getIRMessages(address);
-      }
-    }, 5000);
+    isFirstReceive = true;
+    getIRMessages(address);
   }
   public void cancelReceiveMessages() {
     isGetMessages = false;
@@ -116,6 +114,7 @@ public class RemoController {
           // Started zeroconf probe
           bonjourServiceListener = new BonjourServiceListener();
           jmdns.addServiceListener(IRKIT_SERVICE_TYPE, bonjourServiceListener);
+          jmdns.addServiceListener(REMO_SERVICE_TYPE, bonjourServiceListener);
           jmdns.addServiceListener(DEBUG_SERVICE_TYPE, bonjourServiceListener);
         }
         isProcessingBonjour = false;
@@ -137,6 +136,7 @@ public class RemoController {
         if (jmdns != null) {
           if (bonjourServiceListener != null) {
             jmdns.removeServiceListener(IRKIT_SERVICE_TYPE, bonjourServiceListener);
+            jmdns.removeServiceListener(REMO_SERVICE_TYPE, bonjourServiceListener);
             jmdns.removeServiceListener(DEBUG_SERVICE_TYPE, bonjourServiceListener);
             bonjourServiceListener = null;
           }
@@ -204,6 +204,7 @@ public class RemoController {
     return inetAddress;
   }
   private void getExist(String address) {
+    isError = false;
     isExist = false;
     String urlString = "http://" + address + "/";
     URL url;
@@ -234,6 +235,8 @@ public class RemoController {
         }
         httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
+        httpURLConnection.setConnectTimeout(5000);
+        httpURLConnection.setReadTimeout(5000);
         try {
           httpURLConnection.connect();
           int responseCode = httpURLConnection.getResponseCode();
@@ -257,38 +260,56 @@ public class RemoController {
       }
     }.execute(url);
   }
+
+
+
   private void getIRMessages(final String address) {
     String urlString = "http://" + address + "/messages";
-    URL url;
+    isError = false;
+    isExist = false;
     if (!isGetMessages) {
       return;
     }
-    try {
-      url = new URL(urlString);
-    }catch (MalformedURLException e) {
-      return;
-    }
 
-    new AsyncTask<URL, Void, String>() {
+    new AsyncTask<String, Void, String>() {
       @Override
-      protected String doInBackground(URL... urls) {
-        final URL url = urls[0];
+      protected String doInBackground(String... urls) {
+        String urlString = urls[0];
+        URL url = null;
+
+        try {
+          url = new URL(urlString);
+        }catch (MalformedURLException e) {
+          e.printStackTrace();
+          isError = true;
+          return "";
+        }
+
         HttpURLConnection httpURLConnection = null;
         StringBuilder result = new StringBuilder();
+
         try {
           httpURLConnection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
           e.printStackTrace();
+          isError = true;
+          return "";
         }
         try {
           httpURLConnection.setRequestMethod("GET");
         } catch (ProtocolException e) {
           e.printStackTrace();
+          isError = true;
+          return "";
         }
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
+          httpURLConnection.setConnectTimeout(5000);
+          httpURLConnection.setReadTimeout(5000);
           httpURLConnection.connect();
+
+          isExist = true;
 
           int responseCode = httpURLConnection.getResponseCode();
           switch (responseCode) {
@@ -314,27 +335,39 @@ public class RemoController {
               break;
           }
         } catch (IOException e) {
-
+          isError = true;
         } finally {
-          if (httpURLConnection != null) {
-            httpURLConnection.disconnect();
-          }
+          httpURLConnection.disconnect();
+          return result.toString();
         }
-        return result.toString();
       }
       @Override
       protected void onPostExecute(String result) {
         Log.d(TAG, "onPostExecute: " + result);
+        if (isError || !isExist) {
+          cancelReceiveMessages();
+          messagesListener.onReciveMessages(result ,false);
+          return;
+        }
         if (!isGetMessages) {
           return;
         }
-        if (result.equals("")) {
+        if (isFirstReceive) {
+          isFirstReceive = false;
           Handler handler = new Handler();
           handler.postDelayed(new Runnable() {
             public void run() {
               getIRMessages(address);
             }
-          }, 1000);
+          }, 5000);
+
+        } else if (result.equals("")) {
+          Handler handler = new Handler();
+          handler.postDelayed(new Runnable() {
+            public void run() {
+              getIRMessages(address);
+            }
+          }, 2000);
         } else {
           isGetMessages = false;
           if (messagesListener != null) {
@@ -342,35 +375,49 @@ public class RemoController {
           }
         }
       }
-    }.execute(url);
+    }.execute(urlString);
   }
 
   private void postIRMessages(String address, final String messages) {
     String urlString = "http://" + address + "/messages";
-
+    isError = false;
+    isExist = false;
     new AsyncTask<String, Void, String>() {
       @Override
       protected String doInBackground(String... urls) {
-        final String url = urls[0];
+        String urlString = urls[0];
+        URL url = null;
+        try {
+          url = new URL(urlString);
+        }catch (MalformedURLException e) {
+          e.printStackTrace();
+          isError = true;
+          return "";
+        }
+
         HttpURLConnection httpURLConnection = null;
         StringBuilder result = new StringBuilder();
 
         try {
-          httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
+          httpURLConnection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
           e.printStackTrace();
           isError = true;
+          return "";
         }
         try {
           httpURLConnection.setRequestMethod("POST");
         } catch (ProtocolException e) {
           e.printStackTrace();
           isError = true;
+          return "";
         }
 
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/json; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
+          httpURLConnection.setConnectTimeout(5000);
+          httpURLConnection.setReadTimeout(5000);
           httpURLConnection.setDoOutput(true);
           httpURLConnection.connect();
 
@@ -410,8 +457,8 @@ public class RemoController {
           isExist = false;
         } finally {
             httpURLConnection.disconnect();
+            return result.toString();
         }
-        return result.toString();
       }
       @Override
       protected void onPostExecute(String result) {
