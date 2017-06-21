@@ -8,6 +8,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -49,7 +50,8 @@ import javax.jmdns.impl.DNSRecord.Text;
 public class RemoConfigFragment extends ConfigFragmentBase {
   public String TAG = "RemoConfigFragment";
   private RemoController remoController;
-  private Switch swConnect;
+//  private Switch swConnect;
+  private Button bScan;
   private Button bSignal1;
   private Button bSignal2;
   private Button bSignal3;
@@ -84,9 +86,11 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     EXIST,
     LOST,
     SCAN,
-    RECEIVEING
+    RECEIVEING,
+    SENDING
   }
   private State state;
+  private State currentState;
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -138,12 +142,8 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onExist(boolean result) {
         Log.d(TAG, "onExist: " + result);
-        swConnect.setChecked(result);
-        if (result) {
-          state = State.EXIST;
-        } else {
-          state = State.LOST;
-        }
+//        swConnect.setChecked(result);
+        setExist(result);
       }
       @Override
       public void onServiceAdded(ServiceEvent serviceEvent) {
@@ -213,30 +213,44 @@ public class RemoConfigFragment extends ConfigFragmentBase {
             });
           }
         } else {
-          swConnect.setChecked(false);
+//          swConnect.setChecked(false);
+          setExist(false);
           progressDialog.dismiss();
         }
       }
       @Override
       public void onSendMessages(String messages, boolean isSuccess) {
         Log.d(TAG, "onSendMessages: " + messages + " " + isSuccess);
-      }
-    });
-
-
-    swConnect = (Switch) view.findViewById(R.id.remo_connect);
-    swConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if (state != State.CHECK_EXIST) {
-          if (b) {
-            startScan();
-          } else {
-            state = State.LOST;
-          }
+        if (isSuccess) {
+          setExist(true);
+        } else {
+          setExist(false);
         }
       }
     });
+
+    bScan = (Button) view.findViewById(R.id.remo_scan);
+    bScan.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (state != State.CHECK_EXIST) {
+          startScan();
+        }
+      }
+    });
+//    swConnect = (Switch) view.findViewById(R.id.remo_connect);
+//    swConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//      @Override
+//      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//        if (state != State.CHECK_EXIST) {
+//          if (b) {
+//            startScan();
+//          } else {
+//            changeState(false);
+//          }
+//        }
+//      }
+//    });
 
     bSignal1 = (Button) view.findViewById(R.id.remo_signal_1_receive);
     bSignal1.setOnClickListener(new OnClickListener() {
@@ -454,12 +468,30 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       tvAddress.setText(address);
       remoController.checkExist(address);
     } else {
-      state = State.LOST;
+      setExist(false);
+      tvName.setText("---");
+      tvAddress.setText("---");
+    }
+  }
+  private void changeState(State newState) {
+    currentState = state;
+    state = newState;
+  }
+  private void setExist(boolean isExist) {
+    if (isExist) {
+      tvAddress.setTextColor(Color.GREEN);
+      tvName.setTextColor(Color.GREEN);
+      changeState(State.EXIST);
+    } else {
+      tvAddress.setTextColor(Color.RED);
+      tvName.setTextColor(Color.RED);
+      changeState(State.LOST);
     }
   }
 
+
   private void startScan() {
-    state = State.SCAN;
+    changeState(State.SCAN);
     remoController.startDiscovery();
 
     adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, new ArrayList<String>());
@@ -474,7 +506,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
         remoController.stopDiscovery();
         setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
-        state = State.EXIST;
+        setExist(true);
       }
     });
     builder.setOnCancelListener(new OnCancelListener() {
@@ -483,8 +515,13 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         Log.d(TAG, "onCancel: ");
         remoController.stopDiscovery();
         if (state == State.SCAN) {
-          swConnect.setChecked(false);
-          state = State.LOST;
+          String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
+          if (address != null) {
+            changeState(State.CHECK_EXIST);
+            remoController.checkExist(address);
+          } else {
+            changeState(State.LOST);
+          }
         }
       }
     });
@@ -569,6 +606,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     });
   }
 
+
   private void setDevice(String name, String address) {
     Log.d(TAG, "setDevice: " + name + " " + address);
     address = address.replaceAll("/","");
@@ -580,7 +618,8 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 
   private void receiveMessages(int i) {
     if (state == State.EXIST) {
-      state = State.RECEIVEING;
+      changeState(State.RECEIVEING);
+
       slotIndex = i;
       String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
       remoController.recevieMessages(address);
@@ -595,7 +634,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         @Override
         public void onCancel(DialogInterface dialogInterface) {
           Log.d(TAG, "onCancel: ");
-          state = State.EXIST;
+          changeState(State.EXIST);
           remoController.cancelReceiveMessages();
         }
       });
@@ -606,7 +645,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private void receivedMessages(String messages, String key, final EditText etSignal) {
     progressDialog.setMessage("Receveing...");
     mainActivity.autoSaveValue(key, messages);
-    state = State.EXIST;
+    changeState(State.EXIST);
 
     Handler handler = new Handler();
     handler.postDelayed(new Runnable() {
@@ -625,6 +664,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
       String messages = mainActivity.getSavedValue(key);
       if (address != null && !address.equals("") && messages != null && !messages.equals("")) {
+        changeState(State.SENDING);
         remoController.sendMessages(address, messages);
       }
     }
