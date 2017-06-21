@@ -55,6 +55,11 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private Button bSignal3;
   private Button bSignal4;
   private Button bSignal5;
+  private Button btSignal1;
+  private Button btSignal2;
+  private Button btSignal3;
+  private Button btSignal4;
+  private Button btSignal5;
   private EditText etSignal1;
   private EditText etSignal2;
   private EditText etSignal3;
@@ -266,6 +271,42 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         receiveMessages(5);
+      }
+    });
+
+    btSignal1 = (Button) view.findViewById(R.id.remo_signal_1_send);
+    btSignal1.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        sendMessage("REMO_SIGNAL_1");
+      }
+    });
+    btSignal2 = (Button) view.findViewById(R.id.remo_signal_2_send);
+    btSignal2.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        sendMessage("REMO_SIGNAL_2");
+      }
+    });
+    btSignal3 = (Button) view.findViewById(R.id.remo_signal_3_send);
+    btSignal3.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        sendMessage("REMO_SIGNAL_3");
+      }
+    });
+    btSignal4 = (Button) view.findViewById(R.id.remo_signal_4_send);
+    btSignal4.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        sendMessage("REMO_SIGNAL_4");
+      }
+    });
+    btSignal5 = (Button) view.findViewById(R.id.remo_signal_5_send);
+    btSignal5.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        sendMessage("REMO_SIGNAL_5");
       }
     });
 
@@ -526,21 +567,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         dialog.dismiss();
       }
     });
-
-
-
-
-//    String packageName = "global.nature.remo.app"; //AndroidManifest.xmlのpackageNameに相当
-//
-//    PackageManager pm = mainActivity.getPackageManager();
-//
-//    Intent intent = pm.getLaunchIntentForPackage(packageName);
-//    if (intent == null) {
-//      intent = new Intent(Intent.ACTION_VIEW);
-//      intent.setData(Uri.parse("market://details?id=" + packageName));
-//    }
-//    startActivity(intent);
-
   }
 
   private void setDevice(String name, String address) {
@@ -593,5 +619,14 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         inputMethodManager.showSoftInput(etSignal1, InputMethodManager.RESULT_UNCHANGED_SHOWN);
       }
     }, 1000);
+  }
+  public void sendMessage(String key) {
+    if (state == State.EXIST) {
+      String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
+      String messages = mainActivity.getSavedValue(key);
+      if (address != null && !address.equals("") && messages != null && !messages.equals("")) {
+        remoController.sendMessages(address, messages);
+      }
+    }
   }
 }
