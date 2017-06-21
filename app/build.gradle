@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 25
@@ -29,6 +39,7 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 dependencies {
@@ -48,4 +59,7 @@ dependencies {
     compile 'com.spotify.sdk:spotify-player:24-noconnect-2.20b@aar'
     compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
     testCompile 'junit:junit:4.12'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
 }
