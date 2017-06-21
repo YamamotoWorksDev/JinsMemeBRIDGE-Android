@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -27,6 +31,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -67,12 +72,13 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private ArrayAdapter<String> adapter;
   private HashMap<String, String> deviceMap;
 
+  private final int scanTimeoutDuration = 10000;
 
   enum  State {
     CHECK_EXIST,
     EXIST,
     LOST,
-    FOUNDING,
+    SCAN,
     RECEIVEING
   }
   private State state;
@@ -168,6 +174,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         });
       }
     });
+
     remoController.setMessagesListener(new OnMessagesListener() {
 
       @Override
@@ -213,34 +220,9 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (state != State.CHECK_EXIST) {
           if (b) {
-            state = State.FOUNDING;
-            remoController.startDiscovery();
-
-            adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, new ArrayList<String>());
-            AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-            builder.setTitle("Devices");
-
-            builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
-                remoController.stopDiscovery();
-                setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
-                state = State.EXIST;
-              }
-            });
-            builder.setOnCancelListener(new OnCancelListener() {
-              @Override
-              public void onCancel(DialogInterface dialogInterface) {
-                Log.d(TAG, "onCancel: ");
-                remoController.stopDiscovery();
-                if (state == State.FOUNDING) {
-                  swConnect.setChecked(false);
-                  state = State.LOST;
-                }
-              }
-            });
-            builder.show();
+            startScan();
+          } else {
+            state = State.LOST;
           }
         }
       }
@@ -428,6 +410,132 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     } else {
       state = State.LOST;
     }
+  }
+
+  private void startScan() {
+    state = State.SCAN;
+    remoController.startDiscovery();
+
+    adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, new ArrayList<String>());
+    final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+    final AlertDialog dialog;
+
+    builder.setTitle("Select a device");
+
+    builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
+        remoController.stopDiscovery();
+        setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
+        state = State.EXIST;
+      }
+    });
+    builder.setOnCancelListener(new OnCancelListener() {
+      @Override
+      public void onCancel(DialogInterface dialogInterface) {
+        Log.d(TAG, "onCancel: ");
+        remoController.stopDiscovery();
+        if (state == State.SCAN) {
+          swConnect.setChecked(false);
+          state = State.LOST;
+        }
+      }
+    });
+
+    dialog = builder.create();
+    dialog.show();
+
+    Handler handler = new Handler();
+    handler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        if (state == State.SCAN && deviceMap.size() == 0) {
+          dialog.cancel();
+          showDeviceSettingDialog();
+        }
+      }
+    }, scanTimeoutDuration);
+  }
+  private void endScan() {
+
+  }
+
+  private void showDeviceSettingDialog() {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+    final AlertDialog dialog;
+    LinearLayout layout = new LinearLayout(mainActivity);
+    layout.setOrientation(LinearLayout.VERTICAL);
+
+    float density = mainActivity.getResources().getDisplayMetrics().density;
+
+    TextView irkit = new TextView(mainActivity);
+    irkit.setClickable(true);
+    irkit.setText("Open \"IRKit Simple Remort\"");
+    irkit.setPadding((int)density*24,(int)density*24,(int)density*24,(int)density*24);
+
+    TextView remo = new TextView(mainActivity);
+    remo.setClickable(true);
+
+    remo.setText("Open \"Nature Remo\"");
+    remo.setPadding((int)density*24,(int)density*24,(int)density*24,(int)density*24);
+
+    layout.addView(irkit);
+    layout.addView(remo);
+
+    builder.setTitle("Did wifi setting ?");
+    builder.setView(layout);
+
+    dialog = builder.create();
+    dialog.show();
+
+    irkit.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        String packageName = "com.getirkit.irkitsimpleremote"; //AndroidManifest.xmlのpackageNameに相当
+
+        PackageManager pm = mainActivity.getPackageManager();
+        Intent intent = pm.getLaunchIntentForPackage(packageName);
+        if (intent == null) {
+          intent = new Intent(Intent.ACTION_VIEW);
+          intent.setData(Uri.parse("market://details?id=" + packageName));
+        }
+        startActivity(intent);
+        dialog.dismiss();
+      }
+    });
+
+
+    remo.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        String packageName = "global.nature.remo"; //AndroidManifest.xmlのpackageNameに相当
+
+        PackageManager pm = mainActivity.getPackageManager();
+        Intent intent = pm.getLaunchIntentForPackage(packageName);
+        if (intent == null) {
+          intent = new Intent(Intent.ACTION_VIEW);
+          intent.setData(Uri.parse("market://details?id=" + packageName));
+        }
+        startActivity(intent);
+        dialog.dismiss();
+      }
+    });
+
+
+
+
+//    String packageName = "global.nature.remo.app"; //AndroidManifest.xmlのpackageNameに相当
+//
+//    PackageManager pm = mainActivity.getPackageManager();
+//
+//    Intent intent = pm.getLaunchIntentForPackage(packageName);
+//    if (intent == null) {
+//      intent = new Intent(Intent.ACTION_VIEW);
+//      intent.setData(Uri.parse("market://details?id=" + packageName));
+//    }
+//    startActivity(intent);
+
   }
 
   private void setDevice(String name, String address) {
