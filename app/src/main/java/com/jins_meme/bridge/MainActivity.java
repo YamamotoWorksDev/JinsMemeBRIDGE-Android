@@ -41,6 +41,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.jins_jp.meme.MemeConnectListener;
 import com.jins_jp.meme.MemeFitStatus;
 import com.jins_jp.meme.MemeLib;
@@ -49,6 +50,7 @@ import com.jins_jp.meme.MemeRealtimeListener;
 import com.jins_jp.meme.MemeScanListener;
 import com.jins_jp.meme.MemeStatus;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Fabric.with(this, new Crashlytics());
 
     setContentView(R.layout.activity_bridge_menu);
 
