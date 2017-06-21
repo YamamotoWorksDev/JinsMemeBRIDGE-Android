@@ -43,12 +43,8 @@ public class RemoController {
   private OnDevicesListener devicesListener;
   private OnMessagesListener messagesListener;
 
-  private String address;
-  private String messages;
-
-  private enum RemoState {
-
-  }
+  private boolean isExist;
+  private boolean isError;
 
   RemoController(Context context) {
     this.context = context;
@@ -208,6 +204,7 @@ public class RemoController {
     return inetAddress;
   }
   private void getExist(String address) {
+    isExist = false;
     String urlString = "http://" + address + "/";
     URL url;
     try {
@@ -220,7 +217,7 @@ public class RemoController {
       @Override
       protected Boolean doInBackground(URL... urls) {
         final URL url = urls[0];
-        Boolean isExist = false;
+
         HttpURLConnection httpURLConnection = null;
 
         try {
@@ -286,7 +283,7 @@ public class RemoController {
         try {
           httpURLConnection.setRequestMethod("GET");
         } catch (ProtocolException e) {
-
+          e.printStackTrace();
         }
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
@@ -341,7 +338,7 @@ public class RemoController {
         } else {
           isGetMessages = false;
           if (messagesListener != null) {
-            messagesListener.onReciveMessages(result);
+            messagesListener.onReciveMessages(result ,true);
           }
         }
       }
@@ -350,26 +347,34 @@ public class RemoController {
 
   private void postIRMessages(String address, final String messages) {
     String urlString = "http://" + address + "/messages";
-    URL url;
-    try {
-      url = new URL(urlString);
-    }catch (MalformedURLException e) {
-      return;
-    }
 
-    new AsyncTask<URL, Void, String>() {
+    new AsyncTask<String, Void, String>() {
       @Override
-      protected String doInBackground(URL... urls) {
-        final URL url = urls[0];
+      protected String doInBackground(String... urls) {
+        final String url = urls[0];
         HttpURLConnection httpURLConnection = null;
         StringBuilder result = new StringBuilder();
+
         try {
-          httpURLConnection = (HttpURLConnection) url.openConnection();
+          httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
+        } catch (IOException e) {
+          e.printStackTrace();
+          isError = true;
+        }
+        try {
           httpURLConnection.setRequestMethod("POST");
+        } catch (ProtocolException e) {
+          e.printStackTrace();
+          isError = true;
+        }
+
+        try {
           httpURLConnection.addRequestProperty("Content-Type", "application/json; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
           httpURLConnection.setDoOutput(true);
           httpURLConnection.connect();
+
+          isExist = true;
 
           OutputStream outputStream = httpURLConnection.getOutputStream();
           PrintStream printStream = new PrintStream(outputStream);
@@ -389,7 +394,7 @@ public class RemoController {
               BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
               String line = null;
 
-              while((line = bufferedReader.readLine()) != null) {
+              while ((line = bufferedReader.readLine()) != null) {
                 result.append(line);
               }
               bufferedReader.close();
@@ -400,27 +405,26 @@ public class RemoController {
             default:
               break;
           }
-        } catch (MalformedURLException e) {
-
-        } catch (ProtocolException e) {
-
         } catch (IOException e) {
-
+//          e.printStackTrace();
+          isExist = false;
         } finally {
-          if (httpURLConnection != null) {
             httpURLConnection.disconnect();
-          }
         }
         return result.toString();
       }
       @Override
       protected void onPostExecute(String result) {
+        boolean isSuccess;
         Log.d(TAG, "onPostExecute: " + result);
-        if (messagesListener != null) {
-          messagesListener.onSendMessages(result);
+        if (isExist && !isError) {
+          isSuccess = true;
+        } else {
+          isSuccess = false;
         }
+        messagesListener.onSendMessages(result, isSuccess);
       }
-    }.execute(url);
+    }.execute(urlString);
   }
 
 
@@ -432,8 +436,8 @@ public class RemoController {
 
   }
   public interface OnMessagesListener {
-    public void onReciveMessages(String messages);
-    public void onSendMessages(String messages);
+    public void onReciveMessages(String messages, boolean isSuccess);
+    public void onSendMessages(String messages, boolean isSuccess);
   }
 
 

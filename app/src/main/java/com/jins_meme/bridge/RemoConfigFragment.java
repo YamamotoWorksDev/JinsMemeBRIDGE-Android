@@ -171,7 +171,8 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     remoController.setMessagesListener(new OnMessagesListener() {
 
       @Override
-      public void onReciveMessages(final String messages) {
+      public void onReciveMessages(final String messages, boolean isSuccess) {
+        Log.d(TAG, "onReciveMessages: " + messages + " " + isSuccess);
         if (state == State.RECEIVEING) {
           receiveHandler.post(new Runnable() {
             @Override
@@ -200,8 +201,8 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         }
       }
       @Override
-      public void onSendMessages(String messages) {
-
+      public void onSendMessages(String messages, boolean isSuccess) {
+        Log.d(TAG, "onSendMessages: " + messages + " " + isSuccess);
       }
     });
 

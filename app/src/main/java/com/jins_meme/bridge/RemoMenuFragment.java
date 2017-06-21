@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
+import com.jins_meme.bridge.RemoController.OnMessagesListener;
 import java.util.HashMap;
 
 
@@ -23,12 +25,17 @@ import java.util.HashMap;
  *
  */
 public class RemoMenuFragment extends MenuFragmentBase implements IResultListener {
+  private String TAG = "RemoMenuFragment";
 
   private OnFragmentInteractionListener mListener;
 
   private RemoController remoController;
 
   private HashMap<String, String> signalNameMap;
+
+  private CardAdapter.MyCardHolder selectedCardHolder;
+
+  private boolean isSending;
 
   MainActivity mainActivity;
 
@@ -53,6 +60,27 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
     mView.setAdapter(cardAdapter);
 
     remoController = new RemoController(getContext());
+    remoController.setMessagesListener(new OnMessagesListener() {
+      @Override
+      public void onReciveMessages(String messages, boolean isSuccess) {
+        Log.d(TAG, "onReciveMessages: " + messages + " " + isSuccess);
+
+      }
+
+      @Override
+      public void onSendMessages(String messages, boolean isSuccess) {
+        Log.d(TAG, "onSendMessages: " + messages + " " + isSuccess);
+
+        isSending = false;
+        if (selectedCardHolder != null) {
+          if (isSuccess) {
+            selectedCardHolder.setText("Success", 1000);
+          } else {
+            selectedCardHolder.setText("Fail", 1000);
+          }
+        }
+      }
+    });
 
   }
 
@@ -102,35 +130,40 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
   @Override
   public void onEndCardSelected(int id) {
-    String address;
-    String messages;
-    final RemoMenuFragment.CardAdapter.MyCardHolder mych = (RemoMenuFragment.CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
-    switch (id) {
-      case R.string.signal1:
-        address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
-        messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_1");
-        remoController.sendMessages(address, messages);
-        break;
-      case R.string.signal2:
-        address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
-        messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_2");
-        remoController.sendMessages(address, messages);
-        break;
-      case R.string.signal3:
-        address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
-        messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_3");
-        remoController.sendMessages(address, messages);
-        break;
-      case R.string.signal4:
-        address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
-        messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_4");
-        remoController.sendMessages(address, messages);
-        break;
-      case R.string.signal5:
-        address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
-        messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_5");
-        remoController.sendMessages(address, messages);
-        break;
+    if (!isSending) {
+      String address;
+      String messages;
+      isSending = true;
+      selectedCardHolder = (RemoMenuFragment.CardAdapter.MyCardHolder) mView
+          .findViewHolderForItemId(id);
+      selectedCardHolder.setText("Sending...");
+      switch (id) {
+        case R.string.signal1:
+          address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+          messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_1");
+          remoController.sendMessages(address, messages);
+          break;
+        case R.string.signal2:
+          address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+          messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_2");
+          remoController.sendMessages(address, messages);
+          break;
+        case R.string.signal3:
+          address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+          messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_3");
+          remoController.sendMessages(address, messages);
+          break;
+        case R.string.signal4:
+          address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+          messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_4");
+          remoController.sendMessages(address, messages);
+          break;
+        case R.string.signal5:
+          address = ((MainActivity) getActivity()).getSavedValue("REMO_DEVICE_ADDRESS");
+          messages = ((MainActivity) getActivity()).getSavedValue("REMO_SIGNAL_5");
+          remoController.sendMessages(address, messages);
+          break;
+      }
     }
   }
 
@@ -192,9 +225,6 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
         case 4:
           id = R.string.signal5;
           break;
-        case 5:
-          id = R.string.back;
-          break;
       }
       return id;
     }
@@ -203,7 +233,7 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
         case NO_ID:
-          return 6;
+          return 5;
       }
       return 0;
     }
@@ -220,6 +250,7 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
       TextView mSubtitle;
       TextView mValue;
       Handler mHandler = new Handler();
+      String currentText;
 
       MyCardHolder(View itemView) {
         super(itemView);
@@ -237,12 +268,15 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
       void setText(String text, int msec) {
         //mValue.setText(getString(R.string.selected));
+        currentText = text;
         mValue.setText(text);
 
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
-            mValue.setText(" ");
+            if (mValue.getText().equals(currentText)) {
+              mValue.setText(" ");
+            }
           }
         }, msec);
       }
