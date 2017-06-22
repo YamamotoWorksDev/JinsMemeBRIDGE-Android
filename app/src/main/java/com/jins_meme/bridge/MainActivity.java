@@ -11,7 +11,6 @@ package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
-import android.app.Dialog;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -30,6 +29,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
    */
   // private ***Fragment ***Fragment;
 
-  private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
+  private ArrayList<MenuFragmentBase> menus = new ArrayList<>();
 
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
@@ -157,7 +157,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     preferences = PreferenceManager.getDefaultSharedPreferences(this);
     editor = preferences.edit();
 
-    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+    }
 
     rootMenu = new RootMenuFragment();
     spotifyMenu = new SpotifyMenuFragment();
@@ -237,55 +239,58 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
 
-    String barTitle = getSupportActionBar().getTitle().toString();
+    String barTitle;
+    if (getSupportActionBar() != null && getSupportActionBar().getTitle() != null) {
+      barTitle = getSupportActionBar().getTitle().toString();
 
-    Log.d("DEBUG", "Title = " + barTitle);
+      Log.d("DEBUG", "Title = " + barTitle);
 
-    if (barTitle.contains(getString(R.string.app_name))) {
-      Log.d("DEBUG", "true");
+      if (barTitle.contains(getString(R.string.app_name))) {
+        Log.d("DEBUG", "true");
 
-      switch (batteryStatus) {
-        case 1:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_alert_white_24dp);
-          break;
-        case 2:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_30_white_24dp);
-          break;
-        case 3:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_50_white_24dp);
-          break;
-        case 4:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_80_white_24dp);
-          break;
-        case 5:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_full_white_24dp);
-          break;
-        default:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_unknown_white_24dp);
-          break;
-      }
-      menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-      menu.getItem(0).setVisible(true);
-    } else {
-      Log.d("DEBUG", "false");
-
-      menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-      menu.getItem(0).setVisible(false);
-    }
-
-    if (!barTitle.contains(getString(R.string.app_name))) {
-      for (int i = 1; i < menu.size(); i++) {
-        MenuItem item = menu.getItem(i);
-        String title = item.getTitle().toString();
-        if (barTitle.contains(title)) {
-          item.setVisible(false);
-        } else {
-          item.setVisible(true);
+        switch (batteryStatus) {
+          case 1:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_alert_white_24dp);
+            break;
+          case 2:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_30_white_24dp);
+            break;
+          case 3:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_50_white_24dp);
+            break;
+          case 4:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_80_white_24dp);
+            break;
+          case 5:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_full_white_24dp);
+            break;
+          default:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_unknown_white_24dp);
+            break;
         }
+        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.getItem(0).setVisible(true);
+      } else {
+        Log.d("DEBUG", "false");
+
+        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.getItem(0).setVisible(false);
       }
-    } else {
-      for (int i = 1; i < menu.size(); i++) {
-        menu.getItem(i).setVisible(true);
+
+      if (!barTitle.contains(getString(R.string.app_name))) {
+        for (int i = 1; i < menu.size(); i++) {
+          MenuItem item = menu.getItem(i);
+          String title = item.getTitle().toString();
+          if (barTitle.contains(title)) {
+            item.setVisible(false);
+          } else {
+            item.setVisible(true);
+          }
+        }
+      } else {
+        for (int i = 1; i < menu.size(); i++) {
+          menu.getItem(i).setVisible(true);
+        }
       }
     }
 
@@ -370,11 +375,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   @Override
-  protected Dialog onCreateDialog(int id) {
-    return super.onCreateDialog(id);
-  }
-
-  @Override
   protected void onResume() {
     super.onResume();
 
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         CONNECTIVITY_SERVICE);
 
     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    if (networkInfo == null || (networkInfo != null && !networkInfo.isConnected())) {
+    if (networkInfo == null || !networkInfo.isConnected()) {
       AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("network");
       alertDialogFragment.setCancelable(false);
       alertDialogFragment.setDialogListener(this);
@@ -594,8 +594,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, String[] permissions,
-      int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
     if (requestCode == 1) {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         Log.d("PERMISSION", "Succeeded");
@@ -626,8 +626,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.post(new Runnable() {
       @Override
       public void run() {
-        getSupportActionBar()
-            .setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
+        if (getSupportActionBar() != null) {
+          getSupportActionBar()
+              .setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
+        }
 
         Toast.makeText(MainActivity.this, getString(R.string.meme_connected),
             Toast.LENGTH_SHORT).show();
@@ -646,7 +648,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.post(new Runnable() {
       @Override
       public void run() {
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+        if (getSupportActionBar() != null) {
+          getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+        }
 
         invalidateOptionsMenu();
         if (basicConfigFragment != null) {
@@ -745,8 +749,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           showAppIDandSecretWarning();
           break;
       }
-    } else {
-
     }
   }
 
@@ -923,19 +925,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void setActionBarTitle(int resId) {
-    switch (resId) {
-      case R.string.actionbar_title:
-      case R.string.about:
-        getSupportActionBar().setTitle(getString(resId));
-        break;
-      default:
-        getSupportActionBar().setTitle(getString(resId) + " SETTING");
-        break;
+    if (getSupportActionBar() != null) {
+      switch (resId) {
+        case R.string.actionbar_title:
+        case R.string.about:
+          getSupportActionBar().setTitle(getString(resId));
+          break;
+        default:
+          getSupportActionBar().setTitle(getString(resId) + " SETTING");
+          break;
+      }
     }
   }
 
   void setActionBarBack(boolean flag) {
-    getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
+    }
   }
 
   void transitToMenu(MenuFragmentBase next) {
