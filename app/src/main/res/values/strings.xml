@@ -41,6 +41,9 @@
   <string name="unlock_auth_title">UNLOCK</string>
   <string name="unlock_auth_explain">Please unlock to edit the APP_ID and APP_SECRET.</string>
 
+  <string name="not_selected_midi_title">NOT SELECTED MIDI</string>
+  <string name="not_selected_midi_explain">Please change your USB Connection Type to MIDI and restart.</string>
+
   <string name="camera_error">This device doesn\'t support Camera2 API.</string>
   <string name="request_permission">Camera permission is required.</string>
 

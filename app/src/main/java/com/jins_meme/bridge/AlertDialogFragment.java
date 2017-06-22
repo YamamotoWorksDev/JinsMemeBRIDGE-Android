@@ -108,6 +108,27 @@ public class AlertDialogFragment extends DialogFragment {
             mListener.doPositiveClick("meme");
           }
         });
+        break;
+      case "midi":
+        alert.setTitle(getString(R.string.not_selected_midi_title));
+        alert.setMessage(getString(R.string.not_selected_midi_explain));
+        alert.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i) {
+            Log.d("DEBUG", "Quit App...");
+
+            mListener.doNegativeClick("midi");
+          }
+        });
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i) {
+            Log.d("DEBUG", "Close Alert Dialog...");
+
+            mListener.doPositiveClick("midi");
+          }
+        });
+        break;
     }
 
     return alert.create();
