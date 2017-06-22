@@ -33,7 +33,7 @@
   <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
   <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
   <string name="not_connected_network_title">NO NETWORK CONNECTION</string>
-  <string name="not_connected_network_explain">Please check your network state.</string>
+  <string name="not_connected_network_explain">Please check your network connection. Some functions needs Wi-Fi or Internet connections.</string>
 
   <string name="airplane_mode_on_title">AIRPLANE MODE IS ENABLED</string>
   <string name="airplane_mode_on_explain">Please disable the airplane mode.</string>
