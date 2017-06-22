@@ -342,11 +342,13 @@ public class HueController {
     PHLightState lightState = new PHLightState();
     lightState.setOn(false);
 
-    for (PHLight light : allLights) {
-      PHBridge bridge = hueSDK.getSelectedBridge();
+    if (allLights != null) {
+      for (PHLight light : allLights) {
+        PHBridge bridge = hueSDK.getSelectedBridge();
 
-      if (light != null) {
-        bridge.updateLightState(light, lightState, lightListener);
+        if (light != null) {
+          bridge.updateLightState(light, lightState, lightListener);
+        }
       }
     }
   }
