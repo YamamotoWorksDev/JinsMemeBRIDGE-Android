@@ -98,8 +98,10 @@ public class Camera2BasicFragment extends Fragment {
      * Conversion from screen rotation to JPEG orientation.
      */
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
+    private static final String[] REQUIED_PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -495,12 +497,11 @@ public class Camera2BasicFragment extends Fragment {
         super.onPause();
     }
 
-    private void requestCameraPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
+    private void requestCameraPermission(String[] permissions) {
+        if (shouldShowRequestAnyPermissionRationale(permissions)) {
+            new ConfirmationDialog(permissions).show(getChildFragmentManager(), FRAGMENT_DIALOG);
         } else {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    REQUEST_CAMERA_PERMISSION);
+            requestPermissions(permissions, REQUEST_CAMERA_PERMISSION);
         }
     }
 
@@ -508,13 +509,42 @@ public class Camera2BasicFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                ErrorDialog.newInstance(getString(R.string.request_permission))
+            for(int i = 0; i < grantResults.length; ++i) {
+                if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    ErrorDialog.newInstance(getString(R.string.request_permission))
                         .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+                    return;
+                }
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    private boolean checkIfAllRequiedPermissionGranted() {
+        for(String permission : REQUIED_PERMISSIONS) {
+            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private String[] getPermissionsNotGrantedYet() {
+        ArrayList<String> ret = new ArrayList<String>();
+        for(String permission : REQUIED_PERMISSIONS) {
+            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
+                ret.add(permission);
+            }
+        }
+        return ret.toArray(new String[]{});
+    }
+    private boolean shouldShowRequestAnyPermissionRationale(String[] permissions) {
+        for(String permission : permissions) {
+            if(shouldShowRequestPermissionRationale(permission)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -653,9 +683,8 @@ public class Camera2BasicFragment extends Fragment {
      * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
      */
     private void openCamera(int width, int height) {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission();
+        if (!checkIfAllRequiedPermissionGranted()) {
+            requestCameraPermission(getPermissionsNotGrantedYet());
             return;
         }
         setUpCameraOutputs(width, height);
@@ -1049,6 +1078,10 @@ public class Camera2BasicFragment extends Fragment {
      */
     public static class ConfirmationDialog extends DialogFragment {
 
+        private String[] permissions;
+        public ConfirmationDialog(String[] permissions) {
+            this.permissions = permissions;
+        }
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Fragment parent = getParentFragment();
@@ -1057,7 +1090,7 @@ public class Camera2BasicFragment extends Fragment {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            parent.requestPermissions(new String[]{Manifest.permission.CAMERA},
+                            parent.requestPermissions(permissions,
                                     REQUEST_CAMERA_PERMISSION);
                         }
                     })
