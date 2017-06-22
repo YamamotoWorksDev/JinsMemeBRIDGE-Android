@@ -33,6 +33,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -55,8 +57,11 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;;
@@ -77,10 +82,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -262,6 +269,14 @@ public class Camera2BasicFragment extends Fragment {
 
         @Override
         public void onImageAvailable(ImageReader reader) {
+            long currentTimeMillis = System.currentTimeMillis();
+            Date date = new Date(currentTimeMillis);
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/" + getString(R.string.app_name));
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            mFile = new File(dir, format.format(currentTimeMillis)+".jpg");
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
         }
 
@@ -313,7 +328,7 @@ public class Camera2BasicFragment extends Fragment {
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == null) {
+                    if (afState == null || afState == CaptureResult.CONTROL_AF_STATE_INACTIVE) {
                         captureStillPicture();
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
                             CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
@@ -372,13 +387,18 @@ public class Camera2BasicFragment extends Fragment {
      *
      * @param text The message to show
      */
+    private Toast toast;
     private void showToast(final String text) {
         final Activity activity = getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                    if(toast != null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(activity, text, Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             });
         }
@@ -454,7 +474,6 @@ public class Camera2BasicFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
     }
 
     @Override
@@ -874,7 +893,14 @@ public class Camera2BasicFragment extends Fragment {
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    showToast("Saved: " + mFile);
+                    ContentValues values = new ContentValues();
+                    ContentResolver contentResolver = getActivity().getContentResolver();
+                    values.put(Images.Media.MIME_TYPE, "image/jpeg");
+                    values.put(Images.Media.TITLE, mFile.getName());
+                    values.put("_data", mFile.getPath());
+                    contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                    showToast("写真を保存しました : " + mFile.getName());
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }
