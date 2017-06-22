@@ -423,8 +423,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private void checkAirplaneMode() {
     Log.d("DEBUG", "AIRPLANE = " + Settings.System
-        .getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0));
-    if (Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1) {
+        .getInt(getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0));
+    if (Settings.System.getInt(getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1) {
       Log.d("DEBUG", "show airplane warning.");
 
       AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("airplane");
