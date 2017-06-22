@@ -545,14 +545,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private void requestGPSPermission() {
     if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
-      requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+      requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+          getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_GPS));
     }
   }
 
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions,
       int[] grantResults) {
-    if (requestCode == 1) {
+    if (requestCode == getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_GPS)) {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         Log.d("PERMISSION", "Succeeded");
         Toast.makeText(MainActivity.this, getString(R.string.succeeded), Toast.LENGTH_SHORT)

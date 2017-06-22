@@ -100,7 +100,6 @@ public class Camera2BasicFragment extends Fragment {
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final String FRAGMENT_DIALOG = "dialog";
 
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String[] REQUIED_PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     static {
@@ -501,19 +500,18 @@ public class Camera2BasicFragment extends Fragment {
         if (shouldShowRequestAnyPermissionRationale(permissions)) {
             new ConfirmationDialog(permissions).show(getChildFragmentManager(), FRAGMENT_DIALOG);
         } else {
-            requestPermissions(permissions, REQUEST_CAMERA_PERMISSION);
+            requestPermissions(permissions, getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+        if (requestCode == getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA)) {
             for(int i = 0; i < grantResults.length; ++i) {
                 if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                     ErrorDialog.newInstance(getString(R.string.request_permission))
                         .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-                    return;
                 }
             }
         } else {
@@ -1091,7 +1089,7 @@ public class Camera2BasicFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             parent.requestPermissions(permissions,
-                                    REQUEST_CAMERA_PERMISSION);
+                                getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
                         }
                     })
                     .setNegativeButton(android.R.string.cancel,
