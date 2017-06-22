@@ -444,8 +444,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         CONNECTIVITY_SERVICE);
 
     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    if (networkInfo == null || (networkInfo != null
-        && networkInfo.getState().toString() != "CONNECTED")) {
+    if (networkInfo == null || (networkInfo != null && !networkInfo.isConnected())) {
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
       alert.setTitle(getString(R.string.not_connected_network_title));
       alert.setMessage(getString(R.string.not_connected_network_explain));
