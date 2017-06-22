@@ -387,13 +387,18 @@ public class Camera2BasicFragment extends Fragment {
      *
      * @param text The message to show
      */
+    private Toast toast;
     private void showToast(final String text) {
         final Activity activity = getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                    if(toast != null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(activity, text, Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             });
         }
@@ -895,7 +900,7 @@ public class Camera2BasicFragment extends Fragment {
                     values.put("_data", mFile.getPath());
                     contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-                    showToast("Saved: " + mFile);
+                    showToast("写真を保存しました : " + mFile.getName());
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }
