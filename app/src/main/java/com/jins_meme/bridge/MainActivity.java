@@ -11,6 +11,7 @@ package com.jins_meme.bridge;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -33,7 +34,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     CameraMenuFragment.OnFragmentInteractionListener,
     SpotifyMenuFragment.OnFragmentInteractionListener,
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
-    RemoMenuFragment.OnFragmentInteractionListener {
+    RemoMenuFragment.OnFragmentInteractionListener, DialogListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -370,6 +370,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   @Override
+  protected Dialog onCreateDialog(int id) {
+    return super.onCreateDialog(id);
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
 
@@ -421,19 +426,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         .getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0));
     if (Settings.System.getInt(getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) == 1) {
       Log.d("DEBUG", "show airplane warning.");
-      AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle(getString(R.string.airplane_mode_on_title));
-      alert.setMessage(getString(R.string.airplane_mode_on_explain));
-      alert.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Quit App...");
 
-          finishAndRemoveTask();
-        }
-      });
-      alert.setCancelable(false);
-      alert.create().show();
+      AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("airplane");
+      alertDialogFragment.setCancelable(false);
+      alertDialogFragment.setDialogListener(this);
+      alertDialogFragment.show(getSupportFragmentManager(), "dialog");
     } else {
       checkNetworkEnable();
     }
@@ -445,25 +442,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     if (networkInfo == null || (networkInfo != null && !networkInfo.isConnected())) {
-      AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle(getString(R.string.not_connected_network_title));
-      alert.setMessage(getString(R.string.not_connected_network_explain));
-      alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          checkBluetoothEnable();
-        }
-      });
-      alert.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Quit App...");
-
-          finishAndRemoveTask();
-        }
-      });
-      alert.setCancelable(false);
-      alert.create().show();
+      AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("network");
+      alertDialogFragment.setCancelable(false);
+      alertDialogFragment.setDialogListener(this);
+      alertDialogFragment.show(getSupportFragmentManager(), "dialog");
     } else {
       checkBluetoothEnable();
     }
@@ -1112,51 +1094,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void showNotFoundMeme() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(getString(R.string.not_found_meme_title));
-    alert.setMessage(getString(R.string.not_found_meme_explain));
-    alert.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Quit App...");
-
-        finishAndRemoveTask();
-      }
-    });
-    alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Close Alert Dialog...");
-
-        transitToFragment(basicConfigFragment);
-      }
-    });
-    alert.setCancelable(false);
-    alert.create().show();
+    AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("meme");
+    alertDialogFragment.setCancelable(false);
+    alertDialogFragment.setDialogListener(this);
+    alertDialogFragment.show(getSupportFragmentManager(), "dialog");
   }
 
   void showAppIDandSecretWarning() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(getString(R.string.incorrect_app_id_secret_title));
-    alert.setMessage(getString(R.string.incorrect_app_id_secret_explain));
-    alert.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Quit App...");
-
-        finishAndRemoveTask();
-      }
-    });
-    alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Close Alert Dialog...");
-
-        transitToFragment(basicConfigFragment);
-      }
-    });
-    alert.setCancelable(false);
-    alert.create().show();
+    AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("app_id_secret");
+    alertDialogFragment.setCancelable(false);
+    alertDialogFragment.setDialogListener(this);
+    alertDialogFragment.show(getSupportFragmentManager(), "dialog");
   }
 
   boolean checkAppIDandSecret() {
@@ -1178,4 +1126,21 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     invalidateOptionsMenu();
   }
 
+  @Override
+  public void doPositiveClick(String type) {
+    switch (type) {
+      case "network":
+        checkBluetoothEnable();
+        break;
+      case "meme":
+        transitToFragment(basicConfigFragment);
+        break;
+    }
+  }
+
+  @Override
+  public void doNegativeClick(String type) {
+    handler.removeCallbacksAndMessages(null);
+    finishAndRemoveTask();
+  }
 }
