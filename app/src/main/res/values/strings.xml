@@ -18,6 +18,9 @@
   <string name="exit">EXIT</string>
   <string name="succeeded">SUCCEEDED</string>
   <string name="failed">FAILED</string>
+  <string name="enable">ENABLE</string>
+  <string name="disable">DISABLE</string>
+  <string name="no_change">NO CHANGE</string>
 
   <string name="meme_scanning">START SCANNING&#8230;</string>
   <string name="meme_found">FOUND: %1$s</string>
@@ -29,9 +32,17 @@
   <string name="not_found_meme_explain">Please go to the BASIC SETTING and rescan.</string>
   <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
   <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
+  <string name="not_connected_network_title">NO NETWORK CONNECTION</string>
+  <string name="not_connected_network_explain">Please check your network connection. Some functions needs Wi-Fi or Internet connections.</string>
+
+  <string name="airplane_mode_on_title">AIRPLANE MODE IS ENABLED</string>
+  <string name="airplane_mode_on_explain">Please disable the airplane mode.</string>
 
   <string name="unlock_auth_title">UNLOCK</string>
   <string name="unlock_auth_explain">Please unlock to edit the APP_ID and APP_SECRET.</string>
+
+  <string name="not_selected_midi_title">NOT SELECTED MIDI</string>
+  <string name="not_selected_midi_explain">Please change your USB Connection Type to MIDI and restart.</string>
 
   <string name="camera_error">This device doesn\'t support Camera2 API.</string>
   <string name="request_permission">Camera permission is required.</string>

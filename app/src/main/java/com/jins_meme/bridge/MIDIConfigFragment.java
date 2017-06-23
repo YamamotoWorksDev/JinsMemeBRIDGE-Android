@@ -10,9 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,7 +24,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 
-public class MIDIConfigFragment extends ConfigFragmentBase {
+public class MIDIConfigFragment extends ConfigFragmentBase implements DialogListener {
 
   private Spinner spMidiCh;
   private SeekBar sbCC72;
@@ -88,28 +86,10 @@ public class MIDIConfigFragment extends ConfigFragmentBase {
 
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(getContext()));
     if (!MemeMIDI.checkUsbMidi(getContext())) {
-      AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-      alert.setTitle("Warning");
-      alert.setMessage("Please change your USB Connection Type to MIDI and restart.");
-      alert.setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Quit App...");
-
-          getActivity().finish();
-        }
-      });
-      alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d("DEBUG", "Close Alert Dialog...");
-
-          ((MainActivity) getActivity()).backToPreviousMenu();
-        }
-      });
-      alert.setCancelable(false);
-
-      alert.create().show();
+      AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("midi");
+      alertDialogFragment.setCancelable(false);
+      alertDialogFragment.setDialogListener(this);
+      alertDialogFragment.show(getActivity().getSupportFragmentManager(), "dialog");
     }
 
     spMidiCh = (Spinner) view.findViewById(R.id.midi_ch);
@@ -296,5 +276,19 @@ public class MIDIConfigFragment extends ConfigFragmentBase {
 
     testMIDI.closePort();
     testMIDI = null;
+  }
+
+  @Override
+  public void doPositiveClick(String type) {
+    switch (type) {
+      case "midi":
+        ((MainActivity) getActivity()).backToPreviousMenu();
+        break;
+    }
+  }
+
+  @Override
+  public void doNegativeClick(String type) {
+    getActivity().finishAndRemoveTask();
   }
 }

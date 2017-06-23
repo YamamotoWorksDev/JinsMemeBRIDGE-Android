@@ -23,14 +23,17 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,9 +59,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
-    CameraMenuFragment.OnFragmentInteractionListener, SpotifyMenuFragment.OnFragmentInteractionListener,
+    CameraMenuFragment.OnFragmentInteractionListener,
+    SpotifyMenuFragment.OnFragmentInteractionListener,
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
-    RemoMenuFragment.OnFragmentInteractionListener{
+    RemoMenuFragment.OnFragmentInteractionListener, DialogListener {
 
   private String appID = null;
   private String appSecret = null;
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
    */
   // private ***Fragment ***Fragment;
 
-  private ArrayList<MenuFragmentBase> menus = new ArrayList<MenuFragmentBase>();
+  private ArrayList<MenuFragmentBase> menus = new ArrayList<>();
 
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
@@ -153,7 +157,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     preferences = PreferenceManager.getDefaultSharedPreferences(this);
     editor = preferences.edit();
 
-    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+    }
 
     rootMenu = new RootMenuFragment();
     spotifyMenu = new SpotifyMenuFragment();
@@ -200,64 +206,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.show(rootMenu);
     transaction.commit();
 
-    checkBluetoothEnable();
-
     if (Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
-    }
-
-    lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
-    if (lastConnectedMemeID != null) {
-      Log.d("MAIN", "SCAN Start");
-      //Toast.makeText(this, getString(R.string.meme_scanning), Toast.LENGTH_SHORT).show();
-
-      memeConnectProgressDialog = new ProgressDialog(MainActivity.this);
-      memeConnectProgressDialog.setMax(100);
-      memeConnectProgressDialog.setMessage("Scannig...");
-      memeConnectProgressDialog.setTitle("SCAN & CONNECT");
-      memeConnectProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-      memeConnectProgressDialog.setCancelable(false);
-      memeConnectProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-          new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-              stopScan();
-
-              handler.removeCallbacksAndMessages(null);
-            }
-          });
-      memeConnectProgressDialog.show();
-
-      handler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          startScan();
-
-          handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              stopScan();
-
-              if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
-                connectToMeme(lastConnectedMemeID);
-
-                final String s2 = lastConnectedMemeID;
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    Toast.makeText(MainActivity.this, getString(R.string.meme_connect, s2),
-                        Toast.LENGTH_SHORT).show();
-                  }
-                });
-              } else {
-                memeConnectProgressDialog.dismiss();
-
-                showNotFoundMeme();
-              }
-            }
-          }, 30000);
-        }
-      }, 1000);
     }
   }
 
@@ -289,55 +239,58 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
 
-    String barTitle = getSupportActionBar().getTitle().toString();
+    String barTitle;
+    if (getSupportActionBar() != null && getSupportActionBar().getTitle() != null) {
+      barTitle = getSupportActionBar().getTitle().toString();
 
-    Log.d("DEBUG", "Title = " + barTitle);
+      Log.d("DEBUG", "Title = " + barTitle);
 
-    if (barTitle.contains(getString(R.string.app_name))) {
-      Log.d("DEBUG", "true");
+      if (barTitle.contains(getString(R.string.app_name))) {
+        Log.d("DEBUG", "true");
 
-      switch (batteryStatus) {
-        case 1:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_alert_white_24dp);
-          break;
-        case 2:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_30_white_24dp);
-          break;
-        case 3:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_50_white_24dp);
-          break;
-        case 4:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_80_white_24dp);
-          break;
-        case 5:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_full_white_24dp);
-          break;
-        default:
-          menu.getItem(0).setIcon(R.mipmap.ic_battery_unknown_white_24dp);
-          break;
-      }
-      menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-      menu.getItem(0).setVisible(true);
-    } else {
-      Log.d("DEBUG", "false");
-
-      menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-      menu.getItem(0).setVisible(false);
-    }
-
-    if (!barTitle.contains(getString(R.string.app_name))) {
-      for (int i = 1; i < menu.size(); i++) {
-        MenuItem item = menu.getItem(i);
-        String title = item.getTitle().toString();
-        if (barTitle.contains(title)) {
-          item.setVisible(false);
-        } else {
-          item.setVisible(true);
+        switch (batteryStatus) {
+          case 1:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_alert_white_24dp);
+            break;
+          case 2:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_30_white_24dp);
+            break;
+          case 3:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_50_white_24dp);
+            break;
+          case 4:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_80_white_24dp);
+            break;
+          case 5:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_full_white_24dp);
+            break;
+          default:
+            menu.getItem(0).setIcon(R.mipmap.ic_battery_unknown_white_24dp);
+            break;
         }
+        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.getItem(0).setVisible(true);
+      } else {
+        Log.d("DEBUG", "false");
+
+        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        menu.getItem(0).setVisible(false);
       }
-    } else {
-      for (int i = 1; i < menu.size(); i++) {
-        menu.getItem(i).setVisible(true);
+
+      if (!barTitle.contains(getString(R.string.app_name))) {
+        for (int i = 1; i < menu.size(); i++) {
+          MenuItem item = menu.getItem(i);
+          String title = item.getTitle().toString();
+          if (barTitle.contains(title)) {
+            item.setVisible(false);
+          } else {
+            item.setVisible(true);
+          }
+        }
+      } else {
+        for (int i = 1; i < menu.size(); i++) {
+          menu.getItem(i).setVisible(true);
+        }
       }
     }
 
@@ -468,6 +421,36 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("MAIN", "onDestroy...");
   }
 
+  private void checkAirplaneMode() {
+    Log.d("DEBUG", "AIRPLANE = " + Settings.System
+        .getInt(getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0));
+    if (Settings.System.getInt(getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1) {
+      Log.d("DEBUG", "show airplane warning.");
+
+      AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("airplane");
+      alertDialogFragment.setCancelable(false);
+      alertDialogFragment.setDialogListener(this);
+      alertDialogFragment.show(getSupportFragmentManager(), "dialog");
+    } else {
+      checkNetworkEnable();
+    }
+  }
+
+  private void checkNetworkEnable() {
+    ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(
+        CONNECTIVITY_SERVICE);
+
+    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    if (networkInfo == null || !networkInfo.isConnected()) {
+      AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("network");
+      alertDialogFragment.setCancelable(false);
+      alertDialogFragment.setDialogListener(this);
+      alertDialogFragment.show(getSupportFragmentManager(), "dialog");
+    } else {
+      checkBluetoothEnable();
+    }
+  }
+
   private void checkBluetoothEnable() {
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
@@ -476,6 +459,64 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     } else if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
       Log.d("MAIN", "Initialize MEME LIB");
       initMemeLib();
+
+      scanAndConnectToLastConnectedMeme();
+    }
+  }
+
+  private void scanAndConnectToLastConnectedMeme() {
+    lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
+    if (lastConnectedMemeID != null) {
+      Log.d("MAIN", "SCAN Start");
+      //Toast.makeText(this, getString(R.string.meme_scanning), Toast.LENGTH_SHORT).show();
+
+      memeConnectProgressDialog = new ProgressDialog(MainActivity.this);
+      memeConnectProgressDialog.setMax(100);
+      memeConnectProgressDialog.setMessage("Scannig...");
+      memeConnectProgressDialog.setTitle("SCAN & CONNECT");
+      memeConnectProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+      memeConnectProgressDialog.setCancelable(false);
+      memeConnectProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+          new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+              stopScan();
+
+              handler.removeCallbacksAndMessages(null);
+            }
+          });
+      memeConnectProgressDialog.show();
+
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          startScan();
+
+          handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              stopScan();
+
+              if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
+                connectToMeme(lastConnectedMemeID);
+
+                final String s2 = lastConnectedMemeID;
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    Toast.makeText(MainActivity.this, getString(R.string.meme_connect, s2),
+                        Toast.LENGTH_SHORT).show();
+                  }
+                });
+              } else {
+                memeConnectProgressDialog.dismiss();
+
+                showNotFoundMeme();
+              }
+            }
+          }, 30000);
+        }
+      }, 1000);
     }
   }
 
@@ -502,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void backToPreviousMenu() {
-    if(hasBackStackEntryCount()) {
+    if (hasBackStackEntryCount()) {
       FragmentManager manager = getSupportFragmentManager();
       Fragment active = manager.findFragmentById(R.id.container);
       if (active instanceof MenuFragmentBase) {
@@ -547,6 +588,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         != PackageManager.PERMISSION_GRANTED) {
       requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
           getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_GPS));
+    } else {
+      Log.d("DEBUG", "check airplane...");
+      checkAirplaneMode();
     }
   }
 
@@ -558,6 +602,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         Log.d("PERMISSION", "Succeeded");
         Toast.makeText(MainActivity.this, getString(R.string.succeeded), Toast.LENGTH_SHORT)
             .show();
+
+        checkAirplaneMode();
       } else {
         Log.d("PERMISSION", "Failed");
         Toast.makeText(MainActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT)
@@ -581,8 +627,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.post(new Runnable() {
       @Override
       public void run() {
-        getSupportActionBar()
-            .setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
+        if (getSupportActionBar() != null) {
+          getSupportActionBar()
+              .setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
+        }
 
         Toast.makeText(MainActivity.this, getString(R.string.meme_connected),
             Toast.LENGTH_SHORT).show();
@@ -601,7 +649,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.post(new Runnable() {
       @Override
       public void run() {
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+        if (getSupportActionBar() != null) {
+          getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
+        }
 
         invalidateOptionsMenu();
         if (basicConfigFragment != null) {
@@ -700,8 +750,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           showAppIDandSecretWarning();
           break;
       }
-    } else {
-
     }
   }
 
@@ -864,7 +912,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       processed = ((MenuFragmentBase) active).menuBack();
     }
     if (!processed) {
-      if(allow_finish || hasBackStackEntryCount()) {
+      if (allow_finish || hasBackStackEntryCount()) {
         super.onBackPressed();
         processed = true;
       }
@@ -878,19 +926,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void setActionBarTitle(int resId) {
-    switch (resId) {
-      case R.string.actionbar_title:
-      case R.string.about:
-        getSupportActionBar().setTitle(getString(resId));
-        break;
-      default:
-        getSupportActionBar().setTitle(getString(resId) + " SETTING");
-        break;
+    if (getSupportActionBar() != null) {
+      switch (resId) {
+        case R.string.actionbar_title:
+        case R.string.about:
+          getSupportActionBar().setTitle(getString(resId));
+          break;
+        default:
+          getSupportActionBar().setTitle(getString(resId) + " SETTING");
+          break;
+      }
     }
   }
 
   void setActionBarBack(boolean flag) {
-    getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
+    }
   }
 
   void transitToMenu(MenuFragmentBase next) {
@@ -965,7 +1017,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   private boolean hasBackStackEntryCount() {
-    return getSupportFragmentManager().getBackStackEntryCount()>0;
+    return getSupportFragmentManager().getBackStackEntryCount() > 0;
   }
 
   private MenuFragmentBase getVisibleMenuFragment() {
@@ -1049,51 +1101,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void showNotFoundMeme() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(getString(R.string.not_found_meme_title));
-    alert.setMessage(getString(R.string.not_found_meme_explain));
-    alert.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Quit App...");
-
-        finishAndRemoveTask();
-      }
-    });
-    alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Close Alert Dialog...");
-
-        transitToFragment(basicConfigFragment);
-      }
-    });
-    alert.setCancelable(false);
-    alert.create().show();
+    AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("meme");
+    alertDialogFragment.setCancelable(false);
+    alertDialogFragment.setDialogListener(this);
+    alertDialogFragment.show(getSupportFragmentManager(), "dialog");
   }
 
   void showAppIDandSecretWarning() {
-    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    alert.setTitle(getString(R.string.incorrect_app_id_secret_title));
-    alert.setMessage(getString(R.string.incorrect_app_id_secret_explain));
-    alert.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Quit App...");
-
-        finishAndRemoveTask();
-      }
-    });
-    alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d("DEBUG", "Close Alert Dialog...");
-
-        transitToFragment(basicConfigFragment);
-      }
-    });
-    alert.setCancelable(false);
-    alert.create().show();
+    AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("app_id_secret");
+    alertDialogFragment.setCancelable(false);
+    alertDialogFragment.setDialogListener(this);
+    alertDialogFragment.show(getSupportFragmentManager(), "dialog");
   }
 
   boolean checkAppIDandSecret() {
@@ -1115,4 +1133,21 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     invalidateOptionsMenu();
   }
 
+  @Override
+  public void doPositiveClick(String type) {
+    switch (type) {
+      case "network":
+        checkBluetoothEnable();
+        break;
+      case "meme":
+        transitToFragment(basicConfigFragment);
+        break;
+    }
+  }
+
+  @Override
+  public void doNegativeClick(String type) {
+    handler.removeCallbacksAndMessages(null);
+    finishAndRemoveTask();
+  }
 }
