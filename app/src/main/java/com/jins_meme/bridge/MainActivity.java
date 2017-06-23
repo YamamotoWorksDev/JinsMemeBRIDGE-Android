@@ -545,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void backToPreviousMenu() {
     if (hasBackStackEntryCount()) {
       FragmentManager manager = getSupportFragmentManager();
-      Fragment active = manager.findFragmentById(R.id.container);
+      Fragment active = getVisibleMenuFragment();
       if (active instanceof MenuFragmentBase) {
         ((MenuFragmentBase) active).menuReset();
       }
@@ -905,7 +905,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   public boolean cancel(boolean allow_finish) {
     FragmentManager manager = getSupportFragmentManager();
-    Fragment active = manager.findFragmentById(R.id.container);
+    Fragment active = getVisibleMenuFragment();
 
     boolean processed = false;
     if (active instanceof MenuFragmentBase) {
