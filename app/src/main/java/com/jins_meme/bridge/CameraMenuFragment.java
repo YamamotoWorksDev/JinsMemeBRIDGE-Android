@@ -9,12 +9,16 @@
 
 package com.jins_meme.bridge;
 
+import android.*;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraCharacteristics;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import android.widget.TextView;
 import com.example.android.camera2basic.Camera2BasicFragment;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
+import java.util.ArrayList;
 
 
 /**
@@ -35,10 +40,13 @@ import com.jins_meme.bridge.BridgeUIView.IResultListener;
  * Use the {@link CameraMenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener  {
+public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener {
+
+    private static final String[] REQUIED_PERMISSIONS = {android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     Camera2BasicFragment mCamera;
     private OnFragmentInteractionListener mListener;
+    Handler mHandler = new Handler();
 
     public CameraMenuFragment() {
         // Required empty public constructor
@@ -70,7 +78,7 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
             throw new RuntimeException(context.toString()
                 + " must implement OnFragmentInteractionListener");
         }
-        mCamera = new Camera2BasicFragment();
+        mCamera = Camera2BasicFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.camera, mCamera).commit();
     }
@@ -82,6 +90,44 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(isPermissionRequested) {
+            if(checkIfAllRequiedPermissionGranted()) {
+                mCamera.reopenCamera();
+            }
+            else {
+                mHandler.post(new Runnable() {
+                    public void run() {
+                        mListener.backToPreviousMenu();
+                    }
+                });
+            }
+        }
+        isPermissionRequested = false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden) {
+            mCamera.closeCamera();
+        }
+        else {
+            if (checkIfAllRequiedPermissionGranted()) {
+                mCamera.reopenCamera();
+            }
+            else {
+                requestCameraPermission(getPermissionsNotGrantedYet());
+            }
+        }
+    }
     public void shoot() {
         if(mCamera.isCameraProcessing()) {
             return;
@@ -129,6 +175,58 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
                 break;
         }
     }
+
+    private void requestCameraPermission(String[] permissions) {
+//        if (shouldShowRequestAnyPermissionRationale(permissions)) {
+//            new ConfirmationDialog(permissions).show(getChildFragmentManager(), FRAGMENT_DIALOG);
+//        } else {
+//            requestPermissions(permissions, getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
+//        }
+        isPermissionRequested = true;
+        requestPermissions(permissions, getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults) {
+        if (requestCode == getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA)) {
+            for(int i = 0; i < grantResults.length; ++i) {
+                if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private boolean checkIfAllRequiedPermissionGranted() {
+        for(String permission : REQUIED_PERMISSIONS) {
+            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private String[] getPermissionsNotGrantedYet() {
+        ArrayList<String> ret = new ArrayList<String>();
+        for(String permission : REQUIED_PERMISSIONS) {
+            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
+                ret.add(permission);
+            }
+        }
+        return ret.toArray(new String[]{});
+    }
+    private boolean shouldShowRequestAnyPermissionRationale(String[] permissions) {
+        for(String permission : permissions) {
+            if(shouldShowRequestPermissionRationale(permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPermissionRequested = false;
 
     public interface OnFragmentInteractionListener {
         void backToPreviousMenu();

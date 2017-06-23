@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-
-/*
- * some changes by Nariaki Iwatani (Anno Lab. Inc.)
- * +++ May 8, 2017
- * - delete onCreateView
- * - disable GUI interaction
- * - enable to switch lens_facing
- *
- * +++ May 14, 2017
- * - use support.v4.app.Fragment
-
- */
-
 package com.example.android.camera2basic;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,7 +23,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
@@ -65,7 +50,6 @@ import android.provider.MediaStore.Images;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -99,8 +83,6 @@ public class Camera2BasicFragment extends Fragment {
      */
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final String FRAGMENT_DIALOG = "dialog";
-
-    private static final String[] REQUIED_PERMISSIONS = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -461,88 +443,17 @@ public class Camera2BasicFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // 先ほどのレイアウトをここでViewとして作成します
         return inflater.inflate(R.layout.fragment_camera_inner, container, false);
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-//        view.findViewById(R.id.picture).setOnClickListener(this);
-//        view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        startBackgroundThread();
-
-        // When the screen is turned off and turned back on, the SurfaceTexture is already
-        // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
-        // a camera and start preview from here (otherwise, we wait until the surface is ready in
-        // the SurfaceTextureListener).
-        openCamera(mLensFacingRequest);
-    }
-
-    @Override
-    public void onPause() {
-        closeCamera();
-        stopBackgroundThread();
-        super.onPause();
-    }
-
-    private void requestCameraPermission(String[] permissions) {
-        if (shouldShowRequestAnyPermissionRationale(permissions)) {
-            new ConfirmationDialog(permissions).show(getChildFragmentManager(), FRAGMENT_DIALOG);
-        } else {
-            requestPermissions(permissions, getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA)) {
-            for(int i = 0; i < grantResults.length; ++i) {
-                if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    ErrorDialog.newInstance(getString(R.string.request_permission))
-                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-                }
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private boolean checkIfAllRequiedPermissionGranted() {
-        for(String permission : REQUIED_PERMISSIONS) {
-            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-    private String[] getPermissionsNotGrantedYet() {
-        ArrayList<String> ret = new ArrayList<String>();
-        for(String permission : REQUIED_PERMISSIONS) {
-            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
-                ret.add(permission);
-            }
-        }
-        return ret.toArray(new String[]{});
-    }
-    private boolean shouldShowRequestAnyPermissionRationale(String[] permissions) {
-        for(String permission : permissions) {
-            if(shouldShowRequestPermissionRationale(permission)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -659,6 +570,14 @@ public class Camera2BasicFragment extends Fragment {
         }
     }
 
+    public void reopenCamera() {
+        if (mTextureView.isAvailable()) {
+            closeCamera();
+            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+        } else {
+            mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+        }
+    }
     /**
      * Opens the camera specified by {@link CameraCharacteristics#LENS_FACING}.
      */
@@ -667,23 +586,15 @@ public class Camera2BasicFragment extends Fragment {
             return;
         }
         mLensFacingRequest = lensFacing;
-        if (mTextureView.isAvailable()) {
-            closeCamera();
-            stopBackgroundThread();
-            startBackgroundThread();
-            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
-        } else {
-            mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
-        }
+        reopenCamera();
     }
     public Integer getCurrentLensFacing() { return mCurrentLensFacing; }
     /**
      * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
      */
     private void openCamera(int width, int height) {
-        if (!checkIfAllRequiedPermissionGranted()) {
-            requestCameraPermission(getPermissionsNotGrantedYet());
-            return;
+        if(!isStartBackgroundThread()) {
+            startBackgroundThread();
         }
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
@@ -704,7 +615,7 @@ public class Camera2BasicFragment extends Fragment {
     /**
      * Closes the current {@link CameraDevice}.
      */
-    private void closeCamera() {
+    public void closeCamera() {
         try {
             mCameraOpenCloseLock.acquire();
             if (null != mCaptureSession) {
@@ -723,6 +634,9 @@ public class Camera2BasicFragment extends Fragment {
             throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
         } finally {
             mCameraOpenCloseLock.release();
+            if(isStartBackgroundThread()) {
+                stopBackgroundThread();
+            }
         }
     }
 
@@ -747,6 +661,10 @@ public class Camera2BasicFragment extends Fragment {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isStartBackgroundThread() {
+        return mBackgroundThread != null;
     }
 
     /**
@@ -1038,6 +956,16 @@ public class Camera2BasicFragment extends Fragment {
                     (long) rhs.getWidth() * rhs.getHeight());
         }
 
+    }
+
+    public interface IListener {
+        void onCameraError(int errorCode);
+    }
+    public static final int ERROR_CODE_NONE=0;
+    public static final int ERROR_CODE_PERMISSION_DENYED=1;
+    private IListener mListener;
+    public void setListener(IListener listener) {
+        mListener = listener;
     }
 
     /**
