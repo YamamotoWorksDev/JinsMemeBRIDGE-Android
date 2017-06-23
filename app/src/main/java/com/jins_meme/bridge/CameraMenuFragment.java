@@ -9,7 +9,6 @@
 
 package com.jins_meme.bridge;
 
-import android.*;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraCharacteristics;
@@ -22,7 +21,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -40,7 +38,7 @@ import java.util.ArrayList;
  * Use the {@link CameraMenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener {
+public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener, Camera2BasicFragment.IListener {
 
     private static final String[] REQUIED_PERMISSIONS = {android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -79,6 +77,7 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
                 + " must implement OnFragmentInteractionListener");
         }
         mCamera = Camera2BasicFragment.newInstance();
+        mCamera.setListener(this);
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.add(R.id.camera, mCamera).commit();
     }
@@ -129,14 +128,14 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
         }
     }
     public void shoot() {
-        if(mCamera.isCameraProcessing()) {
+        if(!isCameraReady()) {
             return;
         }
         mCamera.takePicture();
     }
 
     public void toggleFrontRear() {
-        if(mCamera.isCameraProcessing()) {
+        if(!isCameraReady()) {
             return;
         }
         toggleCamera();
@@ -153,6 +152,21 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
                 mCamera.openCamera(CameraCharacteristics.LENS_FACING_FRONT);
                 break;
         }
+    }
+
+    private boolean isCameraOpened = false;
+    @Override
+    public void onCameraOpened() {
+        isCameraOpened = true;
+    }
+
+    @Override
+    public void onCameraClosed() {
+        isCameraOpened = false;
+    }
+
+    boolean isCameraReady() {
+        return mCamera != null && isCameraOpened && !mCamera.isCameraProcessing();
     }
 
     @Override
@@ -227,6 +241,7 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
     }
 
     private boolean isPermissionRequested = false;
+
 
     public interface OnFragmentInteractionListener {
         void backToPreviousMenu();

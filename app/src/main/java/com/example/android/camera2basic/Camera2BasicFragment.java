@@ -201,7 +201,13 @@ public class Camera2BasicFragment extends Fragment {
             mCameraOpenCloseLock.release();
             mCameraDevice = cameraDevice;
             createCameraPreviewSession();
+            mListener.onCameraOpened();
         }
+        @Override
+        public void onClosed(@NonNull CameraDevice cameraDevice) {
+            mListener.onCameraClosed();
+        }
+
 
         @Override
         public void onDisconnected(@NonNull CameraDevice cameraDevice) {
@@ -959,10 +965,9 @@ public class Camera2BasicFragment extends Fragment {
     }
 
     public interface IListener {
-        void onCameraError(int errorCode);
+        void onCameraOpened();
+        void onCameraClosed();
     }
-    public static final int ERROR_CODE_NONE=0;
-    public static final int ERROR_CODE_PERMISSION_DENYED=1;
     private IListener mListener;
     public void setListener(IListener listener) {
         mListener = listener;
