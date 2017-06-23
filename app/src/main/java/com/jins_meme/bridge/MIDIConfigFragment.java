@@ -77,12 +77,14 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.midi_conf_title));
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.midi_conf);
-    //((MainActivity) getActivity()).setActionBarBack(true);
-    getActivity().invalidateOptionsMenu();
 
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(getContext()));
     if (!MemeMIDI.checkUsbMidi(getContext())) {

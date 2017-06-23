@@ -108,11 +108,14 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.spotify_conf_title));
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.spotify_conf);
-    getActivity().invalidateOptionsMenu();
 
     Log.d("DEBUG", "SPOTIFY:: Config...");
 

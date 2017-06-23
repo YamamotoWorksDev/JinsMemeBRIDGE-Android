@@ -34,6 +34,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -149,8 +150,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     setContentView(R.layout.activity_bridge_menu);
 
-    setActionBarTitle(R.string.actionbar_title);
-
     handler = new Handler();
     mainLayout = (FrameLayout) findViewById(R.id.container);
 
@@ -196,14 +195,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    for (Fragment m : menus) {
-      String fullClassName = m.getClass().getName();
-      String className = fullClassName
-          .substring(getPackageName().length() + 1, fullClassName.length());
-      transaction.add(R.id.container, m, className);
-      transaction.hide(m);
-    }
-    transaction.show(rootMenu);
+    transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
     if (Build.VERSION.SDK_INT >= 23) {
@@ -545,10 +537,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void backToPreviousMenu() {
     if (hasBackStackEntryCount()) {
       FragmentManager manager = getSupportFragmentManager();
-      Fragment active = getVisibleMenuFragment();
-      if (active instanceof MenuFragmentBase) {
-        ((MenuFragmentBase) active).menuReset();
-      }
+//      Fragment active = getVisibleMenuFragment();
+//      if (active instanceof MenuFragmentBase) {
+//        ((MenuFragmentBase) active).menuReset();
+//      }
       super.onBackPressed();
     }
   }
@@ -918,31 +910,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
     if (!hasBackStackEntryCount()) {
-      setActionBarTitle(R.string.actionbar_title);
-      setActionBarBack(false);
-      invalidateOptionsMenu();
+      updateActionBar(getResources().getString(R.string.actionbar_title));
     }
     return processed;
   }
 
-  void setActionBarTitle(int resId) {
-    if (getSupportActionBar() != null) {
-      switch (resId) {
-        case R.string.actionbar_title:
-        case R.string.about:
-          getSupportActionBar().setTitle(getString(resId));
-          break;
-        default:
-          getSupportActionBar().setTitle(getString(resId) + " SETTING");
-          break;
-      }
-    }
-  }
-
-  void setActionBarBack(boolean flag) {
-    if (getSupportActionBar() != null) {
-      getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
-    }
+  void updateActionBar(String title) {
+    ActionBar target = getSupportActionBar();
+    target.setTitle(title);
+    target.setDisplayHomeAsUpEnabled(false);
+    invalidateOptionsMenu();
   }
 
   void transitToMenu(MenuFragmentBase next) {
@@ -956,14 +933,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction
         .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
             R.anim.config_out2);
-    hideVisibleMenuFragments(transaction);
-    transaction.show(next);
+//    hideVisibleMenuFragments(transaction);
+    transaction.replace(R.id.container, next);
     transaction.addToBackStack(null);
     transaction.commit();
 
-    setActionBarTitle(R.string.actionbar_title);
-    setActionBarBack(false);
-    invalidateOptionsMenu();
+    updateActionBar(getResources().getString(R.string.actionbar_title));
   }
 
   boolean transitToRootMenu() {
@@ -982,14 +957,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       transaction
           .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
               R.anim.config_out2);
-      hideVisibleMenuFragments(transaction);
-      transaction.show(rootMenu);
+//      hideVisibleMenuFragments(transaction);
+      transaction.replace(R.id.container, rootMenu);
+//      transaction.show(rootMenu);
       //    transaction.addToBackStack(null);
       transaction.commit();
 
-      setActionBarTitle(R.string.actionbar_title);
-      setActionBarBack(false);
-      invalidateOptionsMenu();
+      updateActionBar(getResources().getString(R.string.actionbar_title));
       return true;
     }
     return false;
@@ -1006,14 +980,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction
         .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
             R.anim.config_out2);
-    hideVisibleMenuFragments(transaction);
-    transaction.add(R.id.container, next);
+//    hideVisibleMenuFragments(transaction);
+    transaction.replace(R.id.container, next);
+//    transaction.add(R.id.container, next);
     transaction.addToBackStack(null);
     transaction.commit();
 
-    setActionBarTitle(R.string.actionbar_title);
-    setActionBarBack(false);
-    invalidateOptionsMenu();
+    updateActionBar(getResources().getString(R.string.actionbar_title));
   }
 
   private boolean hasBackStackEntryCount() {

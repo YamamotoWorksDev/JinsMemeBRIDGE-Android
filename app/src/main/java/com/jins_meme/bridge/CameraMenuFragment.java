@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import com.example.android.camera2basic.Camera2BasicFragment;
+import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 import java.util.ArrayList;
@@ -49,11 +50,15 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
     public CameraMenuFragment() {
         // Required empty public constructor
     }
+
+    @Override
+    protected Adapter createAdapter() {
+        return new CardAdapter(getContext(), this);
+    }
+
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        CardAdapter cardAdapter = new CardAdapter(getContext(), this);
-        mView.setAdapter(cardAdapter);
     }
 
     @Override

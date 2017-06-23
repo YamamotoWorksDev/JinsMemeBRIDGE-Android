@@ -97,16 +97,18 @@ public class HueConfigFragment extends ConfigFragmentBase {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.hue_conf_title));
+  }
+
+  @Override
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     Log.d("BASIC", "onViewCreated");
 
     handler = new Handler();
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.hue_conf);
-    //((MainActivity) getActivity()).setActionBarBack(true);
-    getActivity().invalidateOptionsMenu();
 
     hueController = new HueController(getContext());
 
