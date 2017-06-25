@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 import com.jins_meme.bridge.RemoController.OnMessagesListener;
@@ -45,6 +46,11 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
 
   @Override
+  protected Adapter createAdapter() {
+    return new CardAdapter(getContext(), this);
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mainActivity = ((MainActivity) getActivity());
@@ -55,9 +61,6 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
     signalNameMap.put(getResources().getString(R.string.signal3), "REMO_SIGNAL_3_NAME");
     signalNameMap.put(getResources().getString(R.string.signal4), "REMO_SIGNAL_4_NAME");
     signalNameMap.put(getResources().getString(R.string.signal5), "REMO_SIGNAL_5_NAME");
-
-    CardAdapter cardAdapter = new CardAdapter(getContext(), this);
-    mView.setAdapter(cardAdapter);
 
     remoController = new RemoController(getContext());
     remoController.setMessagesListener(new OnMessagesListener() {

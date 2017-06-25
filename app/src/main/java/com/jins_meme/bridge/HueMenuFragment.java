@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 import java.util.Random;
@@ -40,13 +41,15 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
   }
 
   @Override
+  protected Adapter createAdapter() {
+    return new CardAdapter(getContext(), this);
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     Log.d("DEBUG", "HUE:: onViewCreated");
 
     super.onViewCreated(view, savedInstanceState);
-
-    CardAdapter myAdapter = new CardAdapter(getContext(), this);
-    mView.setAdapter(myAdapter);
 
     mHue = new HueController(getContext());
   }

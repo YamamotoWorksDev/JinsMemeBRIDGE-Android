@@ -2,11 +2,18 @@
 <resources>
     <string name="battery">BATTERY</string>
     <string name="basic_conf">BASIC</string>
+    <string name="basic_conf_title">BASIC SETTINGS</string>
     <string name="osc_conf">OSC</string>
+    <string name="osc_conf_title">OSC SETTINGS</string>
     <string name="midi_conf">MIDI</string>
+    <string name="midi_conf_title">MIDI SETTINGS</string>
     <string name="hue_conf">HUE</string>
+    <string name="hue_conf_title">HUE SETTINGS</string>
     <string name="spotify_conf">SPOTIFY</string>
+    <string name="spotify_conf_title">SPOTIFY SETTINGS</string>
     <string name="remo_conf">IRKIT/NATURE REMO</string>
+    <string name="remo_conf_title">IRKIT/NATURE REMO SETTINGS</string>
     <string name="about">ABOUT</string>
+    <string name="about_title">ABOUT</string>
     <string name="exit_app">EXIT APP</string>
 </resources>

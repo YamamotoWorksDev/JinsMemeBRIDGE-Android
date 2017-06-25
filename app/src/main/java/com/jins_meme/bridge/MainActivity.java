@@ -29,11 +29,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -109,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
    */
   // private ***Fragment ***Fragment;
 
-  private ArrayList<MenuFragmentBase> menus = new ArrayList<>();
 
   private BasicConfigFragment basicConfigFragment;
   private AboutFragment aboutFragment;
@@ -149,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     setContentView(R.layout.activity_bridge_menu);
 
-    setActionBarTitle(R.string.actionbar_title);
-
     handler = new Handler();
     mainLayout = (FrameLayout) findViewById(R.id.container);
 
@@ -167,13 +163,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     vdjMenu = new VDJMenuFragment();
     remoMenu = new RemoMenuFragment();
     cameraMenu = new CameraMenuFragment();
-
-    menus.add(rootMenu);
-    menus.add(spotifyMenu);
-    menus.add(hueMenu);
-    menus.add(vdjMenu);
-    menus.add(remoMenu);
-    menus.add(cameraMenu);
 
     cancelFlag = false;
     pauseCount = 0;
@@ -196,14 +185,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     FragmentManager manager = getSupportFragmentManager();
     FragmentTransaction transaction = manager.beginTransaction();
-    for (Fragment m : menus) {
-      String fullClassName = m.getClass().getName();
-      String className = fullClassName
-          .substring(getPackageName().length() + 1, fullClassName.length());
-      transaction.add(R.id.container, m, className);
-      transaction.hide(m);
-    }
-    transaction.show(rootMenu);
+    transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
     if (Build.VERSION.SDK_INT >= 23) {
@@ -524,19 +506,19 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void openNextMenu(int card_id) {
     switch (card_id) {
       case R.string.vdj:
-        transitToMenu(vdjMenu);
+        transitToFragment(vdjMenu);
         break;
       case R.string.spotify:
-        transitToMenu(spotifyMenu);
+        transitToFragment(spotifyMenu);
         break;
       case R.string.hue:
-        transitToMenu(hueMenu);
+        transitToFragment(hueMenu);
         break;
       case R.string.camera:
-        transitToMenu(cameraMenu);
+        transitToFragment(cameraMenu);
         break;
       case R.string.remo:
-        transitToMenu(remoMenu);
+        transitToFragment(remoMenu);
         break;
     }
   }
@@ -544,11 +526,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void backToPreviousMenu() {
     if (hasBackStackEntryCount()) {
-      FragmentManager manager = getSupportFragmentManager();
-      Fragment active = getVisibleMenuFragment();
-      if (active instanceof MenuFragmentBase) {
-        ((MenuFragmentBase) active).menuReset();
-      }
       super.onBackPressed();
     }
   }
@@ -822,7 +799,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           }
         }
       } else if (Math.abs(roll) <= getRollThreshold()) {
-        final MenuFragmentBase active = getVisibleMenuFragment();
+        final Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
         if (!pauseFlag) {
           if (cancelFlag && pauseCount < PAUSE_MAX) {
             if (cancel(false)) {
@@ -904,8 +881,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public boolean cancel(boolean allow_finish) {
-    FragmentManager manager = getSupportFragmentManager();
-    Fragment active = getVisibleMenuFragment();
+    Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
 
     boolean processed = false;
     if (active instanceof MenuFragmentBase) {
@@ -918,81 +894,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
     if (!hasBackStackEntryCount()) {
-      setActionBarTitle(R.string.actionbar_title);
-      setActionBarBack(false);
-      invalidateOptionsMenu();
+      updateActionBar(getResources().getString(R.string.actionbar_title));
     }
     return processed;
   }
 
-  void setActionBarTitle(int resId) {
-    if (getSupportActionBar() != null) {
-      switch (resId) {
-        case R.string.actionbar_title:
-        case R.string.about:
-          getSupportActionBar().setTitle(getString(resId));
-          break;
-        default:
-          getSupportActionBar().setTitle(getString(resId) + " SETTING");
-          break;
-      }
-    }
-  }
-
-  void setActionBarBack(boolean flag) {
-    if (getSupportActionBar() != null) {
-      getSupportActionBar().setDisplayHomeAsUpEnabled(flag);
-    }
-  }
-
-  void transitToMenu(MenuFragmentBase next) {
-    InputMethodManager imm = (InputMethodManager) getSystemService(
-        Context.INPUT_METHOD_SERVICE);
-    imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
-        InputMethodManager.HIDE_NOT_ALWAYS);
-
-    FragmentManager manager = getSupportFragmentManager();
-    FragmentTransaction transaction = manager.beginTransaction();
-    transaction
-        .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
-            R.anim.config_out2);
-    hideVisibleMenuFragments(transaction);
-    transaction.show(next);
-    transaction.addToBackStack(null);
-    transaction.commit();
-
-    setActionBarTitle(R.string.actionbar_title);
-    setActionBarBack(false);
+  void updateActionBar(String title) {
+    ActionBar target = getSupportActionBar();
+    target.setTitle(title);
+    target.setDisplayHomeAsUpEnabled(false);
     invalidateOptionsMenu();
-  }
-
-  boolean transitToRootMenu() {
-    if (hasBackStackEntryCount()) {
-      FragmentManager manager = getSupportFragmentManager();
-      InputMethodManager imm = (InputMethodManager) getSystemService(
-          Context.INPUT_METHOD_SERVICE);
-      imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
-          InputMethodManager.HIDE_NOT_ALWAYS);
-
-      BackStackEntry entry = manager.getBackStackEntryAt(0);
-      manager.popBackStack(entry.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-      manager.executePendingTransactions();
-
-      FragmentTransaction transaction = manager.beginTransaction();
-      transaction
-          .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
-              R.anim.config_out2);
-      hideVisibleMenuFragments(transaction);
-      transaction.show(rootMenu);
-      //    transaction.addToBackStack(null);
-      transaction.commit();
-
-      setActionBarTitle(R.string.actionbar_title);
-      setActionBarBack(false);
-      invalidateOptionsMenu();
-      return true;
-    }
-    return false;
   }
 
   void transitToFragment(Fragment next) {
@@ -1006,35 +917,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction
         .setCustomAnimations(R.anim.config_in, android.R.anim.fade_out, android.R.anim.fade_in,
             R.anim.config_out2);
-    hideVisibleMenuFragments(transaction);
-    transaction.add(R.id.container, next);
+    transaction.replace(R.id.container, next);
     transaction.addToBackStack(null);
     transaction.commit();
-
-    setActionBarTitle(R.string.actionbar_title);
-    setActionBarBack(false);
-    invalidateOptionsMenu();
   }
 
   private boolean hasBackStackEntryCount() {
     return getSupportFragmentManager().getBackStackEntryCount() > 0;
-  }
-
-  private MenuFragmentBase getVisibleMenuFragment() {
-    for (MenuFragmentBase m : menus) {
-      if (m.isVisible()) {
-        return m;
-      }
-    }
-    return null;
-  }
-
-  private void hideVisibleMenuFragments(FragmentTransaction transaction) {
-    for (Fragment m : menus) {
-      if (m.isVisible()) {
-        transaction.hide(m);
-      }
-    }
   }
 
   String getSavedValue(String key) {

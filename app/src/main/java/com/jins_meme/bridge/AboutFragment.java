@@ -41,11 +41,13 @@ public class AboutFragment extends ConfigFragmentBase {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.about_title));
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.about);
-    ((MainActivity) getActivity()).setActionBarBack(true);
-    getActivity().invalidateOptionsMenu();
   }
 }

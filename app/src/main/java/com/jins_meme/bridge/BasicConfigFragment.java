@@ -101,14 +101,16 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.basic_conf_title));
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     Log.d("BASIC", "onViewCreated");
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.basic_conf);
-    //((MainActivity) getActivity()).setActionBarBack(true);
-    getActivity().invalidateOptionsMenu();
 
     swScan = (Switch) view.findViewById(R.id.scan);
     swScan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

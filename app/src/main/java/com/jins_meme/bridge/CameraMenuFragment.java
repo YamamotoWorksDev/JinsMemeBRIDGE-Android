@@ -21,10 +21,14 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import com.example.android.camera2basic.Camera2BasicFragment;
+import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 import java.util.ArrayList;
@@ -49,11 +53,15 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
     public CameraMenuFragment() {
         // Required empty public constructor
     }
+
+    @Override
+    protected Adapter createAdapter() {
+        return new CardAdapter(getContext(), this);
+    }
+
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        CardAdapter cardAdapter = new CardAdapter(getContext(), this);
-        mView.setAdapter(cardAdapter);
     }
 
     @Override
@@ -89,6 +97,44 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
         mListener = null;
     }
 
+    private boolean isPermissionRequested = false;
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        Animation anim = super.onCreateAnimation(transit, enter, nextAnim);
+        if(anim == null) {
+            if(enter) {
+                anim = AnimationUtils.loadAnimation(getContext(), R.anim.config_in);
+            }
+            else {
+                anim = AnimationUtils.loadAnimation(getContext(), R.anim.config_out);
+            }
+        }
+        if(enter && anim != null) {
+            anim.setAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (checkIfAllRequiedPermissionGranted()) {
+                        mCamera.reopenCamera();
+                    }
+                    else {
+                        isPermissionRequested = true;
+                        requestPermissions(getPermissionsNotGrantedYet(), getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
+                    }
+                }
+            });
+        }
+        return anim;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -103,30 +149,16 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
                     }
                 });
             }
+            isPermissionRequested = false;
         }
-        isPermissionRequested = false;
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        mCamera.closeCamera();
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if(hidden) {
-            mCamera.closeCamera();
-        }
-        else {
-            if (checkIfAllRequiedPermissionGranted()) {
-                mCamera.reopenCamera();
-            }
-            else {
-                requestCameraPermission(getPermissionsNotGrantedYet());
-            }
-        }
-    }
     public void shoot() {
         if(!isCameraReady()) {
             return;
@@ -190,16 +222,6 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
         }
     }
 
-    private void requestCameraPermission(String[] permissions) {
-//        if (shouldShowRequestAnyPermissionRationale(permissions)) {
-//            new ConfirmationDialog(permissions).show(getChildFragmentManager(), FRAGMENT_DIALOG);
-//        } else {
-//            requestPermissions(permissions, getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
-//        }
-        isPermissionRequested = true;
-        requestPermissions(permissions, getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
         @NonNull int[] grantResults) {
@@ -239,8 +261,6 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
         }
         return false;
     }
-
-    private boolean isPermissionRequested = false;
 
 
     public interface OnFragmentInteractionListener {

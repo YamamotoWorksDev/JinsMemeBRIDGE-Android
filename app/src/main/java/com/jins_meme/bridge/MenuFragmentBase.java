@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import com.jins_jp.meme.MemeRealtimeListener;
+import com.jins_meme.bridge.BridgeUIView.Adapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback {
+public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback {
 
   protected BridgeUIView mView = null;
 
@@ -26,8 +26,11 @@ public class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter
     mView = new BridgeUIView(getContext());
     mView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.MATCH_PARENT));
+    mView.setAdapter(createAdapter());
     return mView;
   }
+
+  protected abstract Adapter createAdapter();
 
   public boolean menuBack() {
     return mView.back();

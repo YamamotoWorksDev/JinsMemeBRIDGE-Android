@@ -83,6 +83,12 @@ public class OSCConfigFragment extends ConfigFragmentBase {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.osc_conf_title));
+  }
+
+  @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
@@ -99,10 +105,6 @@ public class OSCConfigFragment extends ConfigFragmentBase {
         return false;
       }
     });
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.osc_conf);
-    //((MainActivity) getActivity()).setActionBarBack(true);
-    getActivity().invalidateOptionsMenu();
 
     InputFilter[] filters = new InputFilter[1];
     filters[0] = new InputFilter() {

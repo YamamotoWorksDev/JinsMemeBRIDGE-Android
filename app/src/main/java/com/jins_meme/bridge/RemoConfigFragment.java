@@ -119,11 +119,14 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.remo_conf_title));
+  }
+
+  @Override
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    ((MainActivity) getActivity()).setActionBarTitle(R.string.remo_conf);
-    getActivity().invalidateOptionsMenu();
 
     state = State.CHECK_EXIST;
     mainActivity = ((MainActivity) getActivity());
