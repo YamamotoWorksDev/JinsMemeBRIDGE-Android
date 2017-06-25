@@ -282,7 +282,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   public void doPositiveClick(String type) {
     switch (type) {
       case "midi":
-        ((MainActivity) getActivity()).backToPreviousMenu();
+        ((MainActivity) getActivity()).transitToRootMenu();
         break;
     }
   }
