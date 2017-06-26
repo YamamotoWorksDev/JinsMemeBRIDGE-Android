@@ -47,9 +47,9 @@ public class ProgressDialogFragment extends DialogFragment {
             new OnClickListener() {
               @Override
               public void onClick(DialogInterface dialogInterface, int i) {
-                mListener.doNegativeClick("meme_connect");
-                //stopScan();
-                //handler.removeCallbacksAndMessages(null);
+                if (mListener != null) {
+                  mListener.doNegativeClick("meme_connect");
+                }
               }
             });
         break;
