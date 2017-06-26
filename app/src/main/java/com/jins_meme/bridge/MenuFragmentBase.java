@@ -30,6 +30,13 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
     return mView;
   }
 
+  @Override
+  public void onResume() {
+    super.onResume();
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.actionbar_title));
+  }
+
+
   protected abstract Adapter createAdapter();
 
   public boolean menuBack() {

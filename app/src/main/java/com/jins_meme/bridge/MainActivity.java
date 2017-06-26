@@ -893,9 +893,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         processed = true;
       }
     }
-    if (!hasBackStackEntryCount()) {
-      updateActionBar(getResources().getString(R.string.actionbar_title));
-    }
     return processed;
   }
 
