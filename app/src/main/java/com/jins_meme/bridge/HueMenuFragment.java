@@ -56,7 +56,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   public void destroy() {
     if (mHue != null) {
-      mHue.turnOff();
+      //mHue.turnOff();
       mHue = null;
     }
 
@@ -114,7 +114,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
     switch (id) {
       case R.string.random:
         Random rand = new Random();
-        mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), 255, 1);
+        mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(255), 10);
         break;
       case R.string.light1:
         mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),
