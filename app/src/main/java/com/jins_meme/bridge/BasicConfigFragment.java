@@ -434,7 +434,9 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   void setSwConnect(final boolean b) {
     Log.d("BASIC", "state " + b);
 
-    swConnect.setChecked(b);
+    if (swConnect != null) {
+      swConnect.setChecked(b);
+    }
     /*
     handler.post(new Runnable() {
       @Override
