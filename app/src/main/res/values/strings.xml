@@ -83,4 +83,9 @@
     <item>15</item>
     <item>16</item>
   </string-array>
+
+  <string name="osc_prefix">/jins/meme/bridge</string>
+  <string name="osc_track">/track</string>
+  <string name="osc_effect">/effect</string>
+  <string name="osc_logo">/logo</string>
 </resources>

@@ -160,6 +160,11 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
             if (finalNote != lastNote) {
               Log.d("DEBUG", "note on " + finalNote);
               memeMIDI.sendNote(midiChannel, finalNote, 127);
+              memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_track));
+              memeOSC.setTypeTag("ii");
+              memeOSC.addArgument(midiChannel);
+              memeOSC.addArgument(finalNote);
+              memeOSC.flushMessage();
             }
 
             try {
@@ -211,6 +216,11 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           public void run() {
             Log.d("DEBUG", "note on " + finalNoteFx);
             memeMIDI.sendNote(midiChannel, finalNoteFx, 127);
+            memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_effect));
+            memeOSC.setTypeTag("ii");
+            memeOSC.addArgument(midiChannel);
+            memeOSC.addArgument(finalNoteFx);
+            memeOSC.flushMessage();
 
             try {
               Thread.sleep(500);
@@ -251,6 +261,12 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           public void run() {
             Log.d("DEBUG", "note on " + finalNote);
             memeMIDI.sendNote(midiChannel, finalNote, 127);
+            memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_logo));
+            memeOSC.setTypeTag("ii");
+            memeOSC.addArgument(midiChannel);
+            memeOSC.addArgument(finalNote);
+            memeOSC.flushMessage();
+
             try {
               Thread.sleep(500);
             } catch (InterruptedException e) {
