@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     editor = preferences.edit();
 
     if (getSupportActionBar() != null) {
+      updateActionBar(getResources().getString(R.string.actionbar_title));
       getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
     }
 
