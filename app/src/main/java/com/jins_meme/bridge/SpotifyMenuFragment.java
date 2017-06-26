@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,150 +43,16 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-public class SpotifyMenuFragment extends MenuFragmentBase implements IResultListener,
-    SpotifyPlayer.NotificationCallback,
-    ConnectionStateCallback {
-
-  private static final int REQUEST_CODE = 1337;
+public class SpotifyMenuFragment extends MenuFragmentBase implements IResultListener {
 
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
 
-  private boolean isAuthenticated = false;
-
-  private Player mPlayer;
   private PlaybackState mCurrentPlaybackState;
-  private BroadcastReceiver mNetworkStateReceiver;
   //private AsyncSpotifyApi mAsyncSpotifyApi;
-
-
-  public void setAuthenticated(boolean authenticated) {
-    isAuthenticated = authenticated;
-  }
-
-  public boolean isAuthenticated() {
-    return isAuthenticated;
-  }
-
-  private final Player.OperationCallback mOperationCallback = new OperationCallback() {
-    @Override
-    public void onSuccess() {
-      Log.d("DEBUG", "SPOTIFY:: OperationCallback -> onSuccess");
-    }
-
-    @Override
-    public void onError(Error error) {
-      Log.d("DEBUG", "SPOTIFY:: OperationCallback -> onError:" + error);
-    }
-  };
 
   public SpotifyMenuFragment() {
     // Required empty public constructor
-  }
-
-  IntentFilter getFilter() {
-    return (new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-  }
-
-  void authenticate() {
-    //Log.d("DEBUG", "SPOTIFY:: authenticate " + getRedirectUri().toString());
-
-    if (!isAuthenticated && ((MainActivity) getActivity()).getSavedValue("SPOTIFY_USE", false)) {
-      AuthenticationRequest.Builder builder = new Builder(getString(R.string.spotify_client_id),
-          Type.TOKEN,
-          "jins-meme-bridge-login://callback");
-      //builder.setShowDialog(false).setScopes(new String[]{"user-read-email"});
-      builder.setShowDialog(false).setScopes(
-          new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
-      final AuthenticationRequest request = builder.build();
-
-      AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
-    }
-  }
-
-  private void onAuthenticationComplete(AuthenticationResponse authResponse, String clientID) {
-    // Once we have obtained an authorization token, we can proceed with creating a Player.
-    Log.d("DEBUG", "Got authentication token");
-    if (mPlayer == null) {
-      Config playerConfig = new Config(getContext(), authResponse.getAccessToken(), clientID);
-      // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
-      // the second argument in order to refcount it properly. Note that the method
-      // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
-      // one passed in here. If you pass different instances to Spotify.getPlayer() and
-      // Spotify.destroyPlayer(), that will definitely result in resource leaks.
-      mPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-        @Override
-        public void onInitialized(SpotifyPlayer player) {
-          Log.d("DEBUG", "-- Player initialized --");
-          mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(getContext()));
-          //mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(getActivity().getApplicationContext()));
-          mPlayer.addNotificationCallback(SpotifyMenuFragment.this);
-          mPlayer.addConnectionStateCallback(SpotifyMenuFragment.this);
-          // Trigger UI refresh
-          //updateView();
-        }
-
-        @Override
-        public void onError(Throwable error) {
-          Log.d("DEBUG", "Error in initialization: " + error.getMessage());
-        }
-      });
-    } else {
-      mPlayer.login(authResponse.getAccessToken());
-    }
-  }
-
-  private Connectivity getNetworkConnectivity(Context context) {
-    ConnectivityManager connectivityManager;
-    connectivityManager = (ConnectivityManager) context
-        .getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-    if (activeNetwork != null && activeNetwork.isConnected()) {
-      return Connectivity.fromNetworkType(activeNetwork.getType());
-    } else {
-      return Connectivity.OFFLINE;
-    }
-  }
-
-  @Override
-  public void onConnectionMessage(String s) {
-    Log.d("DEBUG", "SPOTIFY:: Received connection message: " + s);
-  }
-
-  @Override
-  public void onLoggedIn() {
-    Log.d("DEBUG", "SPOTIFY:: User logged in.");
-
-    //mAsyncSpotifyApi.execute("me");
-    //mAsyncSpotifyApi.execute("search_artist", "hoge");
-    //mAsyncSpotifyApi.execute("search_album", "hoge");
-    //mAsyncSpotifyApi.execute("user_playlist");
-    //mAsyncSpotifyApi.execute("featured_playlist");
-  }
-
-  @Override
-  public void onLoggedOut() {
-    Log.d("DEBUG", "SPOTIFY:: User logged out.");
-  }
-
-  @Override
-  public void onLoginFailed(Error error) {
-    Log.d("DEBUG", "SPOTIFY:: Loggin failed.");
-  }
-
-  @Override
-  public void onPlaybackEvent(PlayerEvent playerEvent) {
-
-  }
-
-  @Override
-  public void onPlaybackError(Error error) {
-
-  }
-
-  @Override
-  public void onTemporaryError() {
-    Log.d("DEBUG", "SPOTIFY:: Temporary error occurred.");
   }
 
   @Override
@@ -199,18 +66,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
     super.onViewCreated(view, savedInstanceState);
 
-    //mSpotify = new SpotifyController();
-    //mSpotify.authenticate((MainActivity) getActivity(), getString(R.string.spotify_client_id));
-
-    mNetworkStateReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        if (mPlayer != null) {
-          Connectivity connectivity = getNetworkConnectivity(context);
-          mPlayer.setConnectivityStatus(mOperationCallback, connectivity);
-        }
-      }
-    };
+    ((MainActivity) getActivity()).authenticate();
   }
 
   @Override
@@ -218,9 +74,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     super.onResume();
 
     Log.d("DEBUG", "SPOTIFY:: onResume");
-
-    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-    getActivity().registerReceiver(mNetworkStateReceiver, filter);
   }
 
   @Override
@@ -228,16 +81,9 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     super.onPause();
 
     Log.d("DEBUG", "SPOTIFY:: onPause");
-
-    getActivity().unregisterReceiver(mNetworkStateReceiver);
   }
 
   public void destroy() {
-    if (mPlayer != null) {
-      mPlayer.logout();
-      mPlayer.destroy();
-    }
-
     Log.d("FRAGMENT", "onDestroy...");
   }
 
@@ -281,21 +127,10 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
   }
 
   @Override
-  public void onHiddenChanged(boolean hidden) {
-    super.onHiddenChanged(hidden);
-
-    Log.d("DEBUG", "SPOTIFY:: SpotifyMenuFragment Hidden -> " + hidden);
-
-    if (!hidden) {
-      authenticate();
-    }
-  }
-
-  @Override
   public void onEndCardSelected(int id) {
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
 
-    if (isAuthenticated) {
+    if (((MainActivity) getActivity()).isAuthenticated()) {
       String uri = null;
       switch (id) {
         case R.string.playlist1:
@@ -316,16 +151,16 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
         if (((MainActivity) getActivity()).getSavedValue("SPOTIFY_SHUFFLE", false)) {
           Log.d("DEBUG", "SPOTIFY:: SHUFFLE ON");
 
-          mPlayer.setShuffle(mOperationCallback, true);
+          ((MainActivity) getActivity()).setShuffle(true);
         } else {
           Log.d("DEBUG", "SPOTIFY:: SHUFFLE OFF");
 
-          mPlayer.setShuffle(mOperationCallback, false);
+          ((MainActivity) getActivity()).setShuffle(false);
         }
-        if (!mPlayer.getPlaybackState().isPlaying) {
-          mPlayer.playUri(mOperationCallback, uri, 0, 0);
+        if (!((MainActivity) getActivity()).isPlaying()) {
+          ((MainActivity) getActivity()).setPlayUri(uri);
         } else {
-          mPlayer.pause(mOperationCallback);
+          ((MainActivity) getActivity()).setPause();
         }
       }
       mych.setText(getString(R.string.selected), 300);
@@ -336,7 +171,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
   @Override
   public void onEnterCard(int id) {
-
   }
 
   @Override
@@ -446,33 +280,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
         mValue.setText(" ");
       }
     }
-  }
-
-  String processRequestToken(int requestCode, int resultCode, Intent data) {
-    if (requestCode == REQUEST_CODE) {
-      final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-      //AsyncSpotifyApi.setAccessToken(response.getAccessToken());
-      SpotifyConfigFragment.setAccessToken(response.getAccessToken());
-
-      switch (response.getType()) {
-        case TOKEN:
-          Log.d("DEBUG", "Spotify Token: " + response.getAccessToken());
-
-          onAuthenticationComplete(response, getString(R.string.spotify_client_id));
-          //mAsyncSpotifyApi = new AsyncSpotifyApi(AsyncSpotifyApi.getAccessToken());
-          SpotifyConfigFragment.setIsLoggedIn(true);
-          break;
-        case ERROR:
-          Log.d("DEBUG", "Spotify Error: " + response.getError());
-          break;
-        default:
-          Log.d("DEBUG", "Spotify Other: " + response.getState());
-          break;
-      }
-    }
-
-    //return AsyncSpotifyApi.getAccessToken();
-    return SpotifyConfigFragment.getAccessToken();
   }
 
   @Override

@@ -9,10 +9,6 @@
 
 package com.jins_meme.bridge;
 
-import static com.jins_meme.bridge.R.id.category1;
-import static com.jins_meme.bridge.R.id.container;
-import static com.jins_meme.bridge.R.id.playlists1;
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -60,14 +55,14 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
   private ArrayAdapter[] playlistAdapter = new ArrayAdapter[4];
 
-  List<String> userPlaylistNameList = new ArrayList<>();
-  List<String> featuredPlaylistNameList = new ArrayList<>();
-  List<String> savedAlbumNameList = new ArrayList<>();
-  List<String> followedArtistNameList = new ArrayList<>();
-  List<String> userPlaylistUriList = new ArrayList<>();
-  List<String> featuredPlaylistUriList = new ArrayList<>();
-  List<String> savedAlbumUriList = new ArrayList<>();
-  List<String> followedArtistUriList = new ArrayList<>();
+  private List<String> userPlaylistNameList = new ArrayList<>();
+  private List<String> featuredPlaylistNameList = new ArrayList<>();
+  private List<String> savedAlbumNameList = new ArrayList<>();
+  private List<String> followedArtistNameList = new ArrayList<>();
+  private List<String> userPlaylistUriList = new ArrayList<>();
+  private List<String> featuredPlaylistUriList = new ArrayList<>();
+  private List<String> savedAlbumUriList = new ArrayList<>();
+  private List<String> followedArtistUriList = new ArrayList<>();
 
   public static boolean isLoggedIn() {
     return isLoggedIn;
@@ -100,66 +95,85 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+
+    Log.d("DEBUG", "SPOTIFY_CONFIG:: onAttach");
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
+
+    Log.d("DEBUG", "SPOTIFY_CONFIG:: onDetach");
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.spotify_conf_title));
+
+    Log.d("DEBUG", "SPOTIFY_CONFIG:: onResume");
+
+    ((MainActivity) getActivity())
+        .updateActionBar(getResources().getString(R.string.spotify_conf_title));
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+
+    Log.d("DEBUG", "SPOTIFY_CONFIG:: onDestroy");
+
+    isExecuteFinish = false;
+    isUIInitialized = false;
+
+    mAsyncSpotifyApi = null;
+
+    swUse = null;
+    swShuffle = null;
+
+    for (int i = 0; i < spCategory.length; i++) {
+      spCategory[i] = null;
+      spPlaylist[i] = null;
+
+      playlistAdapter[i].clear();
+      playlistAdapter[i] = null;
+    }
+
+    userPlaylistNameList.clear();
+    featuredPlaylistNameList.clear();
+    savedAlbumNameList.clear();
+    followedArtistNameList.clear();
+    userPlaylistUriList.clear();
+    featuredPlaylistUriList.clear();
+    savedAlbumUriList.clear();
+    followedArtistUriList.clear();
+
+    userPlaylistNameList = null;
+    featuredPlaylistNameList = null;
+    savedAlbumNameList = null;
+    followedArtistNameList = null;
+    userPlaylistUriList = null;
+    featuredPlaylistUriList = null;
+    savedAlbumUriList = null;
+    followedArtistUriList = null;
   }
 
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    Log.d("DEBUG", "SPOTIFY:: Config...");
+    Log.d("DEBUG", "SPOTIFY_CONFIG:: onViewCreated");
 
-    if (isLoggedIn) {
-      mAsyncSpotifyApi = new AsyncSpotifyApi();
-      isExecuteFinish = true;
-      mAsyncSpotifyApi.execute("user_playlist");
+    userPlaylistNameList = new ArrayList<>();
+    featuredPlaylistNameList = new ArrayList<>();
+    savedAlbumNameList = new ArrayList<>();
+    followedArtistNameList = new ArrayList<>();
+    userPlaylistUriList = new ArrayList<>();
+    featuredPlaylistUriList = new ArrayList<>();
+    savedAlbumUriList = new ArrayList<>();
+    followedArtistUriList = new ArrayList<>();
 
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
-          while (isExecuteFinish) {
-            try {
-              Thread.sleep(10);
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
-          }
-
-          mAsyncSpotifyApi = null;
-          mAsyncSpotifyApi = new AsyncSpotifyApi();
-          mAsyncSpotifyApi.execute("featured_playlist");
-          //mAsyncSpotifyApi.execute("followed_artist");
-
-          /*
-          new Thread(new Runnable() {
-            @Override
-            public void run() {
-              while (isExecuteFinish) {
-                try {
-                  Thread.sleep(10);
-                } catch (InterruptedException e) {
-                  e.printStackTrace();
-                }
-              }
-
-              mAsyncSpotifyApi = null;
-              mAsyncSpotifyApi = new AsyncSpotifyApi();
-              mAsyncSpotifyApi.execute("saved_albums");
-            }
-          }).start();
-          */
-        }
-      }).start();
+    if (((MainActivity) getActivity()).authenticate()) {
+      getPlaylist();
     }
 
     swUse = (Switch) view.findViewById(R.id.spotify_use);
@@ -169,14 +183,8 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (b) {
           Log.d("SPOTIFY", "Use Spotify.");
-          //Toast.makeText(getActivity(), "SCANNING...", Toast.LENGTH_SHORT).show();
-
-          //((MainActivity) getActivity()).startScan();
         } else {
           Log.d("SPOTIFY", "Not Use Spotify.");
-          //Toast.makeText(getActivity(), "SCAN STOPPED.", Toast.LENGTH_SHORT).show();
-
-          //((MainActivity) getActivity()).stopScan();
         }
 
         ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_USE", b);
@@ -190,20 +198,15 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (b) {
           Log.d("SPOTIFY", "Enable Shuffle Play.");
-          //Toast.makeText(getActivity(), "SCANNING...", Toast.LENGTH_SHORT).show();
-
-          //((MainActivity) getActivity()).startScan();
         } else {
           Log.d("SPOTIFY", "Disable Shuffle Play.");
-          //Toast.makeText(getActivity(), "SCAN STOPPED.", Toast.LENGTH_SHORT).show();
-
-          //((MainActivity) getActivity()).stopScan();
         }
 
         ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_SHUFFLE", b);
       }
     });
 
+    Log.d("DEBUG", "SPOTIFY:: onViewCreated");
     for (int j = 0; j < 4; j++) {
       switch (j) {
         case 0:
@@ -227,11 +230,12 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       final int jj = j;
 
       spCategory[j]
-          .setSelection(((MainActivity) getActivity()).getSavedValue("SPOTIFY_CAT" + (j + 1), 0));
+          .setSelection(((MainActivity) getActivity()).getSavedValue("SPOTIFY_CAT" + (j + 1), 0),
+              false);
       spCategory[j].setOnItemSelectedListener(new OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-          Log.d("DEBUG", "position = " + i);
+          Log.d("DEBUG", "set position = " + i);
 
           ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_CAT" + (jj + 1), i);
 
@@ -243,6 +247,11 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             case 1:
               playlistAdapter[jj].addAll(featuredPlaylistNameList);
               break;
+            case 2:
+              playlistAdapter[jj].addAll(followedArtistNameList);
+              break;
+            case 3:
+              playlistAdapter[jj].addAll(savedAlbumNameList);
           }
           spPlaylist[jj].setAdapter(playlistAdapter[jj]);
           //spPlaylist[jj].setSelection(0);
@@ -261,7 +270,8 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
           if (isUIInitialized) {
-            Log.d("DEBUG", "SPOTIFY:: playlist -> " + spPlaylist[jj].getSelectedItem().toString());
+            Log.d("DEBUG",
+                "SPOTIFY:: set playlist -> " + spPlaylist[jj].getSelectedItem().toString());
 
             ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_PL_NAME" + (jj + 1),
                 spPlaylist[jj].getSelectedItem().toString());
@@ -284,17 +294,79 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         return userPlaylistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
       case "FEATURED PLAYLIST":
         return featuredPlaylistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
+      case "FOLLOWED ARTIST":
+        return followedArtistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
+      case "SAVED ALBUM":
+        return savedAlbumUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
       default:
         return null;
     }
   }
 
-  class AsyncSpotifyApi extends AsyncTask<String, String, String> {
+  void getPlaylist() {
+    mAsyncSpotifyApi = new AsyncSpotifyApi();
+    isExecuteFinish = true;
+    mAsyncSpotifyApi.execute("user_playlist");
+
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        while (isExecuteFinish) {
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+
+        mAsyncSpotifyApi = null;
+        mAsyncSpotifyApi = new AsyncSpotifyApi();
+        mAsyncSpotifyApi.execute("featured_playlist");
+
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+            while (isExecuteFinish) {
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
+            }
+
+            mAsyncSpotifyApi = null;
+            mAsyncSpotifyApi = new AsyncSpotifyApi();
+            mAsyncSpotifyApi.execute("followed_artist");
+
+            new Thread(new Runnable() {
+              @Override
+              public void run() {
+                while (isExecuteFinish) {
+                  try {
+                    Thread.sleep(10);
+                  } catch (InterruptedException e) {
+                    e.printStackTrace();
+                  }
+                }
+
+                mAsyncSpotifyApi = null;
+                mAsyncSpotifyApi = new AsyncSpotifyApi();
+                mAsyncSpotifyApi.execute("saved_albums");
+              }
+            }).start();
+          }
+        }).start();
+
+      }
+    }).start();
+  }
+
+  private class AsyncSpotifyApi extends AsyncTask<String, String, String> {
 
     private SpotifyApi mSpotifyApi = new SpotifyApi();
     private SpotifyService mSpotifyService;
 
-    public AsyncSpotifyApi() {
+    private AsyncSpotifyApi() {
       Log.d("DEBUG", "SPOTIFY:: CONFIG AccessToken = " + accessToken);
 
       mSpotifyApi.setAccessToken(accessToken);
@@ -308,13 +380,13 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
     @Override
     protected String doInBackground(String... strings) {
-      Log.d("DEBUG", "ASYNC SPOTIFY:: " + strings.length);
+      Log.d("DEBUG", "ASYNC SPOTIFY:: " + strings.length + " " + strings[0]);
 
       isExecuteFinish = true;
 
-      ArrayList[] arrayLists = new ArrayList[2];
-      arrayLists[0] = new ArrayList<String>();
-      arrayLists[1] = new ArrayList<String>();
+      //ArrayList[] arrayLists = new ArrayList[2];
+      //arrayLists[0] = new ArrayList<>();
+      //arrayLists[1] = new ArrayList<>();
 
       switch (strings[0]) {
         case "me":
@@ -395,56 +467,84 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
     protected void onPostExecute(String string) {
       super.onPostExecute(string);
 
-      Log.d("DEBUG", "SPOTIFY:: onPostExecute");
+      Log.d("DEBUG", "SPOTIFY:: onPostExecute " + string);
 
       for (int i = 0; i < 4; i++) {
-        Log.d("DEBUG", "SPOTIFY:: onPostExecute -> " + spCategory[i].getSelectedItem().toString());
+        if (spCategory[i] != null) {
+          Log.d("DEBUG",
+              "SPOTIFY:: onPostExecute -> " + spCategory[i].getSelectedItem().toString() + " " + string);
+          
+          if (string.equals("user_playlist") && spCategory[i].getSelectedItem().toString()
+              .contains("USER")) {
+            Log.d("DEBUG", "SPOTIFY:: user");
 
-        if (string.equals("user_playlist") && spCategory[i].getSelectedItem().toString()
-            .contains("USER")) {
-          Log.d("DEBUG", "SPOTIFY:: user");
+            playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item);
+            if (userPlaylistNameList.size() > 0) {
+              playlistAdapter[i].addAll(userPlaylistNameList);
+            }
+            spPlaylist[i].setAdapter(playlistAdapter[i]);
+          } else if (string.equals("featured_playlist") && spCategory[i].getSelectedItem()
+              .toString()
+              .contains("FEATURED")) {
+            Log.d("DEBUG", "SPOTIFY:: featured");
 
-          playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
-              android.R.layout.simple_spinner_item);
-          if (userPlaylistNameList.size() > 0) {
-            playlistAdapter[i].addAll(userPlaylistNameList);
+            playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item);
+            if (featuredPlaylistNameList.size() > 0) {
+              playlistAdapter[i].addAll(featuredPlaylistNameList);
+            }
+            spPlaylist[i].setAdapter(playlistAdapter[i]);
+          } else if (string.equals("followed_artist") && spCategory[i].getSelectedItem()
+              .toString()
+              .contains("FOLLOWED")) {
+            Log.d("DEBUG", "SPOTIFY:: followed_artist " + followedArtistNameList.size());
+
+            playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item);
+            if (followedArtistNameList.size() > 0) {
+              playlistAdapter[i].addAll(followedArtistNameList);
+            }
+            spPlaylist[i].setAdapter(playlistAdapter[i]);
+          } else if (string.equals("saved_albums") && spCategory[i].getSelectedItem()
+              .toString()
+              .contains("SAVED")) {
+            Log.d("DEBUG", "SPOTIFY:: saved_albums " + savedAlbumNameList.size());
+
+            playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item);
+            if (savedAlbumNameList.size() > 0) {
+              playlistAdapter[i].addAll(savedAlbumNameList);
+            }
+            spPlaylist[i].setAdapter(playlistAdapter[i]);
           }
-          spPlaylist[i].setAdapter(playlistAdapter[i]);
-        } else if (string.equals("featured_playlist") && spCategory[i].getSelectedItem().toString()
-            .contains("FEATURED")) {
-          Log.d("DEBUG", "SPOTIFY:: featured");
-
-          playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
-              android.R.layout.simple_spinner_item);
-          if (featuredPlaylistNameList.size() > 0) {
-            playlistAdapter[i].addAll(featuredPlaylistNameList);
-          }
-          spPlaylist[i].setAdapter(playlistAdapter[i]);
         }
       }
 
-      if (string.equals("featured_playlist")) {
+      if (string.equals("saved_albums")) {
         for (int i = 0; i < 4; i++) {
-          String selectedName = ((MainActivity) getActivity())
-              .getSavedValue("SPOTIFY_PL_NAME" + (i + 1));
+          if (getActivity() != null) {
+            String selectedName = ((MainActivity) getActivity())
+                .getSavedValue("SPOTIFY_PL_NAME" + (i + 1));
 
-          Log.d("DEBUG", "SPOTIFY:: load last playlist -> " + selectedName);
+            Log.d("DEBUG", "SPOTIFY:: load last playlist -> " + selectedName);
 
-          if (selectedName != null) {
-            for (int j = 0; j < playlistAdapter[i].getCount(); j++) {
-              if (selectedName.equals(playlistAdapter[i].getItem(j))) {
-                spPlaylist[i].setSelection(j);
-                break;
+            if (selectedName != null) {
+              for (int j = 0; j < playlistAdapter[i].getCount(); j++) {
+                if (selectedName.equals(playlistAdapter[i].getItem(j))) {
+                  spPlaylist[i].setSelection(j);
+                  break;
+                }
               }
-            }
-          } else {
-            Log.d("DEBUG", "SPOTIFY:: no selected playlist...");
-            spPlaylist[i].setSelection(0);
+            } else {
+              Log.d("DEBUG", "SPOTIFY:: no selected playlist...");
+              spPlaylist[i].setSelection(0);
 
-            ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_PL_NAME" + (i + 1),
-                spPlaylist[i].getSelectedItem().toString());
-            ((MainActivity) getActivity())
-                .autoSaveValue("SPOTIFY_PL_URI" + (i + 1), getSelectedPlaylistUri(i));
+              ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_PL_NAME" + (i + 1),
+                  spPlaylist[i].getSelectedItem().toString());
+              ((MainActivity) getActivity())
+                  .autoSaveValue("SPOTIFY_PL_URI" + (i + 1), getSelectedPlaylistUri(i));
+            }
           }
         }
         isUIInitialized = true;

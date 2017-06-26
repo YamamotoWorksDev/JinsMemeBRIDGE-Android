@@ -14,8 +14,10 @@ import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -49,6 +51,20 @@ import com.jins_jp.meme.MemeRealtimeListener;
 import com.jins_jp.meme.MemeScanListener;
 import com.jins_jp.meme.MemeStatus;
 
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationRequest.Builder;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.authentication.AuthenticationResponse.Type;
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Connectivity;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.Player.OperationCallback;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +74,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     CameraMenuFragment.OnFragmentInteractionListener,
     SpotifyMenuFragment.OnFragmentInteractionListener,
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
-    RemoMenuFragment.OnFragmentInteractionListener, DialogListener {
+    RemoMenuFragment.OnFragmentInteractionListener, DialogListener,
+    SpotifyPlayer.NotificationCallback,
+    ConnectionStateCallback {
+
+  private static final int REQUEST_CODE = 1337;
 
   private String appID = null;
   private String appSecret = null;
@@ -91,6 +111,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private static final int BATTERY_CHECK_INTERVAL = 2000;
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
+
+  private Player mPlayer;
+  private static boolean isAuthenticated = false;
+  private BroadcastReceiver mNetworkStateReceiver;
+
+  private final Player.OperationCallback mOperationCallback = new OperationCallback() {
+    @Override
+    public void onSuccess() {
+      Log.d("DEBUG", "SPOTIFY:: OperationCallback -> onSuccess");
+    }
+
+    @Override
+    public void onError(Error error) {
+      Log.d("DEBUG", "SPOTIFY:: OperationCallback -> onError:" + error);
+    }
+  };
 
   private RootMenuFragment rootMenu;
   private SpotifyMenuFragment spotifyMenu;
@@ -136,6 +172,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   public int getRollThreshold() {
     return rollThreshold;
+  }
+
+  public void setAuthenticated(boolean authenticated) {
+    isAuthenticated = authenticated;
+  }
+
+  public boolean isAuthenticated() {
+    return isAuthenticated;
   }
 
   @Override
@@ -190,6 +234,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
     }
+
+    mNetworkStateReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        if (mPlayer != null) {
+          Connectivity connectivity = getNetworkConnectivity(context);
+          mPlayer.setConnectivityStatus(mOperationCallback, connectivity);
+        }
+      }
+    };
   }
 
   @Override
@@ -359,7 +413,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onResume() {
     super.onResume();
 
+    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+    registerReceiver(mNetworkStateReceiver, filter);
+
     Log.d("MAIN", "onResume..." + scannedMemeList.size());
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+
+    unregisterReceiver(mNetworkStateReceiver);
   }
 
   @Override
@@ -376,6 +440,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (memeLib != null && memeLib.isConnected()) {
       memeLib.disconnect();
       memeLib = null;
+    }
+
+    if (mPlayer != null) {
+      mPlayer.logout();
+      mPlayer.destroy();
     }
 
     rootMenu = null;
@@ -532,9 +601,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         finishAndRemoveTask();
       }
     } else if (requestCode == 1337) {
-      spotifyMenu.processRequestToken(requestCode, resultCode, data);
-
-      spotifyMenu.setAuthenticated(true);
+      processRequestToken(requestCode, resultCode, data);
     } else {
       if (resultCode == RESULT_OK) {
         Log.d("MAIN", "Auth OK");
@@ -912,16 +979,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void autoSaveValue(String key, String text) {
+    Log.d("DEBUG", "SAVE PARAM:: " + key + " -> " + text);
+
     editor.putString(key, text);
     editor.apply();
   }
 
   void autoSaveValue(String key, boolean flag) {
+    Log.d("DEBUG", "SAVE PARAM:: " + key + " -> " + flag);
+
     editor.putBoolean(key, flag);
     editor.apply();
   }
 
   void autoSaveValue(String key, int value) {
+    Log.d("DEBUG", "SAVE PARAM:: " + key + " -> " + value);
+
     switch (key) {
       case "BLINK_TH":
         blinkThreshold = value;
@@ -1016,4 +1089,159 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
     }
   }
+
+  IntentFilter getFilter() {
+    return (new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+  }
+
+  boolean authenticate() {
+    //Log.d("DEBUG", "SPOTIFY:: authenticate " + getRedirectUri().toString());
+
+    if (!isAuthenticated && getSavedValue("SPOTIFY_USE", false)) {
+      AuthenticationRequest.Builder builder = new Builder(getString(R.string.spotify_client_id),
+          Type.TOKEN,
+          "jins-meme-bridge-login://callback");
+      builder.setShowDialog(false).setScopes(
+          new String[]{"user-read-private", "playlist-read", "playlist-read-private", "user-follow-read", "user-library-read", "streaming"});
+      final AuthenticationRequest request = builder.build();
+
+      AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  private void onAuthenticationComplete(AuthenticationResponse authResponse, String clientID) {
+    // Once we have obtained an authorization token, we can proceed with creating a Player.
+    Log.d("DEBUG", "Got authentication token");
+    if (mPlayer == null) {
+      Config playerConfig = new Config(this, authResponse.getAccessToken(), clientID);
+      // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
+      // the second argument in order to refcount it properly. Note that the method
+      // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
+      // one passed in here. If you pass different instances to Spotify.getPlayer() and
+      // Spotify.destroyPlayer(), that will definitely result in resource leaks.
+      mPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+        @Override
+        public void onInitialized(SpotifyPlayer player) {
+          Log.d("DEBUG", "-- Player initialized --");
+          mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(MainActivity.this));
+          //mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(getActivity().getApplicationContext()));
+          mPlayer.addNotificationCallback(MainActivity.this);
+          mPlayer.addConnectionStateCallback(MainActivity.this);
+          // Trigger UI refresh
+          //updateView();
+        }
+
+        @Override
+        public void onError(Throwable error) {
+          Log.d("DEBUG", "Error in initialization: " + error.getMessage());
+        }
+      });
+    } else {
+      mPlayer.login(authResponse.getAccessToken());
+    }
+  }
+
+  private Connectivity getNetworkConnectivity(Context context) {
+    ConnectivityManager connectivityManager;
+    connectivityManager = (ConnectivityManager) context
+        .getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    if (activeNetwork != null && activeNetwork.isConnected()) {
+      return Connectivity.fromNetworkType(activeNetwork.getType());
+    } else {
+      return Connectivity.OFFLINE;
+    }
+  }
+
+  void setShuffle(boolean flag) {
+    mPlayer.setShuffle(mOperationCallback, flag);
+  }
+
+  void setPlayUri(String uri) {
+    mPlayer.playUri(mOperationCallback, uri, 0, 0);
+  }
+
+  void setPause() {
+    mPlayer.pause(mOperationCallback);
+  }
+
+  boolean isPlaying() {
+    return mPlayer.getPlaybackState().isPlaying;
+  }
+
+  String processRequestToken(int requestCode, int resultCode, Intent data) {
+    if (requestCode == REQUEST_CODE) {
+      final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
+      //AsyncSpotifyApi.setAccessToken(response.getAccessToken());
+      SpotifyConfigFragment.setAccessToken(response.getAccessToken());
+
+      switch (response.getType()) {
+        case TOKEN:
+          Log.d("DEBUG", "Spotify Token: " + response.getAccessToken());
+
+          onAuthenticationComplete(response, getString(R.string.spotify_client_id));
+          //mAsyncSpotifyApi = new AsyncSpotifyApi(AsyncSpotifyApi.getAccessToken());
+          SpotifyConfigFragment.setIsLoggedIn(true);
+          break;
+        case ERROR:
+          Log.d("DEBUG", "Spotify Error: " + response.getError());
+          break;
+        default:
+          Log.d("DEBUG", "Spotify Other: " + response.getState());
+          break;
+      }
+    }
+
+    //return AsyncSpotifyApi.getAccessToken();
+    return SpotifyConfigFragment.getAccessToken();
+  }
+
+  @Override
+  public void onConnectionMessage(String s) {
+    Log.d("DEBUG", "SPOTIFY:: Received connection message: " + s);
+  }
+
+  @Override
+  public void onLoggedIn() {
+    Log.d("DEBUG", "SPOTIFY:: User logged in.");
+
+    isAuthenticated = true;
+    spotifyConfigFragment.getPlaylist();
+
+    //mAsyncSpotifyApi.execute("me");
+    //mAsyncSpotifyApi.execute("search_artist", "hoge");
+    //mAsyncSpotifyApi.execute("search_album", "hoge");
+    //mAsyncSpotifyApi.execute("user_playlist");
+    //mAsyncSpotifyApi.execute("featured_playlist");
+  }
+
+  @Override
+  public void onLoggedOut() {
+    Log.d("DEBUG", "SPOTIFY:: User logged out.");
+  }
+
+  @Override
+  public void onLoginFailed(Error error) {
+    Log.d("DEBUG", "SPOTIFY:: Loggin failed.");
+  }
+
+  @Override
+  public void onPlaybackEvent(PlayerEvent playerEvent) {
+
+  }
+
+  @Override
+  public void onPlaybackError(Error error) {
+
+  }
+
+  @Override
+  public void onTemporaryError() {
+    Log.d("DEBUG", "SPOTIFY:: Temporary error occurred.");
+  }
+
 }
