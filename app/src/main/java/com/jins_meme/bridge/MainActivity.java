@@ -454,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       Log.d("MAIN", "SCAN Start");
 
       memeConnectProgressDialog = ProgressDialogFragment.newInstance("meme_connect");
+      memeConnectProgressDialog.setDialogListener(this);
       memeConnectProgressDialog.setCancelable(false);
       memeConnectProgressDialog.show(getSupportFragmentManager(), "dialog");
 
