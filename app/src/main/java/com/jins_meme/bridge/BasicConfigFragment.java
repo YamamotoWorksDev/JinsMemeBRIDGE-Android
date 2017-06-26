@@ -352,6 +352,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
 
+    /*
     ibRestart = (ImageButton) view.findViewById(R.id.restart);
     ibRestart.setOnClickListener(new OnClickListener() {
       @Override
@@ -360,6 +361,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
     setEnableRestart(false);
+    */
 
     ibLock = (ImageButton) view.findViewById(R.id.lock);
     ibLock.setOnClickListener(new OnClickListener() {
