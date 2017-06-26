@@ -13,11 +13,8 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -77,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
 
-  private ProgressDialog memeConnectProgressDialog;
+  //private ProgressDialog memeConnectProgressDialog;
+  private ProgressDialogFragment memeConnectProgressDialog;
   private Handler handler;
   private FrameLayout mainLayout;
 
@@ -154,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     editor = preferences.edit();
 
     if (getSupportActionBar() != null) {
+      updateActionBar(getResources().getString(R.string.actionbar_title));
       getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
     }
 
@@ -448,26 +447,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private void scanAndConnectToLastConnectedMeme() {
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
+
+    Log.d("MAIN", "last connected meme ID = " + lastConnectedMemeID);
+
     if (lastConnectedMemeID != null) {
       Log.d("MAIN", "SCAN Start");
-      //Toast.makeText(this, getString(R.string.meme_scanning), Toast.LENGTH_SHORT).show();
 
-      memeConnectProgressDialog = new ProgressDialog(MainActivity.this);
-      memeConnectProgressDialog.setMax(100);
-      memeConnectProgressDialog.setMessage("Scannig...");
-      memeConnectProgressDialog.setTitle("SCAN & CONNECT");
-      memeConnectProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+      memeConnectProgressDialog = ProgressDialogFragment.newInstance("meme_connect");
       memeConnectProgressDialog.setCancelable(false);
-      memeConnectProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-          new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-              stopScan();
-
-              handler.removeCallbacksAndMessages(null);
-            }
-          });
-      memeConnectProgressDialog.show();
+      memeConnectProgressDialog.show(getSupportFragmentManager(), "dialog");
 
       handler.postDelayed(new Runnable() {
         @Override
@@ -665,7 +653,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void startScan() {
-    Log.d("MAIN", "start scannig...");
+    Log.d("MAIN", "start scannig... " + lastConnectedMemeID);
 
     if (scannedMemeList != null) {
       scannedMemeList.clear();
@@ -685,16 +673,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
           memeConnectProgressDialog.setMessage("Found: " + s);
 
-          /*
-          final String s2 = s;
-          handler.post(new Runnable() {
-            @Override
-            public void run() {
-              Toast.makeText(MainActivity.this, getString(R.string.meme_found, s2), Toast.LENGTH_SHORT).show();
-            }
-          });
-          */
-
           scannedMemeList.add(s);
 
           if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
@@ -706,15 +684,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
             memeConnectProgressDialog.setMessage("Connect to: " + s);
 
             connectToMeme(lastConnectedMemeID);
-
-            /*
-            handler.post(new Runnable() {
-              @Override
-              public void run() {
-                Toast.makeText(MainActivity.this, getString(R.string.meme_connect, s2), Toast.LENGTH_SHORT).show();
-              }
-            });
-            */
           }
         }
       });
@@ -1033,7 +1002,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void doNegativeClick(String type) {
-    handler.removeCallbacksAndMessages(null);
-    finishAndRemoveTask();
+    switch (type) {
+      case "meme_connect":
+        stopScan();
+        handler.removeCallbacksAndMessages(null);
+        break;
+      default:
+        handler.removeCallbacksAndMessages(null);
+        finishAndRemoveTask();
+        break;
+    }
   }
 }

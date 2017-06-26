@@ -160,6 +160,11 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
             if (finalNote != lastNote) {
               Log.d("DEBUG", "note on " + finalNote);
               memeMIDI.sendNote(midiChannel, finalNote, 127);
+              memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_track));
+              memeOSC.setTypeTag("ii");
+              memeOSC.addArgument(midiChannel);
+              memeOSC.addArgument(finalNote);
+              memeOSC.flushMessage();
             }
 
             try {
@@ -211,6 +216,11 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           public void run() {
             Log.d("DEBUG", "note on " + finalNoteFx);
             memeMIDI.sendNote(midiChannel, finalNoteFx, 127);
+            memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_effect));
+            memeOSC.setTypeTag("ii");
+            memeOSC.addArgument(midiChannel);
+            memeOSC.addArgument(finalNoteFx);
+            memeOSC.flushMessage();
 
             try {
               Thread.sleep(500);
@@ -251,6 +261,12 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           public void run() {
             Log.d("DEBUG", "note on " + finalNote);
             memeMIDI.sendNote(midiChannel, finalNote, 127);
+            memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_logo));
+            memeOSC.setTypeTag("ii");
+            memeOSC.addArgument(midiChannel);
+            memeOSC.addArgument(finalNote);
+            memeOSC.flushMessage();
+
             try {
               Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -290,116 +306,86 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
+      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+
       switch (id) {
         case R.string.track14:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("1-4");
           break;
         case R.string.track58:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("5-8");
+          break;
+        default:
+          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+      }
+
+      switch (id) {
+        case R.string.track14:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          break;
+        case R.string.track58:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
           break;
         case R.string.track1:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track1);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track2:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track2);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track3:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track3);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track4);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track5:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track5);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track6:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track6);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track7:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track7);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.track8:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track8);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect1:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect1);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect2:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect2);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect3:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect3);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect4);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect5:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect5);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.effect6:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.logo:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.logo1:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo1);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.logo2:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo2);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.logo3:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo3);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.logo4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
-          ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
       }
     }

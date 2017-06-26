@@ -253,6 +253,16 @@ public class HueController {
 
       if (!hueSDK.isAccessPointConnected(accessPoint)) {
         hueSDK.connect(accessPoint);
+      } else {
+        PHBridge bridge = hueSDK.getSelectedBridge();
+        allLights = bridge.getResourceCache().getAllLights();
+
+        for (PHLight light : allLights) {
+          PHLightState lightState = light.getLastKnownLightState();
+
+          Log.d("DEBUG", "HUE:: id = " + light.getIdentifier() + " " + light.getModelNumber() + " " + light.getUniqueId() + " " + lightState.getBrightness() + " " + lightState.getSaturation());
+          Log.d("DEBUG", "HUE:: type = " + light.getLightType().name() + " " + light.getLightType().ordinal());
+        }
       }
     }
   }

@@ -10,9 +10,11 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,8 +57,10 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
   }
 
   public void destroy() {
+    Log.d("DEBUG", "HUE:: destroy()");
+
     if (mHue != null) {
-      mHue.turnOff();
+      //mHue.turnOff();
       mHue = null;
     }
 
@@ -114,7 +118,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
     switch (id) {
       case R.string.random:
         Random rand = new Random();
-        mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), 255, 1);
+        mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(255), 10);
         break;
       case R.string.light1:
         mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),
@@ -166,9 +170,30 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-      ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
-      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.BLACK);
+      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mSubtitle.setText("");
+
+      switch (id) {
+        case R.string.random:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.huerandom_white);
+          break;
+        case R.string.light1:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue1_white);
+          break;
+        case R.string.light2:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue2_white);
+          break;
+        case R.string.light3:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue3_white);
+          break;
+        case R.string.light4:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue4_white);
+          break;
+        default:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
+          break;
+      }
     }
 
     @Override
@@ -226,6 +251,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     private class MyCardHolder extends CardHolder {
 
+      CardView mCardView;
       ImageView mImageView;
       TextView mTitle;
       TextView mSubtitle;
@@ -235,6 +261,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
       MyCardHolder(View itemView) {
         super(itemView);
 
+        mCardView = (CardView) itemView.findViewById(R.id.card_view);
         mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
         mTitle = (TextView) itemView.findViewById(R.id.card_text);
         mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);

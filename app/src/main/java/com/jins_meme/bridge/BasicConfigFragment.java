@@ -352,6 +352,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
 
+    /*
     ibRestart = (ImageButton) view.findViewById(R.id.restart);
     ibRestart.setOnClickListener(new OnClickListener() {
       @Override
@@ -360,6 +361,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
     setEnableRestart(false);
+    */
 
     ibLock = (ImageButton) view.findViewById(R.id.lock);
     ibLock.setOnClickListener(new OnClickListener() {
@@ -434,7 +436,9 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   void setSwConnect(final boolean b) {
     Log.d("BASIC", "state " + b);
 
-    swConnect.setChecked(b);
+    if (swConnect != null) {
+      swConnect.setChecked(b);
+    }
     /*
     handler.post(new Runnable() {
       @Override

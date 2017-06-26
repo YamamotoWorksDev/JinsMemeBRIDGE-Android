@@ -13,6 +13,6 @@ import java.util.EventListener;
 
 public interface DialogListener extends EventListener {
 
-  public void doPositiveClick(String type);
-  public void doNegativeClick(String type);
+  void doPositiveClick(String type);
+  void doNegativeClick(String type);
 }
