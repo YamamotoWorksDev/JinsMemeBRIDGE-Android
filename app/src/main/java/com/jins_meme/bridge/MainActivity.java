@@ -856,10 +856,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (active instanceof MenuFragmentBase) {
       processed = ((MenuFragmentBase) active).menuBack();
     }
+
     if (!processed) {
       if (allow_finish || hasBackStackEntryCount()) {
-        super.onBackPressed();
+        getSupportFragmentManager().popBackStack();
         processed = true;
+        cancelFlag = false;
       }
     }
     if (!hasBackStackEntryCount()) {
