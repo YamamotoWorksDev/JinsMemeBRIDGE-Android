@@ -55,6 +55,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
   }
 
   public void destroy() {
+    Log.d("DEBUG", "HUE:: destroy()");
+
     if (mHue != null) {
       //mHue.turnOff();
       mHue = null;
