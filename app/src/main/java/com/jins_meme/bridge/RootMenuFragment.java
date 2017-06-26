@@ -10,9 +10,11 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +67,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
   }
 
   public interface OnFragmentInteractionListener {
+
     void openNextMenu(int card_id);
   }
 
@@ -100,11 +103,27 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-
-      ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
-      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-      ((MyCardHolder) cardHolder).mSubtitle.setText("");
-
+      switch (id) {
+        case R.string.hue:
+          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.BLACK);
+          ((MyCardHolder) cardHolder).mTitle.setTextColor(Color.WHITE);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue_white);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        case R.string.vdj:
+          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
+          ((MyCardHolder) cardHolder).mTitle.setTextColor(Color.BLACK);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_eyevdj);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+        default:
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
+          ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+          ((MyCardHolder) cardHolder).mSubtitle.setText("");
+          break;
+      }
     }
 
     @Override
@@ -157,6 +176,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     private class MyCardHolder extends CardHolder {
 
+      CardView mCardView;
       ImageView mImageView;
       TextView mTitle;
       TextView mSubtitle;
@@ -166,6 +186,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
       MyCardHolder(View itemView) {
         super(itemView);
 
+        mCardView = (CardView) itemView.findViewById(R.id.card_view);
         mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
         mTitle = (TextView) itemView.findViewById(R.id.card_text);
         mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
