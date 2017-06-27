@@ -9,15 +9,10 @@
 
 package com.jins_meme.bridge;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,29 +22,14 @@ import android.widget.TextView;
 import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationRequest.Builder;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.authentication.AuthenticationResponse.Type;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Connectivity;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.PlaybackState;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.Player.OperationCallback;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
 
 public class SpotifyMenuFragment extends MenuFragmentBase implements IResultListener {
 
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
 
-  private PlaybackState mCurrentPlaybackState;
-  //private AsyncSpotifyApi mAsyncSpotifyApi;
+  private static int currentPlayingPlaylistID = -1;
+  private static int prevPlayingPlaylistID = -1;
 
   public SpotifyMenuFragment() {
     // Required empty public constructor
@@ -135,15 +115,19 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
       switch (id) {
         case R.string.playlist1:
           uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI1");
+          currentPlayingPlaylistID = 0;
           break;
         case R.string.playlist2:
           uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI2");
+          currentPlayingPlaylistID = 1;
           break;
         case R.string.playlist3:
           uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI3");
+          currentPlayingPlaylistID = 2;
           break;
         case R.string.playlist4:
           uri = ((MainActivity) getActivity()).getSavedValue("SPOTIFY_PL_URI4");
+          currentPlayingPlaylistID = 3;
           break;
       }
 
@@ -157,11 +141,17 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
           ((MainActivity) getActivity()).setShuffle(false);
         }
-        if (!((MainActivity) getActivity()).isPlaying()) {
-          ((MainActivity) getActivity()).setPlayUri(uri);
+
+        if (currentPlayingPlaylistID == prevPlayingPlaylistID) {
+          if (!((MainActivity) getActivity()).isPlaying()) {
+            ((MainActivity) getActivity()).setPlayUri(uri);
+          } else {
+            ((MainActivity) getActivity()).setPause();
+          }
         } else {
-          ((MainActivity) getActivity()).setPause();
+          ((MainActivity) getActivity()).setPlayUri(uri);
         }
+        prevPlayingPlaylistID = currentPlayingPlaylistID;
       }
       mych.setText(getString(R.string.selected), 300);
     } else {

@@ -1114,25 +1114,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   private void onAuthenticationComplete(AuthenticationResponse authResponse, String clientID) {
-    // Once we have obtained an authorization token, we can proceed with creating a Player.
     Log.d("DEBUG", "Got authentication token");
     if (mPlayer == null) {
       Config playerConfig = new Config(this, authResponse.getAccessToken(), clientID);
-      // Since the Player is a static singleton owned by the Spotify class, we pass "this" as
-      // the second argument in order to refcount it properly. Note that the method
-      // Spotify.destroyPlayer() also takes an Object argument, which must be the same as the
-      // one passed in here. If you pass different instances to Spotify.getPlayer() and
-      // Spotify.destroyPlayer(), that will definitely result in resource leaks.
       mPlayer = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
         @Override
         public void onInitialized(SpotifyPlayer player) {
           Log.d("DEBUG", "-- Player initialized --");
           mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(MainActivity.this));
-          //mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(getActivity().getApplicationContext()));
           mPlayer.addNotificationCallback(MainActivity.this);
           mPlayer.addConnectionStateCallback(MainActivity.this);
-          // Trigger UI refresh
-          //updateView();
         }
 
         @Override
@@ -1176,7 +1167,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   String processRequestToken(int requestCode, int resultCode, Intent data) {
     if (requestCode == REQUEST_CODE) {
       final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-      //AsyncSpotifyApi.setAccessToken(response.getAccessToken());
+
       SpotifyConfigFragment.setAccessToken(response.getAccessToken());
 
       switch (response.getType()) {
@@ -1184,7 +1175,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           Log.d("DEBUG", "Spotify Token: " + response.getAccessToken());
 
           onAuthenticationComplete(response, getString(R.string.spotify_client_id));
-          //mAsyncSpotifyApi = new AsyncSpotifyApi(AsyncSpotifyApi.getAccessToken());
           SpotifyConfigFragment.setIsLoggedIn(true);
           break;
         case ERROR:
@@ -1196,7 +1186,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       }
     }
 
-    //return AsyncSpotifyApi.getAccessToken();
     return SpotifyConfigFragment.getAccessToken();
   }
 
@@ -1211,12 +1200,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     isAuthenticated = true;
     spotifyConfigFragment.getPlaylist();
-
-    //mAsyncSpotifyApi.execute("me");
-    //mAsyncSpotifyApi.execute("search_artist", "hoge");
-    //mAsyncSpotifyApi.execute("search_album", "hoge");
-    //mAsyncSpotifyApi.execute("user_playlist");
-    //mAsyncSpotifyApi.execute("featured_playlist");
   }
 
   @Override
@@ -1231,12 +1214,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void onPlaybackEvent(PlayerEvent playerEvent) {
-
   }
 
   @Override
   public void onPlaybackError(Error error) {
-
   }
 
   @Override

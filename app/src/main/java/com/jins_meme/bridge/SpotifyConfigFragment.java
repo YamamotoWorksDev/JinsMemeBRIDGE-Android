@@ -252,6 +252,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
               break;
             case 3:
               playlistAdapter[jj].addAll(savedAlbumNameList);
+              break;
           }
           spPlaylist[jj].setAdapter(playlistAdapter[jj]);
           //spPlaylist[jj].setSelection(0);
@@ -473,7 +474,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         if (spCategory[i] != null) {
           Log.d("DEBUG",
               "SPOTIFY:: onPostExecute -> " + spCategory[i].getSelectedItem().toString() + " " + string);
-          
+
           if (string.equals("user_playlist") && spCategory[i].getSelectedItem().toString()
               .contains("USER")) {
             Log.d("DEBUG", "SPOTIFY:: user");
@@ -545,6 +546,8 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
               ((MainActivity) getActivity())
                   .autoSaveValue("SPOTIFY_PL_URI" + (i + 1), getSelectedPlaylistUri(i));
             }
+          } else {
+            Log.d("DEBUG", "SPOTIFY_CONFIG:: activity null...");
           }
         }
         isUIInitialized = true;
