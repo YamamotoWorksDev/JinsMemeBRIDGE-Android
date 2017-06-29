@@ -32,7 +32,9 @@
     <activity
       android:name=".MainActivity"
       android:hardwareAccelerated="true"
-      android:screenOrientation="portrait">
+      android:screenOrientation="portrait"
+      android:immersive="true"
+      android:resizeableActivity="false">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
