@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   };
 
+  private boolean isForeground = true;
+
   private RootMenuFragment rootMenu;
   private SpotifyMenuFragment spotifyMenu;
   private HueMenuFragment hueMenu;
@@ -416,7 +418,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     registerReceiver(mNetworkStateReceiver, filter);
 
-    Log.d("MAIN", "onResume..." + scannedMemeList.size());
+    isForeground = true;
+
+    Log.d("DEBUG", "onResume..." + scannedMemeList.size());
   }
 
   @Override
@@ -424,6 +428,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     super.onPause();
 
     unregisterReceiver(mNetworkStateReceiver);
+
+    isForeground = false;
+
+    Log.d("DEBUG", "onPause..." + scannedMemeList.size());
   }
 
   @Override
@@ -802,7 +810,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //float pitch = memeRealtimeData.getPitch();
     float roll = memeRealtimeData.getRoll();
 
-    if (memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
+    if (isForeground && memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
       if (Math.abs(roll) > getRollThreshold()) {
         cancelFlag = true;
         //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
@@ -1224,5 +1232,4 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void onTemporaryError() {
     Log.d("DEBUG", "SPOTIFY:: Temporary error occurred.");
   }
-
 }
