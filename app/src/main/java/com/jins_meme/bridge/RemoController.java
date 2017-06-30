@@ -235,8 +235,8 @@ public class RemoController {
         }
         httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-        httpURLConnection.setConnectTimeout(5000);
-        httpURLConnection.setReadTimeout(5000);
+//        httpURLConnection.setConnectTimeout(5000);
+//        httpURLConnection.setReadTimeout(5000);
         try {
           httpURLConnection.connect();
           int responseCode = httpURLConnection.getResponseCode();
@@ -305,8 +305,8 @@ public class RemoController {
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-          httpURLConnection.setConnectTimeout(5000);
-          httpURLConnection.setReadTimeout(5000);
+//          httpURLConnection.setConnectTimeout(5000);
+//          httpURLConnection.setReadTimeout(5000);
           httpURLConnection.connect();
 
           isExist = true;
@@ -335,6 +335,7 @@ public class RemoController {
               break;
           }
         } catch (IOException e) {
+          e.printStackTrace();
           isError = true;
         } finally {
           httpURLConnection.disconnect();
@@ -416,8 +417,8 @@ public class RemoController {
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/json; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-          httpURLConnection.setConnectTimeout(5000);
-          httpURLConnection.setReadTimeout(5000);
+//          httpURLConnection.setConnectTimeout(5000);
+//          httpURLConnection.setReadTimeout(5000);
           httpURLConnection.setDoOutput(true);
           httpURLConnection.connect();
 
