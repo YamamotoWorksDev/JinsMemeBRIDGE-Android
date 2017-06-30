@@ -250,6 +250,8 @@ public class OSCConfigFragment extends ConfigFragmentBase {
     btnTest.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
+        layout.requestFocus();
+
         testOSC.setAddress("/meme/bridge", "/test");
         testOSC.setTypeTag("si");
         testOSC.addArgument(etRemoteIP.getText().toString());
