@@ -8,15 +8,25 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <Switch
+      android:id="@+id/scan"
+      android:layout_width="115dp"
+      android:layout_height="wrap_content"
+      android:checked="false"
+      android:splitTrack="false"
+      android:text="SCAN"
+      android:textOff="STOP"
+      android:textOn="START"
+      android:layout_toEndOf="@+id/space_left"
+      android:layout_below="@+id/textView3"/>
     <Spinner
-        android:id="@+id/meme_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="25dp"
-        android:layout_toEndOf="@+id/connect"
-        />
+      android:id="@+id/meme_list"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="2dp"
+      android:layout_marginRight="25dp"
+      android:layout_below="@+id/textView3"
+      android:layout_toEndOf="@+id/scan"/>
 
     <Switch
       android:id="@+id/connect"
@@ -29,26 +39,13 @@
       android:textOff="disconnect"
       android:textOn="connect"/>
 
-    <Switch
-        android:id="@+id/scan"
-        android:layout_width="115dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/meme_list"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="25dp"
-        android:checked="false"
-        android:splitTrack="false"
-        android:text="SCAN"
-        android:textOff="STOP"
-        android:textOn="START"/>
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SCANNED MEME LIST"
-        android:layout_above="@+id/scan"
-        android:layout_alignStart="@+id/meme_list"/>
+      android:layout_below="@+id/space_top"
+      android:layout_alignStart="@+id/meme_list"/>
     <TextView
       android:id="@+id/blink_title"
       android:layout_width="wrap_content"
@@ -66,7 +63,7 @@
       android:progress="40"
       android:layout_below="@+id/blink_title"
       android:layout_alignStart="@+id/blink_title"
-      android:layout_toStartOf="@+id/space"/>
+      android:layout_toStartOf="@+id/space_right"/>
     <TextView
       android:id="@+id/textView2"
       android:layout_width="wrap_content"
@@ -124,7 +121,7 @@
       android:id="@+id/textView6"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
+      android:layout_marginTop="8dp"
       android:layout_alignStart="@+id/app_id"
       android:layout_below="@+id/app_id"
       android:text="APP_SECRET"/>
@@ -177,5 +174,23 @@
       android:layout_below="@+id/roll_title"
       android:max="35"
       android:progress="5"/>
+    <Space
+      android:id="@+id/space_left"
+      android:layout_width="25dp"
+      android:layout_height="match_parent"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentTop="true"/>
+    <Space
+      android:layout_width="25dp"
+      android:layout_height="match_parent"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentTop="true"
+      android:id="@+id/space_right"/>
+    <Space
+      android:id="@+id/space_top"
+      android:layout_width="match_parent"
+      android:layout_height="20dp"
+      android:layout_alignParentStart="true"
+      android:layout_alignParentTop="true"/>
 
 </RelativeLayout>
