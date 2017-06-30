@@ -403,44 +403,40 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         case "user_playlist":
           Pager<PlaylistSimple> upPager = mSpotifyService.getMyPlaylists();
           Log.d("DEBUG", "ASYNC SPOTIFY:: My Playlist -> " + upPager.total);
-          for (int i = 0; i < upPager.total; i++) {
-            List<PlaylistSimple> list = upPager.items;
-            userPlaylistNameList.add(list.get(i).name);
-            userPlaylistUriList.add(list.get(i).uri);
-            Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + list.get(i).name + " " + list.get(i).uri);
+          for (PlaylistSimple playlistSimple : upPager.items) {
+            userPlaylistNameList.add(playlistSimple.name);
+            userPlaylistUriList.add(playlistSimple.uri);
+            Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + playlistSimple.name + " " + playlistSimple.uri);
           }
           break;
         case "featured_playlist":
           FeaturedPlaylists featuredPlaylists = mSpotifyService.getFeaturedPlaylists();
           Pager<PlaylistSimple> fpPager = featuredPlaylists.playlists;
           Log.d("DEBUG", "ASYNC SPOTIFY:: Featured Playlist -> " + fpPager.total);
-          for (int i = 0; i < fpPager.total; i++) {
-            List<PlaylistSimple> list = fpPager.items;
-            featuredPlaylistNameList.add(list.get(i).name);
-            featuredPlaylistUriList.add(list.get(i).uri);
-            Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + list.get(i).name + " " + list.get(i).uri);
+          for (PlaylistSimple playlistSimple : fpPager.items) {
+            featuredPlaylistNameList.add(playlistSimple.name);
+            featuredPlaylistUriList.add(playlistSimple.uri);
+            Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + playlistSimple.name + " " + playlistSimple.uri);
           }
           break;
         case "saved_albums":
           Pager<SavedAlbum> saPager = mSpotifyService.getMySavedAlbums();
           Log.d("DEBUG", "ASYNC SPOTIFY:: My Saved Albums -> " + saPager.total);
-          for (int i = 0; i < saPager.total; i++) {
-            List<SavedAlbum> list = saPager.items;
-            savedAlbumNameList.add(list.get(i).album.name);
-            savedAlbumUriList.add(list.get(i).album.uri);
+          for (SavedAlbum savedAlbum : saPager.items) {
+            savedAlbumNameList.add(savedAlbum.album.name);
+            savedAlbumUriList.add(savedAlbum.album.uri);
             Log.d("DEBUG",
-                "ASYNC SPOTIFY::   --> " + list.get(i).album.name + " " + list.get(i).album.uri);
+                "ASYNC SPOTIFY::   --> " + savedAlbum.album.name + " " + savedAlbum.album.uri);
           }
           break;
         case "followed_artist":
           ArtistsCursorPager acPager = mSpotifyService.getFollowedArtists();
           CursorPager<Artist> cPager = acPager.artists;
           Log.d("DEBUG", "ASYNC SPOTIFY:: My Followed Artist -> " + cPager.total);
-          for (int i = 0; i < cPager.total; i++) {
-            List<Artist> list = cPager.items;
-            followedArtistNameList.add(list.get(i).name);
-            followedArtistUriList.add(list.get(i).uri);
-            Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + list.get(i).name + " " + list.get(i).uri);
+          for (Artist artist : cPager.items) {
+            followedArtistNameList.add(artist.name);
+            followedArtistUriList.add(artist.uri);
+            Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + artist.name + " " + artist.uri);
           }
           break;
         case "search_artist":
