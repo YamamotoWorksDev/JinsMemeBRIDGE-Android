@@ -238,28 +238,18 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       public void onClick(View view) {
         if (state != State.CHECK_EXIST) {
           startScan();
+          layout.requestFocus();
         }
       }
     });
-//    swConnect = (Switch) view.findViewById(R.id.remo_connect);
-//    swConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//      @Override
-//      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//        if (state != State.CHECK_EXIST) {
-//          if (b) {
-//            startScan();
-//          } else {
-//            changeState(false);
-//          }
-//        }
-//      }
-//    });
+
 
     bSignal1 = (Button) view.findViewById(R.id.remo_signal_1_receive);
     bSignal1.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         receiveMessages(1);
+        layout.requestFocus();
       }
     });
     bSignal2 = (Button) view.findViewById(R.id.remo_signal_2_receive);
@@ -267,6 +257,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         receiveMessages(2);
+        layout.requestFocus();
       }
     });
     bSignal3 = (Button) view.findViewById(R.id.remo_signal_3_receive);
@@ -274,6 +265,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         receiveMessages(3);
+        layout.requestFocus();
       }
     });
     bSignal4 = (Button) view.findViewById(R.id.remo_signal_4_receive);
@@ -281,6 +273,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         receiveMessages(4);
+        layout.requestFocus();
       }
     });
     bSignal5 = (Button) view.findViewById(R.id.remo_signal_5_receive);
@@ -288,6 +281,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         receiveMessages(5);
+        layout.requestFocus();
       }
     });
 
@@ -296,6 +290,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_1");
+        layout.requestFocus();
       }
     });
     btSignal2 = (Button) view.findViewById(R.id.remo_signal_2_send);
@@ -303,6 +298,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_2");
+        layout.requestFocus();
       }
     });
     btSignal3 = (Button) view.findViewById(R.id.remo_signal_3_send);
@@ -310,6 +306,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_3");
+        layout.requestFocus();
       }
     });
     btSignal4 = (Button) view.findViewById(R.id.remo_signal_4_send);
@@ -317,6 +314,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_4");
+        layout.requestFocus();
       }
     });
     btSignal5 = (Button) view.findViewById(R.id.remo_signal_5_send);
@@ -324,6 +322,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_5");
+        layout.requestFocus();
       }
     });
 

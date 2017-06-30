@@ -63,7 +63,7 @@
     android:layout_below="@+id/textView1"
     android:ems="8"
     android:inputType="text"
-    android:maxLength="24"
+    android:maxLength="12"
     android:text=""/>
 
   <Button
@@ -102,7 +102,7 @@
     android:layout_below="@+id/textView2"
     android:ems="8"
     android:inputType="text"
-    android:maxLength="24"
+    android:maxLength="12"
     android:text=""/>
   <Button
     android:id="@+id/remo_signal_2_send"
@@ -139,7 +139,7 @@
     android:layout_below="@+id/textView3"
     android:ems="8"
     android:inputType="text"
-    android:maxLength="24"
+    android:maxLength="12"
     android:text=""/>
   <Button
     android:id="@+id/remo_signal_3_send"
@@ -176,7 +176,7 @@
     android:layout_below="@+id/textView4"
     android:ems="8"
     android:inputType="text"
-    android:maxLength="24"
+    android:maxLength="12"
     android:text=""/>
   <Button
     android:id="@+id/remo_signal_4_send"
@@ -213,7 +213,7 @@
     android:layout_below="@+id/textView5"
     android:ems="8"
     android:inputType="text"
-    android:maxLength="24"
+    android:maxLength="12"
     android:text=""/>
 
   <Button
