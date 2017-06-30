@@ -20,13 +20,18 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -38,6 +43,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
 
+  private RelativeLayout layout;
   private Switch swScan;
   private Switch swConnect;
   private Spinner spMemeList;
@@ -85,6 +91,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
     handler = null;
 
+    layout = null;
     swScan = null;
     swConnect = null;
     spMemeList = null;
@@ -111,6 +118,18 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     super.onViewCreated(view, savedInstanceState);
 
     Log.d("BASIC", "onViewCreated");
+
+    layout = (RelativeLayout) view.findViewById(R.id.basic_layout);
+    layout.setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View view, MotionEvent motionEvent) {
+        Log.d("DEBUG", "view touch.");
+
+        layout.requestFocus();
+
+        return false;
+      }
+    });
 
     swScan = (Switch) view.findViewById(R.id.scan);
     swScan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -151,6 +170,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
           ((MainActivity) getActivity()).stopScan();
         }
+        layout.requestFocus();
       }
     });
 
@@ -177,6 +197,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
           adapter.clear();
           swConnect.setEnabled(false);
         }
+        layout.requestFocus();
       }
     });
     if (((MainActivity) getActivity()).isMemeConnected()
@@ -201,6 +222,15 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
     etAppId = (EditText) view.findViewById(R.id.app_id);
     etAppId.setEnabled(false);
+    etAppId.setOnFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View view, boolean b) {
+        if (!b) {
+          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+          imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+      }
+    });
     etAppId.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -226,6 +256,15 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
     etAppSecret = (EditText) view.findViewById(R.id.app_secret);
     etAppSecret.setEnabled(false);
+    etAppSecret.setOnFocusChangeListener(new OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View view, boolean b) {
+        if (!b) {
+          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+          imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+      }
+    });
     etAppSecret.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -267,7 +306,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {
-
+        layout.requestFocus();
       }
 
       @Override
@@ -290,7 +329,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {
-
+        layout.requestFocus();
       }
 
       @Override
@@ -312,7 +351,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {
-
+        layout.requestFocus();
       }
 
       @Override
@@ -339,7 +378,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {
-
+        layout.requestFocus();
       }
 
       @Override
