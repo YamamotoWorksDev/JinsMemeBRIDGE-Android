@@ -305,61 +305,63 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
   }
 
   void getPlaylist() {
-    mAsyncSpotifyApi = new AsyncSpotifyApi();
-    isExecuteFinish = true;
-    mAsyncSpotifyApi.execute("user_playlist");
+    if (isLoggedIn) {
+      mAsyncSpotifyApi = new AsyncSpotifyApi();
+      isExecuteFinish = true;
+      mAsyncSpotifyApi.execute("user_playlist");
 
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        while (isExecuteFinish) {
-          try {
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-        }
-
-        mAsyncSpotifyApi = null;
-        mAsyncSpotifyApi = new AsyncSpotifyApi();
-        mAsyncSpotifyApi.execute("featured_playlist");
-
-        new Thread(new Runnable() {
-          @Override
-          public void run() {
-            while (isExecuteFinish) {
-              try {
-                Thread.sleep(10);
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              }
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          while (isExecuteFinish) {
+            try {
+              Thread.sleep(10);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
             }
-
-            mAsyncSpotifyApi = null;
-            mAsyncSpotifyApi = new AsyncSpotifyApi();
-            mAsyncSpotifyApi.execute("followed_artist");
-
-            new Thread(new Runnable() {
-              @Override
-              public void run() {
-                while (isExecuteFinish) {
-                  try {
-                    Thread.sleep(10);
-                  } catch (InterruptedException e) {
-                    e.printStackTrace();
-                  }
-                }
-
-                mAsyncSpotifyApi = null;
-                mAsyncSpotifyApi = new AsyncSpotifyApi();
-                mAsyncSpotifyApi.execute("saved_albums");
-              }
-            }).start();
           }
-        }).start();
 
-      }
-    }).start();
+          mAsyncSpotifyApi = null;
+          mAsyncSpotifyApi = new AsyncSpotifyApi();
+          mAsyncSpotifyApi.execute("featured_playlist");
+
+          new Thread(new Runnable() {
+            @Override
+            public void run() {
+              while (isExecuteFinish) {
+                try {
+                  Thread.sleep(10);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+              }
+
+              mAsyncSpotifyApi = null;
+              mAsyncSpotifyApi = new AsyncSpotifyApi();
+              mAsyncSpotifyApi.execute("followed_artist");
+
+              new Thread(new Runnable() {
+                @Override
+                public void run() {
+                  while (isExecuteFinish) {
+                    try {
+                      Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                      e.printStackTrace();
+                    }
+                  }
+
+                  mAsyncSpotifyApi = null;
+                  mAsyncSpotifyApi = new AsyncSpotifyApi();
+                  mAsyncSpotifyApi.execute("saved_albums");
+                }
+              }).start();
+            }
+          }).start();
+
+        }
+      }).start();
+    }
   }
 
   private class AsyncSpotifyApi extends AsyncTask<String, String, String> {
@@ -384,6 +386,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       Log.d("DEBUG", "ASYNC SPOTIFY:: " + strings.length + " " + strings[0]);
 
       isExecuteFinish = true;
+
+      if (!isLoggedIn) {
+        return null;
+      }
 
       //ArrayList[] arrayLists = new ArrayList[2];
       //arrayLists[0] = new ArrayList<>();
@@ -469,6 +475,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       super.onPostExecute(string);
 
       Log.d("DEBUG", "SPOTIFY:: onPostExecute " + string);
+
+      if (string == null) {
+        return;
+      }
 
       for (int i = 0; i < 4; i++) {
         if (spCategory[i] != null) {
