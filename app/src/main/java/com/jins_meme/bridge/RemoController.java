@@ -32,7 +32,7 @@ public class RemoController {
   public String TAG = "RemoController";
   public static final String IRKIT_SERVICE_TYPE = "_irkit._tcp.local.";
   public static final String REMO_SERVICE_TYPE = "_remo._tcp.local.";
-  public static final String DEBUG_SERVICE_TYPE = "_ipp._tcp.local.";
+
 
   private Context context;
   private JmDNS jmdns;
@@ -115,7 +115,7 @@ public class RemoController {
           bonjourServiceListener = new BonjourServiceListener();
           jmdns.addServiceListener(IRKIT_SERVICE_TYPE, bonjourServiceListener);
           jmdns.addServiceListener(REMO_SERVICE_TYPE, bonjourServiceListener);
-          jmdns.addServiceListener(DEBUG_SERVICE_TYPE, bonjourServiceListener);
+
         }
         isProcessingBonjour = false;
 
@@ -137,7 +137,7 @@ public class RemoController {
           if (bonjourServiceListener != null) {
             jmdns.removeServiceListener(IRKIT_SERVICE_TYPE, bonjourServiceListener);
             jmdns.removeServiceListener(REMO_SERVICE_TYPE, bonjourServiceListener);
-            jmdns.removeServiceListener(DEBUG_SERVICE_TYPE, bonjourServiceListener);
+           
             bonjourServiceListener = null;
           }
           try {
@@ -235,8 +235,8 @@ public class RemoController {
         }
         httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-//        httpURLConnection.setConnectTimeout(5000);
-//        httpURLConnection.setReadTimeout(5000);
+        httpURLConnection.setConnectTimeout(3000);
+        httpURLConnection.setReadTimeout(3000);
         try {
           httpURLConnection.connect();
           int responseCode = httpURLConnection.getResponseCode();
