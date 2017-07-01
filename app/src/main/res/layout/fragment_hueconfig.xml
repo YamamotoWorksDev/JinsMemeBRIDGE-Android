@@ -17,7 +17,7 @@
     android:layout_alignParentTop="true"
     android:text="CONNECT"/>
   <TextView
-    android:id="@+id/textView16"
+    android:id="@+id/selected_light_name"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp"
@@ -29,8 +29,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignBottom="@+id/space2"
-    android:layout_alignEnd="@+id/textView16"
-    android:layout_alignStart="@+id/textView16"
+    android:layout_alignEnd="@+id/selected_light_name"
+    android:layout_alignStart="@+id/selected_light_name"
     android:layout_toStartOf="@+id/hue_r_bar"
     android:text="R"
     android:textAlignment="textEnd"/>
@@ -38,8 +38,8 @@
     android:id="@+id/hue_r_bar"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/textView16"
-    android:layout_toEndOf="@+id/textView16"
+    android:layout_below="@+id/selected_light_name"
+    android:layout_toEndOf="@+id/selected_light_name"
     android:layout_toStartOf="@+id/space2"
     android:max="255"/>
   <Space
@@ -47,7 +47,7 @@
     android:layout_width="25dp"
     android:layout_height="20dp"
     android:layout_alignParentEnd="true"
-    android:layout_below="@+id/textView16"/>
+    android:layout_below="@+id/selected_light_name"/>
   <SeekBar
     android:id="@+id/hue_g_bar"
     android:layout_width="wrap_content"
