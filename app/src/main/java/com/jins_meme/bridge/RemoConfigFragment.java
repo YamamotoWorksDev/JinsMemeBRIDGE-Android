@@ -469,6 +469,16 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       tvName.setText(name);
       tvAddress.setText(address);
       remoController.checkExist(address);
+
+      // test
+      final String addr = address;
+      Handler handler = new Handler();
+      handler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          remoController.checkExist(addr);
+        }
+      }, 1000);
     } else {
       setExist(false);
       tvName.setText("---");
