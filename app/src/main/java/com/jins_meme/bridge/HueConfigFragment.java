@@ -411,7 +411,7 @@ public class HueConfigFragment extends ConfigFragmentBase {
           e.printStackTrace();
         }
 
-        Log.d("HUE", "ConnectCheckThread = " + isConnectionCheck);
+        //debug Log.d("HUE", "ConnectCheckThread = " + isConnectionCheck);
       }
 
       Log.d("HUE", "ConnectCheckThread finish...");
