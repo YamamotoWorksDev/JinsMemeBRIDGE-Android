@@ -9,11 +9,11 @@
 
 package com.jins_meme.bridge;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -34,26 +34,24 @@ import com.philips.lighting.model.PHLightState;
 import java.util.List;
 import java.util.Map;
 
-public class HueController {
+public class HueController implements PHSDKListener {
 
   private static final String HUE_SHARED_PREFERENCES_STORE = "HueSharedPrefs";
   private static final String LAST_CONNECTED_USERNAME = "LastConnectedUsername";
   private static final String LAST_CONNECTED_IP = "LastConnectedIP";
 
   private Handler handler;
+  private FragmentManager fragmentManager;
   private static PHHueSDK hueSDK;
-  private List<PHLight> allLights;// = phBridge.getResourceCache().getAllLights();
-  private static PHLight currentLight;// = allLights.get(0);
-  private PHLightState currentLightState;// = light.getLastKnownLightState();
-  //private HueSharedPreferences huePrefs;
-  //private AccesPointListAdapter adapter;
+  private List<PHLight> allLights;
+  //private static PHLight currentLight;// = allLights.get(0);
+  //private PHLightState currentLightState;// = light.getLastKnownLightState();
 
   private SharedPreferences sharedPreferences;
   private SharedPreferences.Editor sharedPreferencesEditor;
 
-  private ProgressDialog progressDialog;
+  ProgressDialogFragment hueConnectProgressDialog;
   private AlertDialog.Builder alert;
-  private AlertDialog alertDialog;
 
   private boolean isAuthRequired = true;
   static int connectionState = 0;
@@ -62,139 +60,132 @@ public class HueController {
     return connectionState;
   }
 
-  private PHSDKListener phListener = new PHSDKListener() {
-    @Override
-    public void onCacheUpdated(List<Integer> list, PHBridge phBridge) {
-      Log.d("HUE", "Cache Updated...");
+  @Override
+  public void onCacheUpdated(List<Integer> list, PHBridge phBridge) {
+    Log.d("HUE", "Cache Updated...");
+  }
+
+  @Override
+  public void onBridgeConnected(PHBridge phBridge, String s) {
+    Log.d("HUE", "Bridge Connected...");
+
+    hueSDK.setSelectedBridge(phBridge);
+    hueSDK.enableHeartbeat(phBridge, PHHueSDK.HB_INTERVAL);
+    hueSDK.getLastHeartbeat()
+        .put(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress(),
+            System.currentTimeMillis());
+
+    setLastConnectIp(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress());
+    setUsername(s);
+
+    allLights = phBridge.getResourceCache().getAllLights();
+
+    for (PHLight light : allLights) {
+      PHLightState lightState = light.getLastKnownLightState();
+
+      Log.d("HUE",
+          "id = " + light.getIdentifier() + " " + light.getModelNumber() + " " + light.getUniqueId()
+              + " " + lightState.getBrightness() + " " + lightState.getSaturation());
+      Log.d("HUE", "type = " + light.getLightType().name() + " " + light.getLightType().ordinal());
     }
 
-    @Override
-    public void onBridgeConnected(PHBridge phBridge, String s) {
-      Log.d("HUE", "Bridge Connected...");
+    closeProgressDialog();
 
-      hueSDK.setSelectedBridge(phBridge);
-      hueSDK.enableHeartbeat(phBridge, PHHueSDK.HB_INTERVAL);
-      hueSDK.getLastHeartbeat()
-          .put(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress(),
-              System.currentTimeMillis());
+    turnOn();
+  }
 
-      setLastConnectIp(phBridge.getResourceCache().getBridgeConfiguration().getIpAddress());
-      setUsername(s);
+  @Override
+  public void onAuthenticationRequired(PHAccessPoint phAccessPoint) {
+    Log.d("HUE", "Authentication Required...");
 
-      allLights = phBridge.getResourceCache().getAllLights();
+    hueSDK.startPushlinkAuthentication(phAccessPoint);
 
-      for (PHLight light : allLights) {
-        PHLightState lightState = light.getLastKnownLightState();
+    closeProgressDialog();
 
-        Log.d("HUE", "id = " + light.getIdentifier() + " " + light.getModelNumber() + " " + light.getUniqueId() + " " + lightState.getBrightness() + " " + lightState.getSaturation());
-        Log.d("HUE", "type = " + light.getLightType().name() + " " + light.getLightType().ordinal());
-      }
+    if (isAuthRequired) {
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          hueConnectProgressDialog = ProgressDialogFragment.newInstance("hue_connect");
+          //hueConnectProgressDialog.setDialogListener(this);
+          hueConnectProgressDialog.setCancelable(false);
+          hueConnectProgressDialog.show(fragmentManager, "dialog");
+        }
+      });
 
-      if (progressDialog.isShowing()) {
-        progressDialog.dismiss();
-      }
-
-      turnOn();
+      isAuthRequired = false;
     }
+  }
 
-    @Override
-    public void onAuthenticationRequired(PHAccessPoint phAccessPoint) {
-      Log.d("HUE", "Authentication Required...");
+  @Override
+  public void onAccessPointsFound(List<PHAccessPoint> list) {
+    Log.d("HUE", "Access Point Found... " + list.size());
 
-      hueSDK.startPushlinkAuthentication(phAccessPoint);
+    isAuthRequired = true;
+    connectionState = 2;
 
-      if (isAuthRequired) {
-        handler.post(new Runnable() {
-          @Override
-          public void run() {
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Found Hue Bridge.\nPlease push the LINK Button...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-          }
-        });
-
-        isAuthRequired = false;
-      }
+    if (list.size() > 0) {
+      hueSDK.getAccessPointsFound().clear();
+      hueSDK.getAccessPointsFound().addAll(list);
+      hueSDK.connect(list.get(0));
     }
+  }
 
-    @Override
-    public void onAccessPointsFound(List<PHAccessPoint> list) {
-      Log.d("HUE", "Access Point Found... " + list.size());
+  @Override
+  public void onError(int i, String s) {
+    Log.d("HUE", "Error Called : " + i + ":" + s);
 
-      isAuthRequired = true;
-      connectionState = 2;
+    if (i == PHHueError.NO_CONNECTION) {
 
-      progressDialog.dismiss();
+      Log.d("HUE", "No Connection...");
+    } else if (i == PHHueError.AUTHENTICATION_FAILED
+        || i == PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
+      Log.d("HUE", "Authentication failed... / Pushlink Authentication failed...");
 
-      if (list.size() > 0) {
-        hueSDK.getAccessPointsFound().clear();
-        hueSDK.getAccessPointsFound().addAll(list);
+      connectionState = -1;
 
-        /*
-        runOnUiThread(new Runnable() {
-          @Override
-          public void run() {
-            adapter.updateData(hueSDK.getAccessPointsFound());
-          }
-        });
-        */
+      hueConnectProgressDialog.dismiss();
+    } else if (i == PHHueError.BRIDGE_NOT_RESPONDING) {
+      Log.d("HUE", "Bridge Not Responding..");
 
-        hueSDK.connect(list.get(0));
-      }
+      connectionState = -2;
+
+      setLastConnectIp("");
+
+    } else if (i == PHMessageType.BRIDGE_NOT_FOUND) {
+      Log.d("HUE", "Bridge Not Found...");
+
+      connectionState = -2;
+
+      //if(!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
+      //  phHueSDK = PHHueSDK.getInstance();
+      //  PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
+      //  sm.search(false, false, true);
+      //  lastSearchWasIPScan=true;
+      //}
     }
+  }
 
-    @Override
-    public void onError(int i, String s) {
-      Log.d("HUE", "Error Called : " + i + ":" + s);
+  @Override
+  public void onConnectionResumed(PHBridge phBridge) {
 
-      if (i == PHHueError.NO_CONNECTION) {
+  }
 
-        Log.d("HUE", "No Connection...");
-      } else if (i == PHHueError.AUTHENTICATION_FAILED
-          || i == PHMessageType.PUSHLINK_AUTHENTICATION_FAILED) {
-        Log.d("HUE", "Authentication failed... / Pushlink Authentication failed...");
+  @Override
+  public void onConnectionLost(PHAccessPoint phAccessPoint) {
+    Log.d("HUE", "onConnectionLost : " + phAccessPoint.getIpAddress());
 
-        connectionState = -1;
-
-        progressDialog.dismiss();
-      } else if (i == PHHueError.BRIDGE_NOT_RESPONDING) {
-        Log.d("HUE", "Bridge Not Responding..");
-
-        setLastConnectIp("");
-      } else if (i == PHMessageType.BRIDGE_NOT_FOUND) {
-        Log.d("HUE", "Bridge Not Found...");
-
-        //if(!lastSearchWasIPScan) {  // Perform an IP Scan (backup mechanism) if UPNP and Portal Search fails.
-        //  phHueSDK = PHHueSDK.getInstance();
-        //  PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
-        //  sm.search(false, false, true);
-        //  lastSearchWasIPScan=true;
-        //}
-      }
+    if (!hueSDK.getDisconnectedAccessPoint().contains(phAccessPoint)) {
+      hueSDK.getDisconnectedAccessPoint().add(phAccessPoint);
     }
+  }
 
-    @Override
-    public void onConnectionResumed(PHBridge phBridge) {
-
+  @Override
+  public void onParsingErrors(List<PHHueParsingError> list) {
+    for (PHHueParsingError parsingError : list) {
+      Log.d("HUE", "ParsingError : " + parsingError.getMessage());
     }
-
-    @Override
-    public void onConnectionLost(PHAccessPoint phAccessPoint) {
-      Log.d("HUE", "onConnectionLost : " + phAccessPoint.getIpAddress());
-
-      if (!hueSDK.getDisconnectedAccessPoint().contains(phAccessPoint)) {
-        hueSDK.getDisconnectedAccessPoint().add(phAccessPoint);
-      }
-    }
-
-    @Override
-    public void onParsingErrors(List<PHHueParsingError> list) {
-      for (PHHueParsingError parsingError : list) {
-        Log.d("HUE", "ParsingError : " + parsingError.getMessage());
-      }
-    }
-  };
+  }
 
   private PHLightListener lightListener = new PHLightListener() {
     @Override
@@ -215,6 +206,8 @@ public class HueController {
     @Override
     public void onSuccess() {
       Log.d("HUE", "Success...");
+
+      connectionState = 4;
     }
 
     @Override
@@ -228,13 +221,14 @@ public class HueController {
     }
   };
 
-  HueController(Context context) {
+  HueController(Context context, FragmentManager fragmentManager) {
     handler = new Handler();
 
     sharedPreferences = context.getSharedPreferences(HUE_SHARED_PREFERENCES_STORE, 0);
     sharedPreferencesEditor = sharedPreferences.edit();
 
-    progressDialog = new ProgressDialog(context);
+    this.fragmentManager = fragmentManager;
+
     alert = new AlertDialog.Builder(context);
 
     hueSDK = PHHueSDK.create();
@@ -242,7 +236,7 @@ public class HueController {
     hueSDK.setAppName("JINS MEME BRIDGE");
     hueSDK.setDeviceName(Build.MODEL);
 
-    hueSDK.getNotificationManager().registerSDKListener(phListener);
+    hueSDK.getNotificationManager().registerSDKListener(this);
 
     if (getLastConnectedIp() != null && !getLastConnectedIp().equals("")) {
       Log.d("HUE", "connect... " + getLastConnectedIp() + " / " + getUsername());
@@ -260,11 +254,28 @@ public class HueController {
         for (PHLight light : allLights) {
           PHLightState lightState = light.getLastKnownLightState();
 
-          Log.d("DEBUG", "HUE:: id = " + light.getIdentifier() + " " + light.getModelNumber() + " " + light.getUniqueId() + " " + lightState.getBrightness() + " " + lightState.getSaturation());
-          Log.d("DEBUG", "HUE:: type = " + light.getLightType().name() + " " + light.getLightType().ordinal());
+          Log.d("DEBUG",
+              "HUE:: id = " + light.getIdentifier() + " " + light.getModelNumber() + " " + light
+                  .getUniqueId() + " " + lightState.getBrightness() + " " + lightState
+                  .getSaturation());
+          Log.d("DEBUG",
+              "HUE:: type = " + light.getLightType().name() + " " + light.getLightType().ordinal());
         }
       }
     }
+  }
+
+  void closeProgressDialog() {
+    if (hueConnectProgressDialog != null && hueConnectProgressDialog.isShowing()) {
+      hueConnectProgressDialog.dismiss();
+    }
+  }
+
+  void showConnectionAlertDialog(FragmentManager fragmentManager) {
+    AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("hue");
+    alertDialogFragment.setCancelable(false);
+    //alertDialogFragment.setDialogListener(this);
+    alertDialogFragment.show(fragmentManager, "dialog");
   }
 
   void connect() {
@@ -285,10 +296,10 @@ public class HueController {
 
       connectionState = 1;
 
-      progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-      progressDialog.setMessage("Searching Hue Bridge...");
-      progressDialog.setCancelable(false);
-      progressDialog.show();
+      hueConnectProgressDialog = ProgressDialogFragment.newInstance("hue_search");
+      //hueConnectProgressDialog.setDialogListener(this);
+      hueConnectProgressDialog.setCancelable(false);
+      hueConnectProgressDialog.show(fragmentManager, "dialog");
 
       PHBridgeSearchManager searchManager = (PHBridgeSearchManager) hueSDK
           .getSDKService(PHHueSDK.SEARCH_BRIDGE);
@@ -301,6 +312,7 @@ public class HueController {
 
     PHBridge bridge = hueSDK.getSelectedBridge();
     if (bridge != null) {
+      hueSDK.disableAllHeartbeat();
       hueSDK.disconnect(bridge);
     }
   }

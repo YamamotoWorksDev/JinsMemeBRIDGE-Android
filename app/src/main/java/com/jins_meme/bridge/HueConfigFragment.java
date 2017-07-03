@@ -75,6 +75,8 @@ public class HueConfigFragment extends ConfigFragmentBase {
   public void onDetach() {
     super.onDetach();
 
+    isConnectionCheck = false;
+
     handler = null;
 
     if (hueController != null) {
@@ -112,7 +114,11 @@ public class HueConfigFragment extends ConfigFragmentBase {
 
     handler = new Handler();
 
-    hueController = new HueController(getContext());
+    hueController = new HueController(getContext(), getFragmentManager());
+
+    isConnectionCheck = true;
+    ConnectCheckThread cct = new ConnectCheckThread();
+    cct.start();
 
     tvSelectedLightPresetName = (TextView) view.findViewById(R.id.selected_light_name);
 
@@ -124,14 +130,18 @@ public class HueConfigFragment extends ConfigFragmentBase {
 
         if (b) {
           if (HueController.getConnectionState() != 4) {
+            /*
             isConnectionCheck = true;
             ConnectCheckThread cct = new ConnectCheckThread();
             cct.start();
+            */
 
             hueController.connect();
+            //connect();
           }
         } else {
           hueController.disconnect();
+          //disconnect();
         }
       }
     });
@@ -333,12 +343,14 @@ public class HueConfigFragment extends ConfigFragmentBase {
     });
 
     bTest = (Button) view.findViewById(R.id.hue_test);
+    bTest.setEnabled(false);
     bTest.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         Log.d("HUE", "change color...");
 
         hueController.changeColor(sbRed.getProgress(), sbGreen.getProgress(), sbBlue.getProgress(), sbBrightness.getProgress(), sbTransactionTime.getProgress());
+        //changeColor(sbRed.getProgress(), sbGreen.getProgress(), sbBlue.getProgress(), sbBrightness.getProgress(), sbTransactionTime.getProgress());
       }
     });
 
@@ -365,17 +377,32 @@ public class HueConfigFragment extends ConfigFragmentBase {
     @Override
     public void run() {
       while (isConnectionCheck) {
-        if (HueController.getConnectionState() == -1) {
+        if (HueController.getConnectionState() == -1 || HueController.getConnectionState() == -2) {
+          isConnectionCheck = false;
+
+          hueController.closeProgressDialog();
+          if (swConnect.isChecked()) {
+            hueController.showConnectionAlertDialog(getFragmentManager());
+
+            handler.post(new Runnable() {
+              @Override
+              public void run() {
+                swConnect.setChecked(false);
+              }
+            });
+          }
+        } else if (HueController.getConnectionState() == 4) {
           isConnectionCheck = false;
 
           handler.post(new Runnable() {
             @Override
             public void run() {
-              swConnect.setChecked(false);
+              if (!swConnect.isChecked()) {
+                swConnect.setChecked(true);
+              }
+              bTest.setEnabled(true);
             }
           });
-        } else if (HueController.getConnectionState() == 4) {
-          isConnectionCheck = false;
         }
 
         try {
@@ -383,6 +410,8 @@ public class HueConfigFragment extends ConfigFragmentBase {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
+
+        Log.d("HUE", "ConnectCheckThread = " + isConnectionCheck);
       }
 
       Log.d("HUE", "ConnectCheckThread finish...");

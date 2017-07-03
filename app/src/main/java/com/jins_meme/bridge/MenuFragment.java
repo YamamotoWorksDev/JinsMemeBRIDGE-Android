@@ -117,7 +117,7 @@ public class MenuFragment extends Fragment implements IResultListener, MemeRealt
     mView.setAdapter(myAdapter);
 
     // Initialize Hue
-    hueController = new HueController(getContext());
+    hueController = new HueController(getContext(), getFragmentManager());
 
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());

@@ -53,7 +53,7 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     super.onViewCreated(view, savedInstanceState);
 
-    mHue = new HueController(getContext());
+    mHue = new HueController(getContext(), getFragmentManager());
   }
 
   public void destroy() {
