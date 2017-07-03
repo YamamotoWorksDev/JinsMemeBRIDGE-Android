@@ -48,7 +48,7 @@
   <string name="request_permission">Camera permission is required.</string>
 
   <string name="hue_error_title">NOT FOUND / AUTHENTICATED</string>
-  <string name="hue_error_message">Please check the Hue Bridge condition.</string>
+  <string name="hue_error_message">Please check the Hue Bridge condition or Wi-Fi connection.</string>
 
   <string name="selected">selected</string>
   <string name="pause">pause</string>
