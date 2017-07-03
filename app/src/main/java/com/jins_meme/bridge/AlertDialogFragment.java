@@ -11,6 +11,7 @@ package com.jins_meme.bridge;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -126,6 +127,15 @@ public class AlertDialogFragment extends DialogFragment {
             Log.d("DEBUG", "Close Alert Dialog...");
 
             mListener.doPositiveClick("midi");
+          }
+        });
+        break;
+      case "hue":
+        alert.setTitle(getString(R.string.hue_error_title));
+        alert.setMessage(getString(R.string.hue_error_message));
+        alert.setNegativeButton(getString(R.string.ok), new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
           }
         });
         break;

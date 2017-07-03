@@ -53,6 +53,16 @@ public class ProgressDialogFragment extends DialogFragment {
               }
             });
         break;
+      case "hue_search":
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setMessage("Searching Hue Bridge...");
+        progress.setCancelable(false);
+        break;
+      case "hue_connect":
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setMessage("Found Hue Bridge.\nPlease push the LINK Button...");
+        progress.setCancelable(false);
+        break;
     }
 
     return progress;
@@ -69,6 +79,10 @@ public class ProgressDialogFragment extends DialogFragment {
 
   public void setDialogListener(DialogListener listener) {
     mListener = listener;
+  }
+
+  public boolean isShowing() {
+    return progress.isShowing();
   }
 
   public void removeDialogListener() {
