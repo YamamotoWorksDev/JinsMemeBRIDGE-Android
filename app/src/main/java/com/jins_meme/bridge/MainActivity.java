@@ -104,10 +104,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MemeRealtimeDataFilter mMemeDataFilter = new MemeRealtimeDataFilter();
 
   private static final int TIMER_ID_UI_DISABLE = 0;
-  private static final int TIMER_ID_UI_CANCELE = 1;
+  private static final int TIMER_ID_UI_CANCEL = 1;
   private static final int TIMER_ID_UI_PAUSE = 2;
   private SimpleTimer interactionDisableTimer = new SimpleTimer(TIMER_ID_UI_DISABLE);
-  private SimpleTimer canceleTimer = new SimpleTimer(TIMER_ID_UI_CANCELE);
+  private SimpleTimer cancelTimer = new SimpleTimer(TIMER_ID_UI_CANCEL);
   private SimpleTimer pauseTimer = new SimpleTimer(TIMER_ID_UI_PAUSE);
   private boolean memeInteractionFlagPrepareCancel = false;
   private float PAUSE_WAIT_TIME = 2.5f;
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     cameraMenu = new CameraMenuFragment();
 
     interactionDisableTimer.setListener(this);
-    canceleTimer.setListener(this);
+    cancelTimer.setListener(this);
     pauseTimer.setListener(this);
 
     basicConfigFragment = new BasicConfigFragment();
@@ -822,7 +822,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       if (Math.abs(roll) > getRollThreshold()) {
         if(!memeInteractionFlagPrepareCancel) {
           if(!isUIPaused) {
-            canceleTimer.startTimer(CANCEL_WAIT_TIME, true);
+            cancelTimer.startTimer(CANCEL_WAIT_TIME, true);
           }
           pauseTimer.startTimer(PAUSE_WAIT_TIME, true);
         }
@@ -831,7 +831,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         final Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
         if (!isUIPaused) {
           pauseTimer.abortTimer();
-          canceleTimer.abortTimer();
+          cancelTimer.abortTimer();
           if(!isUIDisabled) {
             mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
                 getLeftRightThreshold());
@@ -877,7 +877,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         isUIDisabled = true;
         Log.d("=========PAUSE=========", "disable interaction");
         break;
-      case TIMER_ID_UI_CANCELE:
+      case TIMER_ID_UI_CANCEL:
         Log.d("=========PAUSE=========", "start cancel timer");
         break;
       case TIMER_ID_UI_PAUSE:
@@ -894,7 +894,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           Log.d("=========PAUSE=========", "enable interaction");
         }
         break;
-      case TIMER_ID_UI_CANCELE:
+      case TIMER_ID_UI_CANCEL:
         if(!completed) {
           handler.post(new Runnable() {
             @Override
