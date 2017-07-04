@@ -927,6 +927,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private boolean isUIDisabled = false;
   private void setUIPaused(final boolean pause) {
     isUIPaused = pause;
+    Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
+    if(active instanceof MenuFragmentBase) {
+      ((MenuFragmentBase) active).setTouchEnabled(!isUIPaused);
+    }
     handler.post(new Runnable() {
       @Override
       public void run() {

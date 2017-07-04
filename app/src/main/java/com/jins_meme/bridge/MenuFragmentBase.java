@@ -36,6 +36,9 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
     ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.actionbar_title));
   }
 
+  public void setTouchEnabled(boolean enabled) {
+    mView.setTouchEnabled(enabled);
+  }
 
   protected abstract Adapter createAdapter();
 

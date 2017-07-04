@@ -13,6 +13,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.Stack;
@@ -20,12 +21,17 @@ import java.util.Stack;
 public class BridgeUIView extends RecyclerView {
 
   private CardLayoutManager mLayoutManager;
+  private ScrollController mScrollController;
+  private TouchListener mTouchListener;
 
   public BridgeUIView(Context context) {
     super(context);
     mLayoutManager = new CardLayoutManager(getContext());
     setLayoutManager(mLayoutManager);
     addItemDecoration(new CardDecoration());
+    mScrollController = new ScrollController();
+    addOnItemTouchListener(mScrollController);
+    mTouchListener = new TouchListener();
   }
 
   @Override
@@ -38,6 +44,11 @@ public class BridgeUIView extends RecyclerView {
         near - near % adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
   }
 
+  @Override
+  public void setAdapter(RecyclerView.Adapter adapter) {
+    super.setAdapter(adapter);
+    ((Adapter)adapter).setTouchEnabler(mTouchListener);
+  }
   public void move(int amount) {
     int toIndex = getCurrentCenteredItemPosition() + amount;
     if (0 <= toIndex && toIndex < getAdapter().getItemCount()) {
@@ -91,6 +102,11 @@ public class BridgeUIView extends RecyclerView {
     return null;
   }
 
+  public void setTouchEnabled(boolean enabled) {
+    mTouchListener.setEnabled(enabled);
+    mScrollController.setEnabled(enabled);
+  }
+
   public interface IResultListener {
 
     void onEnterCard(int id);
@@ -110,6 +126,7 @@ public class BridgeUIView extends RecyclerView {
 
     private Stack<Integer> mHistory = new Stack<>();
     private IResultListener mListener;
+    private TouchListener mTouchEnabler;
 
     Adapter(IResultListener listener) {
       mListener = listener;
@@ -195,6 +212,7 @@ public class BridgeUIView extends RecyclerView {
           }
         }
       });
+      viewHolder.itemView.setOnTouchListener(mTouchEnabler);
     }
 
     private int calcCardPosition(int position) {
@@ -203,6 +221,10 @@ public class BridgeUIView extends RecyclerView {
 
     private int getSelectedCardId() {
       return mHistory.empty() ? NO_ID : mHistory.peek();
+    }
+
+    public void setTouchEnabler(TouchListener enabler) {
+      mTouchEnabler = enabler;
     }
   }
 
@@ -261,4 +283,40 @@ public class BridgeUIView extends RecyclerView {
       return getHeight();
     }
   }
+
+  private class TouchListener implements View.OnTouchListener {
+
+    private boolean isEnabled = true;
+    public void setEnabled(boolean enabled) {
+      isEnabled = enabled;
+    }
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+      return !isEnabled;
+    }
+  }
+  private class ScrollController implements RecyclerView.OnItemTouchListener {
+
+    private boolean isEnabled = true;
+
+    public ScrollController() {
+    }
+    public void setEnabled(boolean enabled) {
+      isEnabled = enabled;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+      return !isEnabled;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+    }
+  }
+
 }
