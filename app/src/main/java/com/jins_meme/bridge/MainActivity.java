@@ -896,17 +896,28 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
       case TIMER_ID_UI_CANCELE:
         if(!completed) {
-          if (cancel(false)) {
-            interactionDisableTimer.startTimer(CANCEL_REFRACTORY_TIME, true);
-            Log.d("=========PAUSE=========", "cancel");
-          }
-          Log.d("=========PAUSE=========", "stop cancel timer");
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              if (cancel(false)) {
+                interactionDisableTimer.startTimer(CANCEL_REFRACTORY_TIME, true);
+                Log.d("=========PAUSE=========", "cancel");
+              }
+            }
+          });
         }
+        Log.d("=========PAUSE=========", "stop cancel timer");
         break;
       case TIMER_ID_UI_PAUSE:
         if(completed) {
-          setUIPaused(!isUIPaused);
-          Log.d("=========PAUSE=========", "setUIPaused:".concat(isUIPaused ?"true":"false"));
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              setUIPaused(!isUIPaused);
+              Log.d("=========PAUSE=========",
+                  "setUIPaused:".concat(isUIPaused ? "true" : "false"));
+            }
+          });
         }
         Log.d("=========PAUSE=========", "stop pause timer");
         break;
@@ -965,7 +976,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if (!processed) {
       if (allow_finish || hasBackStackEntryCount()) {
-        getSupportFragmentManager().popBackStack();
+        super.onBackPressed();
         processed = true;
       }
     }
