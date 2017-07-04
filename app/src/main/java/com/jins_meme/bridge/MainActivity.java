@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
     RemoMenuFragment.OnFragmentInteractionListener, DialogListener,
     SpotifyPlayer.NotificationCallback,
-    ConnectionStateCallback {
+    ConnectionStateCallback, SimpleTimer.OnResultListener {
 
   private static final int REQUEST_CODE = 1337;
 
@@ -102,12 +102,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
   private MemeRealtimeDataFilter mMemeDataFilter = new MemeRealtimeDataFilter();
-  private static final int PAUSE_MAX = 50;
-  private static final int REFRACTORY_PERIOD_MAX = 20;
-  private boolean cancelFlag = false;
-  private int pauseCount = 0;
-  private boolean pauseFlag = false;
-  private int refractoryPeriod = 0;
+
+  private static final int TIMER_ID_UI_DISABLE = 0;
+  private static final int TIMER_ID_UI_CANCELE = 1;
+  private static final int TIMER_ID_UI_PAUSE = 2;
+  private SimpleTimer interactionDisableTimer = new SimpleTimer(TIMER_ID_UI_DISABLE);
+  private SimpleTimer canceleTimer = new SimpleTimer(TIMER_ID_UI_CANCELE);
+  private SimpleTimer pauseTimer = new SimpleTimer(TIMER_ID_UI_PAUSE);
+  private boolean memeInteractionFlagPrepareCancel = false;
+  private float PAUSE_WAIT_TIME = 2.5f;
+  private float CANCEL_WAIT_TIME = 2.5f;
+  private float CANCEL_REFRACTORY_TIME = 1.f;
 
   private static final int BATTERY_CHECK_INTERVAL = 2000;
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
@@ -209,10 +214,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     remoMenu = new RemoMenuFragment();
     cameraMenu = new CameraMenuFragment();
 
-    cancelFlag = false;
-    pauseCount = 0;
-    pauseFlag = false;
-    refractoryPeriod = 0;
+    interactionDisableTimer.setListener(this);
+    canceleTimer.setListener(this);
+    pauseTimer.setListener(this);
 
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -794,6 +798,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       batteryCheckCount = 0;
     }
 
+    if(isUIDisabled) {
+      return;
+    }
+
     int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
     int eyeBlinkSpeed = memeRealtimeData.getBlinkSpeed();
 
@@ -812,88 +820,110 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if (isForeground && memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
       if (Math.abs(roll) > getRollThreshold()) {
-        cancelFlag = true;
-        //Log.d("DEBUG", "menu = " + getResources().getString(currentEnteredMenu) + " / item = " + getResources().getString(currentSelectedItem));
-
-        //if (++pauseCount >= PAUSE_MAX) {
-        if (pauseCount < PAUSE_MAX) {
-          pauseCount++;
-
-          if (pauseCount == PAUSE_MAX) {
-
-            //pauseFlag = true;
-            pauseFlag = !pauseFlag;
-
-            if (pauseFlag) {
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  findViewById(R.id.pauseView).setVisibility(View.VISIBLE);
-                }
-              });
-              Log.d("=========PAUSE=========", "pause");
-            } else {
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  findViewById(R.id.pauseView).setVisibility(View.GONE);
-                }
-              });
-              Log.d("=========PAUSE=========", "pause clear");
-            }
+        if(!memeInteractionFlagPrepareCancel) {
+          if(!isUIPaused) {
+            canceleTimer.startTimer(CANCEL_WAIT_TIME, true);
           }
+          pauseTimer.startTimer(PAUSE_WAIT_TIME, true);
         }
+        memeInteractionFlagPrepareCancel = true;
       } else if (Math.abs(roll) <= getRollThreshold()) {
         final Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
-        if (!pauseFlag) {
-          if (cancelFlag && pauseCount < PAUSE_MAX) {
-            if (cancel(false)) {
-              refractoryPeriod = REFRACTORY_PERIOD_MAX;
-              Log.d("=========PAUSE=========", "cancel");
-            }
-          } else {
-            if (refractoryPeriod > 0) {
-              refractoryPeriod--;
-            } else {
-              mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
-                  getLeftRightThreshold());
-              if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
-                final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
-                if (mMemeDataFilter.isBlink()) {
-                  Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
-                  handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                      accepter.onMemeBlinked();
-                    }
-                  });
-                } else if (mMemeDataFilter.isLeft()) {
-                  Log.d("EYE", "left = " + eyeLeft);
-                  handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                      accepter.onMemeMoveLeft();
-                    }
-                  });
-                } else if (mMemeDataFilter.isRight()) {
-                  Log.d("EYE", "right = " + eyeRight);
-                  handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                      accepter.onMemeMoveRight();
-                    }
-                  });
-                }
+        if (!isUIPaused) {
+          pauseTimer.abortTimer();
+          canceleTimer.abortTimer();
+          if(!isUIDisabled) {
+            mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
+                getLeftRightThreshold());
+            if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
+              final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
+              if (mMemeDataFilter.isBlink()) {
+                Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    accepter.onMemeBlinked();
+                  }
+                });
+              } else if (mMemeDataFilter.isLeft()) {
+                Log.d("EYE", "left = " + eyeLeft);
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    accepter.onMemeMoveLeft();
+                  }
+                });
+              } else if (mMemeDataFilter.isRight()) {
+                Log.d("EYE", "right = " + eyeRight);
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    accepter.onMemeMoveRight();
+                  }
+                });
               }
             }
           }
         }
-
-        cancelFlag = false;
-        pauseCount = 0;
+        memeInteractionFlagPrepareCancel = false;
       }
     }
   }
+
+  @Override
+  public void onTimerStarted(int id) {
+    switch(id) {
+      case TIMER_ID_UI_DISABLE:
+        isUIDisabled = true;
+        Log.d("=========PAUSE=========", "disable interaction");
+        break;
+      case TIMER_ID_UI_CANCELE:
+        Log.d("=========PAUSE=========", "start cancel timer");
+        break;
+      case TIMER_ID_UI_PAUSE:
+        Log.d("=========PAUSE=========", "start pause timer");
+        break;
+    }
+  }
+  @Override
+  public void onTimerFinished(int id, boolean completed) {
+    switch(id) {
+      case TIMER_ID_UI_DISABLE:
+        if(completed) {
+          isUIDisabled = false;
+          Log.d("=========PAUSE=========", "enable interaction");
+        }
+        break;
+      case TIMER_ID_UI_CANCELE:
+        if(!completed) {
+          if (cancel(false)) {
+            interactionDisableTimer.startTimer(CANCEL_REFRACTORY_TIME, true);
+            Log.d("=========PAUSE=========", "cancel");
+          }
+          Log.d("=========PAUSE=========", "stop cancel timer");
+        }
+        break;
+      case TIMER_ID_UI_PAUSE:
+        if(completed) {
+          setUIPaused(!isUIPaused);
+          Log.d("=========PAUSE=========", "setUIPaused:".concat(isUIPaused ?"true":"false"));
+        }
+        Log.d("=========PAUSE=========", "stop pause timer");
+        break;
+    }
+  }
+  private boolean isUIPaused = false;
+  private boolean isUIDisabled = false;
+  private void setUIPaused(final boolean pause) {
+    isUIPaused = pause;
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        findViewById(R.id.pauseView).setVisibility(pause?View.VISIBLE:View.GONE);
+      }
+    });
+  }
+
 
   public List<String> getScannedMemeList() {
     return scannedMemeList;
@@ -937,7 +967,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       if (allow_finish || hasBackStackEntryCount()) {
         getSupportFragmentManager().popBackStack();
         processed = true;
-        cancelFlag = false;
       }
     }
     return processed;
