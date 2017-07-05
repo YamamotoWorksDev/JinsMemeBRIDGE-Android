@@ -525,6 +525,8 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
       for (int i = 0; i < 4; i++) {
         if (this.isCancelled()) {
+          Log.d("DEBUG", "SPOTIFY:: canceled... "+ i);
+
           return;
         }
 
@@ -580,6 +582,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       }
 
       if (string.equals("saved_albums")) {
+        int loadedCount = 0;
         for (int i = 0; i < 4; i++) {
           if (this.isCancelled()) {
             return;
@@ -599,6 +602,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
                 if (selectedName.equals(playlistAdapter[i].getItem(j))) {
                   Log.d("DEBUG", "SPOTIFY:: setSelection " + j);
                   spPlaylist[i].setSelection(j);
+                  loadedCount++;
                   break;
                 }
               }
@@ -615,7 +619,9 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             Log.d("DEBUG", "SPOTIFY_CONFIG:: activity null...");
           }
         }
-        isUIInitialized = true;
+        if (loadedCount == 3) {
+          isUIInitialized = true;
+        }
       }
 
       isExecuteFinish = false;
