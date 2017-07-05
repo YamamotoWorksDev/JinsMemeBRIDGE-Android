@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     HueMenuFragment.OnFragmentInteractionListener, VDJMenuFragment.OnFragmentInteractionListener,
     RemoMenuFragment.OnFragmentInteractionListener, DialogListener,
     SpotifyPlayer.NotificationCallback,
-    ConnectionStateCallback, SimpleTimer.OnResultListener {
+    ConnectionStateCallback, SimpleTimer.OnResultListener,
+    PauseActionDetector.OnPauseActionListener {
 
   private static final int REQUEST_CODE = 1337;
 
@@ -217,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     interactionDisableTimer.setListener(this);
     cancelTimer.setListener(this);
     pauseTimer.setListener(this);
+    ((PauseActionDetector)findViewById(R.id.intercepter)).setListaner(this);
 
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -875,13 +877,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     switch(id) {
       case TIMER_ID_UI_DISABLE:
         isUIDisabled = true;
-        Log.d("=========PAUSE=========", "disable interaction");
         break;
       case TIMER_ID_UI_CANCEL:
-        Log.d("=========PAUSE=========", "start cancel timer");
         break;
       case TIMER_ID_UI_PAUSE:
-        Log.d("=========PAUSE=========", "start pause timer");
         break;
     }
   }
@@ -891,7 +890,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       case TIMER_ID_UI_DISABLE:
         if(completed) {
           isUIDisabled = false;
-          Log.d("=========PAUSE=========", "enable interaction");
         }
         break;
       case TIMER_ID_UI_CANCEL:
@@ -901,12 +899,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
             public void run() {
               if (cancel(false)) {
                 interactionDisableTimer.startTimer(CANCEL_REFRACTORY_TIME, true);
-                Log.d("=========PAUSE=========", "cancel");
               }
             }
           });
         }
-        Log.d("=========PAUSE=========", "stop cancel timer");
         break;
       case TIMER_ID_UI_PAUSE:
         if(completed) {
@@ -914,12 +910,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
             @Override
             public void run() {
               setUIPaused(!isUIPaused);
-              Log.d("=========PAUSE=========",
-                  "setUIPaused:".concat(isUIPaused ? "true" : "false"));
             }
           });
         }
-        Log.d("=========PAUSE=========", "stop pause timer");
         break;
     }
   }
@@ -939,6 +932,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
   }
 
+  @Override
+  public void onPauseAction() {
+    setUIPaused(!isUIPaused);
+  }
 
   public List<String> getScannedMemeList() {
     return scannedMemeList;
