@@ -39,6 +39,8 @@ import kaaes.spotify.webapi.android.models.SavedAlbum;
 
 public class SpotifyConfigFragment extends ConfigFragmentBase {
 
+  private ProgressDialogFragment loadingDialog;
+
   private AsyncSpotifyApi mAsyncSpotifyApi;
 
   private static boolean isLoggedIn = false;
@@ -231,6 +233,9 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           break;
       }
 
+      spCategory[j].setEnabled(false);
+      spPlaylist[j].setEnabled(false);
+
       final int jj = j;
 
       spCategory[j]
@@ -309,6 +314,11 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
   void getPlaylist() {
     if (isLoggedIn) {
+      loadingDialog = ProgressDialogFragment.newInstance("spotify_loading");
+      //loadingDialog.setDialogListener(this);
+      loadingDialog.setCancelable(false);
+      loadingDialog.show(getFragmentManager(), "dialog");
+
       mAsyncSpotifyApi = new AsyncSpotifyApi();
       isExecuteFinish = true;
       mAsyncSpotifyApi.execute("user_playlist");
@@ -621,6 +631,13 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         }
         if (loadedCount == 3) {
           isUIInitialized = true;
+
+          for (int i = 0; i < 4; i++) {
+            spCategory[i].setEnabled(true);
+            spPlaylist[i].setEnabled(true);
+          }
+
+          loadingDialog.dismiss();
         }
       }
 

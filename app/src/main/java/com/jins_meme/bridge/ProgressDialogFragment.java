@@ -68,6 +68,11 @@ public class ProgressDialogFragment extends DialogFragment {
         progress.setMessage(getString(R.string.hue_push_link_button));
         progress.setCancelable(false);
         break;
+      case "spotify_loading":
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setMessage(getString(R.string.spotify_loading));
+        progress.setCancelable(false);
+        break;
     }
 
     return progress;
