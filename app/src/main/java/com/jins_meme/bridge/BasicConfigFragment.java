@@ -110,7 +110,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   @Override
   public void onResume() {
     super.onResume();
-    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.basic_conf_title));
+    ((MainActivity) getActivity())
+        .updateActionBar(getResources().getString(R.string.basic_conf_title));
   }
 
   @Override
@@ -226,7 +227,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       @Override
       public void onFocusChange(View view, boolean b) {
         if (!b) {
-          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+          InputMethodManager imm = (InputMethodManager) getActivity()
+              .getSystemService(Context.INPUT_METHOD_SERVICE);
           imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
       }
@@ -260,7 +262,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       @Override
       public void onFocusChange(View view, boolean b) {
         if (!b) {
-          InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+          InputMethodManager imm = (InputMethodManager) getActivity()
+              .getSystemService(Context.INPUT_METHOD_SERVICE);
           imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
       }
@@ -293,7 +296,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
     tvBlinkTitle = (TextView) view.findViewById(R.id.blink_title);
     tvBlinkTitle.setText(
-        String.format("BLINK (%d)", ((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90)));
+        getString(R.string.meme_config_blink,
+            ((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90)));
 
     sbBlinkThreshold = (SeekBar) view.findViewById(R.id.blink_threshold);
     sbBlinkThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90) - 50);
@@ -301,7 +305,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       @Override
       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         int value = seekBar.getProgress() + 50;
-        tvBlinkTitle.setText(String.format("BLINK (%d)", value));
+        tvBlinkTitle.setText(getString(R.string.meme_config_blink, value));
       }
 
       @Override
@@ -315,7 +319,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         ((MainActivity) getActivity()).autoSaveValue("BLINK_TH", value);
         Log.d("BASIC", "blink th. = " + value);
         Toast.makeText(getActivity(), "BLINK THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
-        tvBlinkTitle.setText(String.format("BLINK (%d)", value));
+        tvBlinkTitle.setText(getString(R.string.meme_config_blink, value));
       }
     });
 
@@ -364,8 +368,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     });
 
     tvRollTitle = (TextView) view.findViewById(R.id.roll_title);
-    tvRollTitle.setText(
-        String.format("CANCEL/PAUSE ANGLE(ROLL: %d)", ((MainActivity) getActivity()).getSavedValue("ROLL_TH", 15)));
+    tvRollTitle.setText(getString(R.string.meme_config_angle,
+        ((MainActivity) getActivity()).getSavedValue("ROLL_TH", 15)));
 
     sbRollThreshold = (SeekBar) view.findViewById(R.id.roll_threshold);
     sbRollThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("ROLL_TH", 15) - 10);
@@ -373,7 +377,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       @Override
       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         int value = seekBar.getProgress() + 10;
-        tvRollTitle.setText(String.format("CANCEL/PAUSE ANGLE(ROLL: %d)", value));
+        tvRollTitle.setText(getString(R.string.meme_config_angle, value));
       }
 
       @Override
@@ -387,7 +391,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         ((MainActivity) getActivity()).autoSaveValue("ROLL_TH", value);
         Log.d("BASIC", "roll th. = " + value);
         Toast.makeText(getActivity(), "ROLL THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
-        tvRollTitle.setText(String.format("CANCEL/PAUSE ANGLE(ROLL: %d)", value));
+        tvRollTitle.setText(getString(R.string.meme_config_angle, value));
       }
     });
 

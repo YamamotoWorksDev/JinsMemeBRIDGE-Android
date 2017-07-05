@@ -1,3 +1,12 @@
+/**
+ * AlertDialogFragment.java
+ *
+ * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.app.Dialog;
@@ -9,10 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-
-/**
- * Created by shun on 2017/06/26.
- */
 
 public class ProgressDialogFragment extends DialogFragment {
 
@@ -39,11 +44,11 @@ public class ProgressDialogFragment extends DialogFragment {
     switch (type) {
       case "meme_connect":
         progress.setMax(100);
-        progress.setMessage("Scannig...");
-        progress.setTitle("SCAN & CONNECT");
+        progress.setMessage(getString(R.string.meme_scanning));
+        progress.setTitle(getString(R.string.meme_scan_connect_title));
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setCancelable(false);
-        progress.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+        progress.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel),
             new OnClickListener() {
               @Override
               public void onClick(DialogInterface dialogInterface, int i) {
@@ -55,12 +60,12 @@ public class ProgressDialogFragment extends DialogFragment {
         break;
       case "hue_search":
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progress.setMessage("Searching Hue Bridge...");
+        progress.setMessage(getString(R.string.hue_searching));
         progress.setCancelable(false);
         break;
       case "hue_connect":
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progress.setMessage("Found Hue Bridge.\nPlease push the LINK Button...");
+        progress.setMessage(getString(R.string.hue_push_link_button));
         progress.setCancelable(false);
         break;
     }
