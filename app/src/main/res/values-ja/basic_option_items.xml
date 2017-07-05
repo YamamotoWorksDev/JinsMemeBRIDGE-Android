@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="battery">バッテリー残量</string>
+    <string name="basic_conf">基本設定</string>
+    <string name="basic_conf_title">基本設定</string>
+    <string name="osc_conf">OSC</string>
+    <string name="osc_conf_title">設定：OSC</string>
+    <string name="midi_conf">MIDI</string>
+    <string name="midi_conf_title">設定：MIDI</string>
+    <string name="hue_conf">Philips Hue</string>
+    <string name="hue_conf_title">設定：Philips Hue</string>
+    <string name="spotify_conf">SPOTIFY</string>
+    <string name="spotify_conf_title">設定：SPOTIFY</string>
+    <string name="remo_conf">IRKIT/NATURE REMO</string>
+    <string name="remo_conf_title">設定：IRKIT/NATURE REMO</string>
+    <string name="about">このアプリについて</string>
+    <string name="about_title">このアプリについて</string>
+    <string name="exit_app">アプリを終了する</string>
+</resources>

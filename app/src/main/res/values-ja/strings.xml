@@ -22,43 +22,43 @@
   <string name="disable">DISABLE</string>
   <string name="no_change">NO CHANGE</string>
 
-  <string name="meme_scanning">START SCANNING&#8230;</string>
-  <string name="meme_found">FOUND: %1$s</string>
-  <string name="meme_connect">CONNECT TO: %1$s</string>
-  <string name="meme_connected">JINS MEME CONNECTED</string>
-  <string name="meme_disconnected">JINS MEME DISCONNECTED</string>
+  <string name="meme_scanning">周囲のMEMEを探しています・・・</string>
+  <string name="meme_found">MEMEを発見: %1$s</string>
+  <string name="meme_connect">MEMEに接続試行中: %1$s</string>
+  <string name="meme_connected">MEMEに接続しました</string>
+  <string name="meme_disconnected">MEMEとの接続を解除しました</string>
 
-  <string name="not_found_meme_title">NOT FOUND MEME</string>
-  <string name="not_found_meme_explain">Please go to the BASIC SETTING and rescan.</string>
-  <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
-  <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
-  <string name="not_connected_network_title">NO NETWORK CONNECTION</string>
-  <string name="not_connected_network_explain">Please check your network connection. Some functions needs Wi-Fi or Internet connections.</string>
+  <string name="not_found_meme_title">MEMEが見つかりませんでした</string>
+  <string name="not_found_meme_explain">基本設定からスキャンし直して下さい。</string>
+  <string name="incorrect_app_id_secret_title">不正なAPP_IDもしくはAPP_SECRET</string>
+  <string name="incorrect_app_id_secret_explain">入力したAPP_ID、APP_SECRETが正しいか確認して下さい。</string>
+  <string name="not_connected_network_title">ネットワーク接続エラー</string>
+  <string name="not_connected_network_explain">Internet/Wi-Fiの接続状況を確認して下さい。いくつかの機能では必須となります。</string>
 
-  <string name="airplane_mode_on_title">AIRPLANE MODE IS ENABLED</string>
-  <string name="airplane_mode_on_explain">Please disable the airplane mode.</string>
+  <string name="airplane_mode_on_title">機内モード・オン</string>
+  <string name="airplane_mode_on_explain">機内モードをオフにして下さい。</string>
 
-  <string name="unlock_auth_title">UNLOCK</string>
-  <string name="unlock_auth_explain">Please unlock to edit the APP_ID and APP_SECRET.</string>
+  <string name="unlock_auth_title">ロック解除</string>
+  <string name="unlock_auth_explain">APP_IDとAPP_SECRETを編集するにはロックを解除して下さい。</string>
 
-  <string name="not_selected_midi_title">NOT SELECTED MIDI</string>
-  <string name="not_selected_midi_explain">Please change your USB Connection Type to MIDI and restart.</string>
+  <string name="not_selected_midi_title">MIDI未選択</string>
+  <string name="not_selected_midi_explain">一旦アプリを終了し、「USBの使用」をMIDIに変更して下さい。</string>
 
   <string name="camera_error">This device doesn\'t support Camera2 API.</string>
   <string name="request_permission">Camera permission is required.</string>
 
-  <string name="hue_error_title">NOT FOUND / AUTHENTICATED</string>
-  <string name="hue_error_message">Please check the Hue Bridge condition or Wi-Fi connection.</string>
+  <string name="hue_error_title">Hue Bridge接続・認証エラー</string>
+  <string name="hue_error_message">Hue Bridgeが正しく動いているか、端末がWi-Fiに接続している確認して下さい。</string>
 
   <string name="selected">selected</string>
   <string name="pause">pause</string>
   <string name="count">%1$d</string>
 
   <string-array name="spotify_category">
-    <item>USER PLAYLIST</item>
-    <item>FEATURED PLAYLIST</item>
-    <item>FOLLOWED ARTIST</item>
-    <item>SAVED ALBUM</item>
+    <item>ユーザープレイリスト</item>
+    <item>Spotifyプレイリスト</item>
+    <item>フォロー中のアーティスト</item>
+    <item>保存したアルバム</item>
   </string-array>
 
   <string-array name="hue_preset">
