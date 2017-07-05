@@ -89,7 +89,7 @@ public class RemoController {
 
   private void startBonjourDiscovery() {
     if (isProcessingBonjour) {
-      Log.e(TAG, "isProcessingBonjour is true");
+      Log.e(TAG, "startBonjourDiscovery: isProcessingBonjour is true");
       return;
     }
     isProcessingBonjour = true;
@@ -125,7 +125,7 @@ public class RemoController {
   }
   private void stopBonjourDiscovery() {
     if (isProcessingBonjour) {
-      Log.e(TAG, "isProcessingBonjour is true");
+      Log.e(TAG, "stopBonjourDiscovery: isProcessingBonjour is true");
       return;
     }
     isProcessingBonjour = true;
@@ -137,7 +137,7 @@ public class RemoController {
           if (bonjourServiceListener != null) {
             jmdns.removeServiceListener(IRKIT_SERVICE_TYPE, bonjourServiceListener);
             jmdns.removeServiceListener(REMO_SERVICE_TYPE, bonjourServiceListener);
-           
+
             bonjourServiceListener = null;
           }
           try {
@@ -235,8 +235,8 @@ public class RemoController {
         }
         httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-        httpURLConnection.setConnectTimeout(3000);
-        httpURLConnection.setReadTimeout(3000);
+        httpURLConnection.setConnectTimeout(10000);
+//        httpURLConnection.setReadTimeout(1000);
         try {
           httpURLConnection.connect();
           int responseCode = httpURLConnection.getResponseCode();
@@ -305,7 +305,7 @@ public class RemoController {
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-//          httpURLConnection.setConnectTimeout(5000);
+          httpURLConnection.setConnectTimeout(5000);
 //          httpURLConnection.setReadTimeout(5000);
           httpURLConnection.connect();
 
@@ -417,7 +417,7 @@ public class RemoController {
         try {
           httpURLConnection.addRequestProperty("Content-Type", "application/json; charset=UTF-8");
           httpURLConnection.setRequestProperty("X-Requested-With", "JinsMemeBRIDGE");
-//          httpURLConnection.setConnectTimeout(5000);
+          httpURLConnection.setConnectTimeout(5000);
 //          httpURLConnection.setReadTimeout(5000);
           httpURLConnection.setDoOutput(true);
           httpURLConnection.connect();
