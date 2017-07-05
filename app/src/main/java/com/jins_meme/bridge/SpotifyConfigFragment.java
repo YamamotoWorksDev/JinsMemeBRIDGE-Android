@@ -29,7 +29,6 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.AlbumsPager;
 import kaaes.spotify.webapi.android.models.Artist;
-import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.ArtistsCursorPager;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.CursorPager;
@@ -285,24 +284,23 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
-
+          Log.d("DEBUG", "SPOTIFY:: nothing selected");
         }
       });
     }
   }
 
   private String getSelectedPlaylistUri(int listIndex) {
-    switch (spCategory[listIndex].getSelectedItem().toString()) {
-      case "USER PLAYLIST":
-        return userPlaylistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
-      case "FEATURED PLAYLIST":
-        return featuredPlaylistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
-      case "FOLLOWED ARTIST":
-        return followedArtistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
-      case "SAVED ALBUM":
-        return savedAlbumUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
-      default:
-        return null;
+    if (spCategory[listIndex].getSelectedItem().toString().equals(getString(R.string.spotify_cat_user))) {
+      return userPlaylistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
+    } else if (spCategory[listIndex].getSelectedItem().toString().equals(getString(R.string.spotify_cat_featured))) {
+      return featuredPlaylistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
+    } else if (spCategory[listIndex].getSelectedItem().toString().equals(getString(R.string.spotify_cat_followed))) {
+      return followedArtistUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
+    } else if (spCategory[listIndex].getSelectedItem().toString().equals(getString(R.string.spotify_cat_saved))) {
+      return savedAlbumUriList.get(spPlaylist[listIndex].getSelectedItemPosition());
+    } else {
+      return null;
     }
   }
 
@@ -484,7 +482,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
               "SPOTIFY:: onPostExecute -> " + spCategory[i].getSelectedItem().toString() + " " + string);
 
           if (string.equals("user_playlist") && spCategory[i].getSelectedItem().toString()
-              .contains("USER")) {
+              .contains(getString(R.string.spotify_cat_user))) {
             Log.d("DEBUG", "SPOTIFY:: user");
 
             playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
@@ -495,7 +493,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             spPlaylist[i].setAdapter(playlistAdapter[i]);
           } else if (string.equals("featured_playlist") && spCategory[i].getSelectedItem()
               .toString()
-              .contains("FEATURED")) {
+              .contains(getString(R.string.spotify_cat_featured))) {
             Log.d("DEBUG", "SPOTIFY:: featured");
 
             playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
@@ -506,7 +504,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             spPlaylist[i].setAdapter(playlistAdapter[i]);
           } else if (string.equals("followed_artist") && spCategory[i].getSelectedItem()
               .toString()
-              .contains("FOLLOWED")) {
+              .contains(getString(R.string.spotify_cat_followed))) {
             Log.d("DEBUG", "SPOTIFY:: followed_artist " + followedArtistNameList.size());
 
             playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
@@ -517,7 +515,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             spPlaylist[i].setAdapter(playlistAdapter[i]);
           } else if (string.equals("saved_albums") && spCategory[i].getSelectedItem()
               .toString()
-              .contains("SAVED")) {
+              .contains(getString(R.string.spotify_cat_saved))) {
             Log.d("DEBUG", "SPOTIFY:: saved_albums " + savedAlbumNameList.size());
 
             playlistAdapter[i] = new ArrayAdapter<String>(getContext(),
@@ -539,8 +537,12 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             Log.d("DEBUG", "SPOTIFY:: load last playlist -> " + selectedName);
 
             if (selectedName != null) {
+              //debug Log.d("DEBUG", "SPOTIFY::  count " + playlistAdapter[i].getCount());
               for (int j = 0; j < playlistAdapter[i].getCount(); j++) {
+                //debug Log.d("DEBUG", "SPOTIFY::    -> " + playlistAdapter[i].getItem(j));
+
                 if (selectedName.equals(playlistAdapter[i].getItem(j))) {
+                  Log.d("DEBUG", "SPOTIFY:: setSelection " + j);
                   spPlaylist[i].setSelection(j);
                   break;
                 }

@@ -61,6 +61,11 @@
   <string name="meme_config_blink">BLINK (%1$d)</string>
   <string name="meme_config_angle">CANCEL/PAUSE ANGLE(ROLL: %1$d)</string>
 
+  <string name="spotify_cat_user">USER PLAYLIST</string>
+  <string name="spotify_cat_featured">FEATURED PLAYLIST</string>
+  <string name="spotify_cat_followed">FOLLOWED ARTIST</string>
+  <string name="spotify_cat_saved">SAVED ALBUM</string>
+
   <string-array name="spotify_category">
     <item>USER PLAYLIST</item>
     <item>FEATURED PLAYLIST</item>
