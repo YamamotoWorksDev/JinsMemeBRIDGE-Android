@@ -181,13 +181,15 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
     swUse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_USE", b);
+        
         if (b) {
           Log.d("SPOTIFY", "Use Spotify.");
+
+          ((MainActivity) getActivity()).authenticate();
         } else {
           Log.d("SPOTIFY", "Not Use Spotify.");
         }
-
-        ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_USE", b);
       }
     });
 
