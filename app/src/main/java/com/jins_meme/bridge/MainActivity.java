@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     interactionDisableTimer.setListener(this);
     cancelTimer.setListener(this);
     pauseTimer.setListener(this);
-    ((PauseActionDetector)findViewById(R.id.intercepter)).setListaner(this);
+    ((PauseActionDetector)findViewById(R.id.interceptor)).setListaner(this);
 
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();

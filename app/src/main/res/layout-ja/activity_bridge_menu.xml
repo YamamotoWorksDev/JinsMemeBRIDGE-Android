@@ -1,22 +1,26 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="#1976D2"
-             android:keepScreenOn="true"
-             tools:context="com.jins_meme.bridge.BridgeMenu">
-  <FrameLayout
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="#1976D2"
+  android:keepScreenOn="true"
+  tools:context="com.jins_meme.bridge.BridgeMenu">
+  <com.jins_meme.bridge.PauseActionDetector
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container"/>
-  <TextView
-    android:id="@+id/pauseView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_centerInParent="true"
-    android:background="#60000000"
-    android:gravity="center"
-    android:text=""
-    android:visibility="gone"/>
-
+    android:id="@+id/interceptor">
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/container"/>
+    <TextView
+      android:id="@+id/pauseView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_centerInParent="true"
+      android:background="#60000000"
+      android:gravity="center"
+      android:text=""
+      android:visibility="gone"/>
+  </com.jins_meme.bridge.PauseActionDetector>
 </FrameLayout>
