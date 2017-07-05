@@ -964,6 +964,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void onBackPressed() {
     Log.d("MAIN", "press back!");
+    setUIPaused(false);
     cancel(false);
   }
 
