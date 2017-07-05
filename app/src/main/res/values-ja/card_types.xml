@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <integer name="CARD_TYPE_ONLY_TITLE">0</integer>
+  <integer name="CARD_TYPE_LOGO_TITLE">1</integer>
+  <integer name="CARD_TYPE_ONLY_LOGO">2</integer>
+</resources>
