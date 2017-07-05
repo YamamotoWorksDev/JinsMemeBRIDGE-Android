@@ -34,7 +34,7 @@ public class PauseActionDetector extends FrameLayout implements SimpleTimer.OnRe
     this.listener = listener;
   }
   @Override
-  public boolean onInterceptTouchEvent(MotionEvent event) {
+  public boolean dispatchTouchEvent(MotionEvent event) {
     switch(event.getAction()) {
       case ACTION_DOWN:
         longPressTimer.startTimer(longPressDuration, true);
@@ -53,7 +53,11 @@ public class PauseActionDetector extends FrameLayout implements SimpleTimer.OnRe
         longPressTimer.abortTimer();
         break;
     }
-    return interceptTouchEvent;
+    return super.dispatchTouchEvent(event);
+  }
+  @Override
+  public boolean onInterceptTouchEvent(MotionEvent event) {
+    return interceptTouchEvent || super.onInterceptTouchEvent(event);
   }
   @Override
   public void onTimerStarted(int id) {
