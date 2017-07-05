@@ -124,7 +124,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
     isExecuteFinish = false;
     isUIInitialized = false;
 
-    mAsyncSpotifyApi = null;
+    if (mAsyncSpotifyApi != null) {
+      mAsyncSpotifyApi.cancel(true);
+      mAsyncSpotifyApi = null;
+    }
 
     swUse = null;
     swShuffle = null;
@@ -391,6 +394,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         return null;
       }
 
+      if (this.isCancelled()) {
+        return null;
+      }
+
       //ArrayList[] arrayLists = new ArrayList[2];
       //arrayLists[0] = new ArrayList<>();
       //arrayLists[1] = new ArrayList<>();
@@ -404,8 +411,16 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           Pager<PlaylistSimple> upPager = mSpotifyService.getMyPlaylists();
           Log.d("DEBUG", "ASYNC SPOTIFY:: My Playlist -> " + upPager.total);
           for (PlaylistSimple playlistSimple : upPager.items) {
-            userPlaylistNameList.add(playlistSimple.name);
-            userPlaylistUriList.add(playlistSimple.uri);
+            if (this.isCancelled()) {
+              return null;
+            }
+
+            if (userPlaylistNameList != null) {
+              userPlaylistNameList.add(playlistSimple.name);
+            }
+            if (userPlaylistUriList != null) {
+              userPlaylistUriList.add(playlistSimple.uri);
+            }
             Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + playlistSimple.name + " " + playlistSimple.uri);
           }
           break;
@@ -414,8 +429,16 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           Pager<PlaylistSimple> fpPager = featuredPlaylists.playlists;
           Log.d("DEBUG", "ASYNC SPOTIFY:: Featured Playlist -> " + fpPager.total);
           for (PlaylistSimple playlistSimple : fpPager.items) {
-            featuredPlaylistNameList.add(playlistSimple.name);
-            featuredPlaylistUriList.add(playlistSimple.uri);
+            if (this.isCancelled()) {
+              return null;
+            }
+
+            if (featuredPlaylistNameList != null) {
+              featuredPlaylistNameList.add(playlistSimple.name);
+            }
+            if (featuredPlaylistUriList != null) {
+              featuredPlaylistUriList.add(playlistSimple.uri);
+            }
             Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + playlistSimple.name + " " + playlistSimple.uri);
           }
           break;
@@ -423,8 +446,16 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           Pager<SavedAlbum> saPager = mSpotifyService.getMySavedAlbums();
           Log.d("DEBUG", "ASYNC SPOTIFY:: My Saved Albums -> " + saPager.total);
           for (SavedAlbum savedAlbum : saPager.items) {
-            savedAlbumNameList.add(savedAlbum.album.name);
-            savedAlbumUriList.add(savedAlbum.album.uri);
+            if (this.isCancelled()) {
+              return null;
+            }
+
+            if (savedAlbumNameList != null) {
+              savedAlbumNameList.add(savedAlbum.album.name);
+            }
+            if (savedAlbumUriList != null) {
+              savedAlbumUriList.add(savedAlbum.album.uri);
+            }
             Log.d("DEBUG",
                 "ASYNC SPOTIFY::   --> " + savedAlbum.album.name + " " + savedAlbum.album.uri);
           }
@@ -434,8 +465,16 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           CursorPager<Artist> cPager = acPager.artists;
           Log.d("DEBUG", "ASYNC SPOTIFY:: My Followed Artist -> " + cPager.total);
           for (Artist artist : cPager.items) {
-            followedArtistNameList.add(artist.name);
-            followedArtistUriList.add(artist.uri);
+            if (this.isCancelled()) {
+              return null;
+            }
+
+            if (followedArtistNameList != null) {
+              followedArtistNameList.add(artist.name);
+            }
+            if (followedArtistUriList != null) {
+              followedArtistUriList.add(artist.uri);
+            }
             Log.d("DEBUG", "ASYNC SPOTIFY::   --> " + artist.name + " " + artist.uri);
           }
           break;
@@ -444,6 +483,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           Pager<Artist> aPager = artistsPager.artists;
           Log.d("DEBUG", "ASYNC SPOTIFY:: Searched Artist -> " + strings[1] + " " + aPager.total);
           for (int i = 0; i < aPager.total; i++) {
+            if (this.isCancelled()) {
+              return null;
+            }
+
             List<Artist> list = aPager.items;
             //arrayLists[0].add(list.get(i).name);
             //arrayLists[1].add(list.get(i).uri);
@@ -455,6 +498,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           Pager<AlbumSimple> albPager = albumsPager.albums;
           Log.d("DEBUG", "ASYNC SPOTIFY:: Searched Album -> " + albPager.total);
           for (int i = 0; i < albPager.total; i++) {
+            if (this.isCancelled()) {
+              return null;
+            }
+
             List<AlbumSimple> list = albPager.items;
             //arrayLists[0].add(list.get(i).name);
             //arrayLists[1].add(list.get(i).uri);
@@ -477,6 +524,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       }
 
       for (int i = 0; i < 4; i++) {
+        if (this.isCancelled()) {
+          return;
+        }
+
         if (spCategory[i] != null) {
           Log.d("DEBUG",
               "SPOTIFY:: onPostExecute -> " + spCategory[i].getSelectedItem().toString() + " " + string);
@@ -530,6 +581,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
       if (string.equals("saved_albums")) {
         for (int i = 0; i < 4; i++) {
+          if (this.isCancelled()) {
+            return;
+          }
+
           if (getActivity() != null) {
             String selectedName = ((MainActivity) getActivity())
                 .getSavedValue("SPOTIFY_PL_NAME" + (i + 1));
@@ -564,6 +619,11 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       }
 
       isExecuteFinish = false;
+    }
+
+    @Override
+    protected void onCancelled() {
+      super.onCancelled();
     }
   }
 }
