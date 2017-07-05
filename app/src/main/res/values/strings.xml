@@ -20,15 +20,17 @@
   <string name="failed">FAILED</string>
   <string name="enable">ENABLE</string>
   <string name="disable">DISABLE</string>
+  <string name="cancel">CANCEL</string>
   <string name="no_change">NO CHANGE</string>
 
+  <string name="meme_scan_connect_title">SCAN &amp; CONNECT</string>
   <string name="meme_scanning">START SCANNING&#8230;</string>
   <string name="meme_found">FOUND: %1$s</string>
   <string name="meme_connect">CONNECT TO: %1$s</string>
   <string name="meme_connected">JINS MEME CONNECTED</string>
   <string name="meme_disconnected">JINS MEME DISCONNECTED</string>
 
-  <string name="not_found_meme_title">NOT FOUND MEME</string>
+  <string name="not_found_meme_title">CONNECTION TIMEOUT</string>
   <string name="not_found_meme_explain">Please go to the BASIC SETTING and rescan.</string>
   <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
   <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
@@ -49,10 +51,15 @@
 
   <string name="hue_error_title">NOT FOUND / AUTHENTICATED</string>
   <string name="hue_error_message">Please check the Hue Bridge condition or Wi-Fi connection.</string>
+  <string name="hue_searching">Searching Hue Bridge&#8230;</string>
+  <string name="hue_push_link_button">Found Hue Bridge.\n Please push the LINK Button&#8230;</string>
 
   <string name="selected">selected</string>
   <string name="pause">pause</string>
   <string name="count">%1$d</string>
+
+  <string name="meme_config_blink">BLINK (%1$d)</string>
+  <string name="meme_config_angle">CANCEL/PAUSE ANGLE(ROLL: %1$d)</string>
 
   <string-array name="spotify_category">
     <item>USER PLAYLIST</item>
