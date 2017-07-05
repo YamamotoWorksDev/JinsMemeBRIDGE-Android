@@ -919,17 +919,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private boolean isUIPaused = false;
   private boolean isUIDisabled = false;
   private void setUIPaused(final boolean pause) {
-    isUIPaused = pause;
     Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
     if(active instanceof MenuFragmentBase) {
+      isUIPaused = pause;
       ((MenuFragmentBase) active).setTouchEnabled(!isUIPaused);
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          findViewById(R.id.pauseView).setVisibility(pause?View.VISIBLE:View.GONE);
+        }
+      });
     }
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        findViewById(R.id.pauseView).setVisibility(pause?View.VISIBLE:View.GONE);
-      }
-    });
   }
 
   @Override
@@ -992,6 +992,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void transitToFragment(Fragment next) {
+    setUIPaused(false);
     InputMethodManager imm = (InputMethodManager) getSystemService(
         Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(mainLayout.getWindowToken(),
