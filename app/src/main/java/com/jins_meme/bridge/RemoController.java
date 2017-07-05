@@ -47,6 +47,8 @@ public class RemoController {
   private boolean isError;
 
   private boolean isFirstReceive;
+  private boolean isRestartBonjour = false;
+  private boolean isRestopBonjour = false;
 
   RemoController(Context context) {
     this.context = context;
@@ -90,6 +92,7 @@ public class RemoController {
   private void startBonjourDiscovery() {
     if (isProcessingBonjour) {
       Log.e(TAG, "startBonjourDiscovery: isProcessingBonjour is true");
+      isRestartBonjour = true;
       return;
     }
     isProcessingBonjour = true;
@@ -118,7 +121,10 @@ public class RemoController {
 
         }
         isProcessingBonjour = false;
-
+        if (isRestopBonjour) {
+          stopBonjourDiscovery();
+          isRestopBonjour = false;
+        }
         return null;
       }
     }.execute();
@@ -126,6 +132,7 @@ public class RemoController {
   private void stopBonjourDiscovery() {
     if (isProcessingBonjour) {
       Log.e(TAG, "stopBonjourDiscovery: isProcessingBonjour is true");
+      isRestopBonjour = true;
       return;
     }
     isProcessingBonjour = true;
@@ -153,6 +160,10 @@ public class RemoController {
         }
         // Stopped zeroconf probe
         isProcessingBonjour = false;
+        if (isRestartBonjour) {
+          startBonjourDiscovery();
+          isRestartBonjour = false;
+        }
       }
     }).start();
   }

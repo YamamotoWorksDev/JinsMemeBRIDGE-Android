@@ -518,6 +518,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     changeState(State.SCAN);
     remoController.startDiscovery();
 
+    deviceMap = new HashMap<String, String>();
     adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, new ArrayList<String>());
     final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
     final AlertDialog dialog;
@@ -548,16 +549,23 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 //            changeState(State.LOST);
 //          }
 //        }
+
+          scanDialogHandler.removeCallbacksAndMessages(null);
+
       }
     });
 
     dialog = builder.create();
     dialog.show();
 
-    Handler handler = new Handler();
-    handler.postDelayed(new Runnable() {
+
+    scanDialogHandler = new Handler();
+
+
+    scanDialogHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
+        Log.d(TAG, "state: " + state + " deviceMap.size: " + deviceMap.size());
         if (state == State.SCAN && deviceMap.size() == 0) {
           dialog.cancel();
           showDeviceSettingDialog();
@@ -565,7 +573,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       }
     }, scanTimeoutDuration);
   }
-
+  private Handler scanDialogHandler;
 
   private void showDeviceSettingDialog() {
     final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
