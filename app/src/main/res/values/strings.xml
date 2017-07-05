@@ -3,8 +3,8 @@
   <string name="actionbar_title">JINS MEME BRIDGE</string>
 
   <!-- PLEASE INPUT YOUR APP_ID & APP_SECRET -->
-  <string name="meme_app_id"></string>
-  <string name="meme_app_secret"></string>
+  <string name="meme_app_id">907977722622109</string>
+  <string name="meme_app_secret">ka53fgrcct043wq3d6tm9gi8a2hetrxz</string>
 
   <string name="spotify_client_id">92d6b9906bd54b3dbc60c646ca4f5017</string>
   <string name="spotify_client_secret">71807167c3594c9993cc4a42497e599a</string>
