@@ -35,20 +35,24 @@
   <Spinner
     android:id="@+id/category1"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_alignEnd="@+id/enable_shuffle"
     android:layout_alignStart="@+id/textView22"
     android:layout_below="@+id/textView22"
     android:layout_toStartOf="@+id/space3"
-    android:entries="@array/spotify_category"/>
+    android:background="@drawable/border_spinner"
+    android:entries="@array/spotify_category"
+    />
   <Spinner
     android:id="@+id/playlists1"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_marginTop="10dp"
     android:layout_alignStart="@+id/category1"
     android:layout_below="@+id/category1"
-    android:layout_toStartOf="@+id/space3"/>
+    android:layout_toStartOf="@+id/space3"
+    android:background="@drawable/border_spinner"
+    />
   <Switch
     android:id="@+id/enable_shuffle"
     android:layout_width="150dp"
@@ -68,19 +72,22 @@
   <Spinner
     android:id="@+id/category2"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_alignEnd="@+id/category1"
     android:layout_alignStart="@+id/textView23"
     android:layout_below="@+id/textView23"
-    android:entries="@array/spotify_category"/>
+    android:background="@drawable/border_spinner"
+    android:entries="@array/spotify_category"
+    />
   <Spinner
     android:id="@+id/playlists2"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_marginTop="5dp"
     android:layout_alignStart="@+id/category2"
     android:layout_below="@+id/category2"
-    android:layout_toStartOf="@+id/space3"/>
+    android:layout_toStartOf="@+id/space3"
+    android:background="@drawable/border_spinner"/>
   <TextView
     android:id="@+id/textView24"
     android:layout_width="wrap_content"
@@ -92,19 +99,22 @@
   <Spinner
     android:id="@+id/category3"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_alignEnd="@+id/category2"
     android:layout_alignStart="@+id/textView24"
     android:layout_below="@+id/textView24"
-    android:entries="@array/spotify_category"/>
+    android:background="@drawable/border_spinner"
+    android:entries="@array/spotify_category"
+    />
   <Spinner
     android:id="@+id/playlists3"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_marginTop="5dp"
     android:layout_alignStart="@+id/category3"
     android:layout_below="@+id/category3"
-    android:layout_toStartOf="@+id/space3"/>
+    android:layout_toStartOf="@+id/space3"
+    android:background="@drawable/border_spinner"/>
   <TextView
     android:id="@+id/textView25"
     android:layout_width="wrap_content"
@@ -116,17 +126,20 @@
   <Spinner
     android:id="@+id/category4"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_alignEnd="@+id/category3"
     android:layout_alignStart="@+id/textView25"
     android:layout_below="@+id/textView25"
-    android:entries="@array/spotify_category"/>
+    android:background="@drawable/border_spinner"
+    android:entries="@array/spotify_category"
+    />
   <Spinner
     android:id="@+id/playlists4"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="25dp"
     android:layout_marginTop="5dp"
     android:layout_alignStart="@+id/category4"
     android:layout_below="@+id/category4"
-    android:layout_toStartOf="@+id/space3"/>
+    android:layout_toStartOf="@+id/space3"
+    android:background="@drawable/border_spinner"/>
 </RelativeLayout>

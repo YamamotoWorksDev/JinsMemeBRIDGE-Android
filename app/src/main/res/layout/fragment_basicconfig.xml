@@ -28,11 +28,14 @@
             <Spinner
               android:id="@+id/meme_list"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="25dp"
               android:layout_marginTop="2dp"
               android:layout_marginRight="25dp"
+              android:layout_alignBottom="@+id/scan"
               android:layout_below="@+id/textView3"
-              android:layout_toEndOf="@+id/scan"/>
+              android:layout_toEndOf="@+id/scan"
+              android:background="@drawable/border_spinner"
+              />
 
             <Switch
               android:id="@+id/connect"
