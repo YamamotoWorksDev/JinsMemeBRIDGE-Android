@@ -606,6 +606,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
 
             if (selectedName != null) {
               //debug Log.d("DEBUG", "SPOTIFY::  count " + playlistAdapter[i].getCount());
+              boolean isSameName = false;
               for (int j = 0; j < playlistAdapter[i].getCount(); j++) {
                 Log.d("DEBUG", "SPOTIFY::    (" + i + ")-> " + playlistAdapter[i].getItem(j));
 
@@ -613,8 +614,13 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
                   Log.d("DEBUG", "SPOTIFY:: setSelection " + j);
                   spPlaylist[i].setSelection(j);
                   loadedCount++;
+                  isSameName = true;
                   break;
                 }
+              }
+              if (!isSameName) {
+                spPlaylist[i].setSelection(0);
+                loadedCount++;
               }
             } else {
               Log.d("DEBUG", "SPOTIFY:: no selected playlist...");
