@@ -118,7 +118,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     super.onViewCreated(view, savedInstanceState);
 
     Log.d("BASIC", "onViewCreated");
-    
+
     layout = (LinearLayout) view.findViewById(R.id.basic_layout);
     layout.setOnTouchListener(new OnTouchListener() {
       @Override
