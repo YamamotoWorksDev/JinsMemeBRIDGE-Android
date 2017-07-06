@@ -35,7 +35,6 @@ import java.util.Locale;
 public class HueConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
-  private TextView tvSelectedLightPresetName;
   private Switch swConnect;
   private Spinner spLightPresetList;
   private SeekBar sbRed;
@@ -84,7 +83,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
       hueController = null;
     }
 
-    tvSelectedLightPresetName = null;
     swConnect = null;
     spLightPresetList = null;
     sbRed = null;
@@ -119,8 +117,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
     isConnectionCheck = true;
     ConnectCheckThread cct = new ConnectCheckThread();
     cct.start();
-
-    tvSelectedLightPresetName = (TextView) view.findViewById(R.id.selected_light_name);
 
     swConnect = (Switch) view.findViewById(R.id.hue_connect);
     swConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -164,7 +160,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
         int[] val = new int[5];
         switch (i) {
           case 0:
-            tvSelectedLightPresetName.setText(getString(R.string.light1));
             val[0] = ((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255);
             val[1] = ((MainActivity) getActivity()).getSavedValue("HUE_L1_G", 0);
             val[2] = ((MainActivity) getActivity()).getSavedValue("HUE_L1_B", 0);
@@ -172,7 +167,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
             val[4] = ((MainActivity) getActivity()).getSavedValue("HUE_L1_TTIME", 10);
             break;
           case 1:
-            tvSelectedLightPresetName.setText(getString(R.string.light2));
             val[0] = ((MainActivity) getActivity()).getSavedValue("HUE_L2_R", 0);
             val[1] = ((MainActivity) getActivity()).getSavedValue("HUE_L2_G", 255);
             val[2] = ((MainActivity) getActivity()).getSavedValue("HUE_L2_B", 0);
@@ -180,7 +174,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
             val[4] = ((MainActivity) getActivity()).getSavedValue("HUE_L2_TTIME", 10);
             break;
           case 2:
-            tvSelectedLightPresetName.setText(getString(R.string.light3));
             val[0] = ((MainActivity) getActivity()).getSavedValue("HUE_L3_R", 0);
             val[1] = ((MainActivity) getActivity()).getSavedValue("HUE_L3_G", 0);
             val[2] = ((MainActivity) getActivity()).getSavedValue("HUE_L3_B", 255);
@@ -188,7 +181,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
             val[4] = ((MainActivity) getActivity()).getSavedValue("HUE_L3_TTIME", 10);
             break;
           case 3:
-            tvSelectedLightPresetName.setText(getString(R.string.light4));
             val[0] = ((MainActivity) getActivity()).getSavedValue("HUE_L4_R", 255);
             val[1] = ((MainActivity) getActivity()).getSavedValue("HUE_L4_G", 255);
             val[2] = ((MainActivity) getActivity()).getSavedValue("HUE_L4_B", 255);
