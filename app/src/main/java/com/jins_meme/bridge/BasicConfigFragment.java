@@ -15,7 +15,6 @@ import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,7 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -43,7 +42,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
 
-  private RelativeLayout layout;
+  private LinearLayout layout;
   private Switch swScan;
   private Switch swConnect;
   private Spinner spMemeList;
@@ -119,8 +118,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     super.onViewCreated(view, savedInstanceState);
 
     Log.d("BASIC", "onViewCreated");
-
-    layout = (RelativeLayout) view.findViewById(R.id.basic_layout);
+    
+    layout = (LinearLayout) view.findViewById(R.id.basic_layout);
     layout.setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
