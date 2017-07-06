@@ -12,6 +12,9 @@
         -->
         <item name="android:actionOverflowButtonStyle">@style/ActionBarOverFlow</item>
 
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/no3</item>
+
         <!--
         <item name="actionBarSize">42dp</item>
         -->
