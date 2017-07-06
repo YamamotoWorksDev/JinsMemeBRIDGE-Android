@@ -28,13 +28,13 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class OSCConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
-  private RelativeLayout layout;
+  private LinearLayout layout;
   private EditText etRemoteIP;
   private EditText etRemotePort;
   private EditText etHostIP;
@@ -94,7 +94,7 @@ public class OSCConfigFragment extends ConfigFragmentBase {
 
     handler = new Handler();
 
-    layout = (RelativeLayout) view.findViewById(R.id.osc_layout);
+    layout = (LinearLayout) view.findViewById(R.id.osc_layout);
     layout.setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
