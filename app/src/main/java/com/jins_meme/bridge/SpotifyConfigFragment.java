@@ -607,7 +607,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
             if (selectedName != null) {
               //debug Log.d("DEBUG", "SPOTIFY::  count " + playlistAdapter[i].getCount());
               for (int j = 0; j < playlistAdapter[i].getCount(); j++) {
-                //debug Log.d("DEBUG", "SPOTIFY::    -> " + playlistAdapter[i].getItem(j));
+                Log.d("DEBUG", "SPOTIFY::    (" + i + ")-> " + playlistAdapter[i].getItem(j));
 
                 if (selectedName.equals(playlistAdapter[i].getItem(j))) {
                   Log.d("DEBUG", "SPOTIFY:: setSelection " + j);
@@ -624,12 +624,14 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
                   spPlaylist[i].getSelectedItem().toString());
               ((MainActivity) getActivity())
                   .autoSaveValue("SPOTIFY_PL_URI" + (i + 1), getSelectedPlaylistUri(i));
+
+              loadedCount++;
             }
           } else {
             Log.d("DEBUG", "SPOTIFY_CONFIG:: activity null...");
           }
         }
-        if (loadedCount == 3) {
+        if (loadedCount == 4) {
           isUIInitialized = true;
 
           for (int i = 0; i < 4; i++) {
