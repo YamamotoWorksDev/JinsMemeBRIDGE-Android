@@ -1,10 +1,15 @@
+/**
+ * SimpleTimer.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.os.Handler;
-
-/**
- * Created by nariakiiwatani on 2017/07/04.
- */
 
 public class SimpleTimer {
   SimpleTimer(int id) {

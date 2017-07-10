@@ -1,3 +1,12 @@
+/**
+ * RemoConfigFragment.java
+ *
+ * Copylight (C) 2017, Taiki Niimi(Freelance)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.app.AlertDialog;

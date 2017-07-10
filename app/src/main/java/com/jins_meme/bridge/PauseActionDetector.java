@@ -1,3 +1,12 @@
+/**
+ * PauseActionDetector.java
+ *
+ * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import static android.view.MotionEvent.ACTION_DOWN;
@@ -11,10 +20,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-
-/**
- * Created by nariakiiwatani on 2017/07/05.
- */
 
 public class PauseActionDetector extends FrameLayout implements SimpleTimer.OnResultListener {
   private float allowSlideRadius = 1;
