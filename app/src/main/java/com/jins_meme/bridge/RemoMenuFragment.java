@@ -216,7 +216,7 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal4);
           break;
         case R.string.signal5:
-          //((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal4);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal5);
           break;
       }
 
