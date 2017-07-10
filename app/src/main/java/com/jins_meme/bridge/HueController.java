@@ -400,21 +400,23 @@ public class HueController implements PHSDKListener {
 
     PHBridge bridge = hueSDK.getSelectedBridge();
 
-    for (PHLight light : allLights) {
-      PHLightState lightState = new PHLightState();
-      lightState.setOn(true);
+    if (allLights != null) {
+      for (PHLight light : allLights) {
+        PHLightState lightState = new PHLightState();
+        lightState.setOn(true);
 
-      if (light != null) {
-        float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, light.getModelNumber());
+        if (light != null) {
+          float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, light.getModelNumber());
 
-        if (!light.getModelNumber().equals("LWB014")) {
-          lightState.setX(xy[0]);
-          lightState.setY(xy[1]);
+          if (!light.getModelNumber().equals("LWB014")) {
+            lightState.setX(xy[0]);
+            lightState.setY(xy[1]);
+          }
+          lightState.setBrightness(brightness);
+          lightState.setTransitionTime(time);
+
+          bridge.updateLightState(light, lightState, lightListener);
         }
-        lightState.setBrightness(brightness);
-        lightState.setTransitionTime(time);
-
-        bridge.updateLightState(light, lightState, lightListener);
       }
     }
   }
