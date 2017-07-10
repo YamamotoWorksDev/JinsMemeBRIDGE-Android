@@ -317,7 +317,9 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       loadingDialog = ProgressDialogFragment.newInstance("spotify_loading");
       //loadingDialog.setDialogListener(this);
       loadingDialog.setCancelable(false);
-      loadingDialog.show(getFragmentManager(), "dialog");
+      if (getFragmentManager() != null) {
+        loadingDialog.show(getFragmentManager(), "dialog");
+      }
 
       mAsyncSpotifyApi = new AsyncSpotifyApi();
       isExecuteFinish = true;
