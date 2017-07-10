@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#FF4081</color>
+  <color name="colorPrimary">#3F51B5</color>
+  <color name="colorPrimaryDark">#000000</color>
+  <color name="colorAccent">#FF4081</color>
 
-    <color name="no1">#141D37</color>
-    <color name="no2">#174C9E</color>
-    <color name="no3">#00ADC3</color>
-    <color name="no4">#FFFFFF</color>
+  <color name="no1">#141D37</color>
+  <color name="no2">#174C9E</color>
+  <color name="no3">#00ADC3</color>
+  <color name="no4">#FFFFFF</color>
 
-    <!--
-    <color name="colorActionBarBackground">#171E37</color>
-    -->
+  <color name="camera">#00ADC3</color>
+  <color name="spotify">#1DB954</color>
+  <color name="remo">#1373FF</color>
+  <color name="hue">#FF8200</color>
+  <color name="eyevdj">#231815</color>
+
+  <!--
+  <color name="colorActionBarBackground">#171E37</color>
+  -->
 </resources>

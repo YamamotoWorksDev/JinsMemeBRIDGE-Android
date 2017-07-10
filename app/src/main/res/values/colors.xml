@@ -9,6 +9,12 @@
     <color name="no3">#00ADC3</color>
     <color name="no4">#FFFFFF</color>
 
+    <color name="camera">#00ADC3</color>
+    <color name="spotify">#1DB954</color>
+    <color name="remo">#1373FF</color>
+    <color name="hue">#FF8200</color>
+    <color name="eyevdj">#231815</color>
+
     <!--
     <color name="colorActionBarBackground">#171E37</color>
     -->
