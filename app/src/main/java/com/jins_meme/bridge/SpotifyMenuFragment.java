@@ -11,8 +11,11 @@ package com.jins_meme.bridge;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -185,9 +188,28 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-      ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
+      ((CardAdapter.MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
+
+      switch (id) {
+        case R.string.playlist1:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_spotify_playlist1);
+          break;
+        case R.string.playlist2:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_spotify_playlist2);
+          break;
+        case R.string.playlist3:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_spotify_playlist3);
+          break;
+        case R.string.playlist4:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_spotify_playlist4);
+          break;
+      }
+
       ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.spotify));
       ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setTextColor(ContextCompat.getColor(getContext(), R.color.spotify));
+      ((CardAdapter.MyCardHolder) cardHolder).mValue.setTextColor(ContextCompat.getColor(getContext(), R.color.spotify));
     }
 
     @Override
@@ -236,6 +258,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
     private class MyCardHolder extends CardHolder {
 
+      CardView mCardView;
       ImageView mImageView;
       TextView mTitle;
       TextView mSubtitle;
@@ -245,6 +268,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
       MyCardHolder(View itemView) {
         super(itemView);
 
+        mCardView = (CardView) itemView.findViewById(R.id.card_view);
         mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
         mTitle = (TextView) itemView.findViewById(R.id.card_text);
         mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
