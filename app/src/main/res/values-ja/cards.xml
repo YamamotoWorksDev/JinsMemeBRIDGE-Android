@@ -33,8 +33,8 @@
     <!-- for Eye VDJ -->
     <string name="vdj">EYE VDJ</string>
     <string name="track">TRACK</string>
-    <string name="track14">TRACKS</string>
-    <string name="track58">TRACKS</string>
+    <string name="track14">TRACKS1-4</string>
+    <string name="track58">TRACKS5-8</string>
     <string name="effect">FX</string>
     <string name="logo">LOGO</string>
 

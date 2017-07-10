@@ -10,9 +10,12 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -301,13 +304,16 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-      return new MyCardHolder(mInflater.inflate(R.layout.card_vdj, parent, false));
+      //return new MyCardHolder(mInflater.inflate(R.layout.card_vdj, parent, false));
+      return new MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
     }
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
+      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
       ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
 
+      /*
       switch (id) {
         case R.string.track14:
           ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("1-4");
@@ -319,6 +325,8 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
       }
+      */
+      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
 
       switch (id) {
         case R.string.track14:
@@ -388,6 +396,12 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
           break;
       }
+
+      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.eyevdj));
+      ((MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((MyCardHolder) cardHolder).mSubtitle.setTextColor(ContextCompat.getColor(getContext(), R.color.eyevdj));
+      ((MyCardHolder) cardHolder).mValue.setTextColor(ContextCompat.getColor(getContext(), R.color.eyevdj));
     }
 
     @Override
@@ -521,6 +535,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     private class MyCardHolder extends CardHolder {
 
+      CardView mCardView;
       ImageView mImageView;
       TextView mTitle;
       TextView mSubtitle;
@@ -530,6 +545,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
       MyCardHolder(View itemView) {
         super(itemView);
 
+        mCardView = (CardView) itemView.findViewById(R.id.card_view);
         mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
         mTitle = (TextView) itemView.findViewById(R.id.card_text);
         mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
