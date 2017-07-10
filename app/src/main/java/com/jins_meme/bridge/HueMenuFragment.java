@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -170,30 +171,34 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.BLACK);
-      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-      ((MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
 
       switch (id) {
         case R.string.random:
-          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.huerandom_white);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue_light_random);
           break;
         case R.string.light1:
-          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue1_white);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue_light1);
           break;
         case R.string.light2:
-          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue2_white);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue_light2);
           break;
         case R.string.light3:
-          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue3_white);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue_light3);
           break;
         case R.string.light4:
-          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.hue4_white);
+          ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue_light4);
           break;
         default:
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
           break;
       }
+
+      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.hue));
+      ((MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((MyCardHolder) cardHolder).mSubtitle.setTextColor(ContextCompat.getColor(getContext(), R.color.hue));
+      ((MyCardHolder) cardHolder).mValue.setTextColor(ContextCompat.getColor(getContext(), R.color.hue));
     }
 
     @Override
