@@ -1,9 +1,21 @@
+/**
+ * RemoMenuFragment.java
+ *
+ * Copylight (C) 2017, Taiki Niimi(Freelance) and Shunichi Yamamoto(Yamamoto Works Ltd.)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ **/
+
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +27,6 @@ import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 import com.jins_meme.bridge.RemoController.OnMessagesListener;
 import java.util.HashMap;
-
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,7 +96,6 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
     });
 
   }
-
 
   @Override
   public void onAttach(Context context) {
@@ -193,9 +202,30 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
       String title = getResources().getString(id);
       String subTitle = mainActivity.getSavedValue(signalNameMap.get(title));
 
-      ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
-      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(title);
-      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText(subTitle);
+      switch (id) {
+        case R.string.signal1:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal1);
+          break;
+        case R.string.signal2:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal2);
+          break;
+        case R.string.signal3:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal3);
+          break;
+        case R.string.signal4:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal4);
+          break;
+        case R.string.signal5:
+          //((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo_signal4);
+          break;
+      }
+
+      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
+      ((MyCardHolder) cardHolder).mTitle.setText(title);
+      ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.remo));
+      ((MyCardHolder) cardHolder).mSubtitle.setText(subTitle);
+      ((MyCardHolder) cardHolder).mSubtitle.setTextColor(ContextCompat.getColor(getContext(), R.color.remo));
+      ((MyCardHolder) cardHolder).mValue.setTextColor(ContextCompat.getColor(getContext(), R.color.remo));
     }
 
 
@@ -248,6 +278,7 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
     private class MyCardHolder extends CardHolder {
 
+      CardView mCardView;
       ImageView mImageView;
       TextView mTitle;
       TextView mSubtitle;
@@ -258,6 +289,7 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
       MyCardHolder(View itemView) {
         super(itemView);
 
+        mCardView = (CardView) itemView.findViewById(R.id.card_view);
         mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
         mTitle = (TextView) itemView.findViewById(R.id.card_text);
         mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
