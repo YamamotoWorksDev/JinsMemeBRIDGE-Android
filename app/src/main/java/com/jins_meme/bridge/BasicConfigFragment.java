@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -56,6 +57,12 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   private SeekBar sbRollThreshold;
   private ImageButton ibRestart;
   private ImageButton ibLock;
+
+  private Switch cameraEnableSwitch;
+  private Switch spotifyEnableSwitch;
+  private Switch remoEnableSwitch;
+  private Switch hueEnableSwitch;
+  private Switch eyevdjEnableSwitch;
 
   private ArrayAdapter<String> adapter;
 
@@ -104,6 +111,11 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     sbRollThreshold = null;
     ibRestart = null;
     ibLock = null;
+    cameraEnableSwitch = null;
+    spotifyEnableSwitch = null;
+    remoEnableSwitch = null;
+    hueEnableSwitch = null;
+    eyevdjEnableSwitch = null;
   }
 
   @Override
@@ -414,6 +426,51 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         } else {
           lockAppIDandSecret();
         }
+      }
+    });
+
+    cameraEnableSwitch = (Switch) view.findViewById(R.id.enable_camera);
+    cameraEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_CAMERA", true));
+    cameraEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ((MainActivity) getActivity()).autoSaveValue("ENABLE_CAMERA", isChecked);
+      }
+    });
+
+    spotifyEnableSwitch = (Switch) view.findViewById(R.id.enable_spotify);
+    spotifyEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_SPOTIFY", true));
+    spotifyEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ((MainActivity) getActivity()).autoSaveValue("ENABLE_SPOTIFY", isChecked);
+      }
+    });
+
+    remoEnableSwitch = (Switch) view.findViewById(R.id.enable_remo);
+    remoEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_REMO", true));
+    remoEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ((MainActivity) getActivity()).autoSaveValue("ENABLE_REMO", isChecked);
+      }
+    });
+
+    hueEnableSwitch = (Switch) view.findViewById(R.id.enable_hue);
+    hueEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_HUE", true));
+    hueEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ((MainActivity) getActivity()).autoSaveValue("ENABLE_HUE", isChecked);
+      }
+    });
+
+    eyevdjEnableSwitch = (Switch) view.findViewById(R.id.enable_eyevdj);
+    eyevdjEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_EYEVDJ", true));
+    eyevdjEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ((MainActivity) getActivity()).autoSaveValue("ENABLE_EYEVDJ", isChecked);
       }
     });
   }

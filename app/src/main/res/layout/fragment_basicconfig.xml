@@ -230,6 +230,127 @@
             <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:layout_marginTop="10dp"
+              android:layout_marginBottom="25dp"
+              android:layout_marginStart="15dp"
+              android:layout_marginEnd="15dp"
+              android:divider="@drawable/border_subline"
+              android:orientation="vertical"
+              android:showDividers="middle">
+                <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dp"
+                  android:divider="@drawable/border_line"
+                  android:orientation="vertical"
+                  android:showDividers="middle">
+                    <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginBottom="15dp"
+                      android:text="機能の使用"
+                      android:textColor="@color/no3"/>
+                    <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginBottom="5dp"
+                      android:orientation="vertical">
+                        <Switch
+                          android:id="@+id/enable_camera"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:checked="true"
+                          android:splitTrack="false"
+                          android:text="Camera"/>
+                        <TextView
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginBottom="15dp"
+                          android:text="Enable Camera function"
+                          android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="15dp"
+                  android:layout_marginBottom="5dp"
+                  android:orientation="vertical">
+                    <Switch
+                      android:id="@+id/enable_spotify"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:checked="true"
+                      android:splitTrack="false"
+                      android:text="Spotify"/>
+                    <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Enable Spotify function"
+                      android:textSize="12sp"/>
+                </LinearLayout>
+                <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="15dp"
+                  android:layout_marginBottom="5dp"
+                  android:orientation="vertical">
+                    <Switch
+                      android:id="@+id/enable_remo"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:checked="true"
+                      android:splitTrack="false"
+                      android:text="IRKit / Nature Remo"/>
+                    <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Enable IRKit / Nature Remo function"
+                      android:textSize="12sp"/>
+                </LinearLayout>
+                <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="15dp"
+                  android:layout_marginBottom="5dp"
+                  android:orientation="vertical">
+                    <Switch
+                      android:id="@+id/enable_hue"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:checked="true"
+                      android:splitTrack="false"
+                      android:text="Philips Hue"/>
+                    <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Enable Hue function"
+                      android:textSize="12sp"/>
+                </LinearLayout>
+                <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="15dp"
+                  android:layout_marginBottom="5dp"
+                  android:orientation="vertical">
+                    <Switch
+                      android:id="@+id/enable_eyevdj"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:checked="true"
+                      android:splitTrack="false"
+                      android:text="EyeVDJ"/>
+                    <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Enable EyeVDJ function"
+                      android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:layout_marginTop="20dp"
               android:layout_marginBottom="25dp"
               android:layout_marginStart="15dp"

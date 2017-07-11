@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
@@ -65,6 +66,8 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
+    Log.d("DEBUG", "ROOT:: onViewCreated");
   }
 
   public interface OnFragmentInteractionListener {
@@ -140,11 +143,13 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
+        /*
         default:
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
+          */
       }
     }
 
@@ -155,24 +160,19 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public int getCardId(int parent_id, int position) {
+      Log.d("DEBUG", "ROOT:: getCardId");
+
       int id = NO_ID;
+
       switch (parent_id) {
         case NO_ID:
           switch (position) {
             case 0:
-              id = R.string.camera;
-              break;
             case 1:
-              id = R.string.spotify;
-              break;
             case 2:
-              id = R.string.remo;
-              break;
             case 3:
-              id = R.string.hue;
-              break;
             case 4:
-              id = R.string.vdj;
+              id = ((MainActivity) getActivity()).getRootCardId(position);
               break;
           }
           break;
@@ -183,9 +183,11 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public int getChildCardCount(int parent_id) {
+      Log.d("DEBUG", "ROOT:: getChildCardCount");
+
       switch (parent_id) {
         case NO_ID:
-          return 5;
+          return ((MainActivity) getActivity()).getEnabledCardNum();
       }
       return 0;
     }
