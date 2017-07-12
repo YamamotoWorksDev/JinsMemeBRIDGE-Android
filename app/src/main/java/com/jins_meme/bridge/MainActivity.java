@@ -667,19 +667,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void memeConnectCallback(boolean b) {
     Log.d("MAIN", "meme connected. " + b + " " + lastConnectedMemeID);
 
-    memeConnectProgressDialog.dismiss();
+    if (memeConnectProgressDialog != null) {
+      memeConnectProgressDialog.dismiss();
+    }
 
     if (b) {
       autoSaveValue("LAST_CONNECTED_MEME_ID", lastConnectedMemeID);
     }
 
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        Toast.makeText(MainActivity.this, getString(R.string.meme_connected),
-            Toast.LENGTH_SHORT).show();
-      }
-    });
+    if (handler != null) {
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          Toast.makeText(MainActivity.this, getString(R.string.meme_connected),
+              Toast.LENGTH_SHORT).show();
+        }
+      });
+    }
     batteryStatus = 5;
     updateActionBarLogo();
     //invalidateOptionsMenu();
