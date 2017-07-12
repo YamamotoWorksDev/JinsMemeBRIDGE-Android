@@ -1,37 +1,37 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+  <!-- Base application theme. -->
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
 
-        <!--
-        <item name="actionBarStyle">@style/CustomActionBar</item>
-        -->
-        <item name="android:actionOverflowButtonStyle">@style/ActionBarOverFlow</item>
 
-        <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/no3</item>
+    <item name="actionBarStyle">@style/CustomActionBar</item>
 
-        <!--
-        <item name="actionBarSize">42dp</item>
-        -->
-    </style>
+    <item name="android:actionOverflowButtonStyle">@style/ActionBarOverFlow</item>
+
+    <!-- active thumb & track color (30% transparency) -->
+    <item name="colorControlActivated">@color/no3</item>
 
     <!--
-    <style name="CustomActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="background">@color/colorActionBarBackground</item>
-        <item name="titleTextStyle">@style/titleTextStyle</item>
-    </style>
-
-    <style name="titleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
+    <item name="actionBarSize">42dp</item>
     -->
+  </style>
 
-    <style name="ActionBarOverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
-        <item name="android:src">@mipmap/ic_settings_white_24dp</item>
-    </style>
+  <style name="CustomActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+    <item name="background">@color/no4</item>
+    <item name="titleTextStyle">@style/titleTextStyle</item>
+  </style>
+
+  <style name="titleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <item name="android:textColor">@color/no1</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:paddingStart">20dp</item>
+  </style>
+
+  <style name="ActionBarOverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <item name="android:src">@mipmap/ic_setting</item>
+  </style>
 </resources>
