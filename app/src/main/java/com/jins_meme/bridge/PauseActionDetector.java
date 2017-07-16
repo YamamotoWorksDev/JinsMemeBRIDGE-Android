@@ -45,7 +45,7 @@ public class PauseActionDetector extends FrameLayout implements SimpleTimer.OnRe
         longPressTimer.startTimer(longPressDuration, true);
         interceptTouchEvent = false;
         touchedPoint = new PointF(event.getX(), event.getY());
-        break;
+        return super.dispatchTouchEvent(event) || true;
       case ACTION_MOVE:
         float dx = event.getX()-touchedPoint.x;
         float dy = event.getY()-touchedPoint.y;
