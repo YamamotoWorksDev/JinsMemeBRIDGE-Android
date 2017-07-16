@@ -20,8 +20,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -68,6 +66,7 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
@@ -207,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if (getSupportActionBar() != null) {
       updateActionBar(getResources().getString(R.string.actionbar_title));
-      getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
     }
 
     rootMenu = new RootMenuFragment();
@@ -260,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onCreateOptionsMenu(Menu menu) {
     int index = 0;
 
-    menu.add(0, index++, 0, R.string.battery);
+    //menu.add(0, index++, 0, R.string.battery);
     menu.add(0, index++, 0, R.string.basic_conf);
 
     /*
@@ -293,28 +291,30 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       if (barTitle.contains(getString(R.string.app_name))) {
         Log.d("DEBUG", "true");
 
+        /*
         switch (batteryStatus) {
           case 1:
-            menu.getItem(0).setIcon(R.mipmap.ic_battery_alert_white_24dp);
+            menu.getItem(0).setIcon(R.mipmap.connected_caution);
             break;
           case 2:
-            menu.getItem(0).setIcon(R.mipmap.ic_battery_30_white_24dp);
+            menu.getItem(0).setIcon(R.mipmap.connected_30);
             break;
           case 3:
-            menu.getItem(0).setIcon(R.mipmap.ic_battery_50_white_24dp);
+            menu.getItem(0).setIcon(R.mipmap.connected_50);
             break;
           case 4:
-            menu.getItem(0).setIcon(R.mipmap.ic_battery_80_white_24dp);
+            menu.getItem(0).setIcon(R.mipmap.connected_80);
             break;
           case 5:
-            menu.getItem(0).setIcon(R.mipmap.ic_battery_full_white_24dp);
+            menu.getItem(0).setIcon(R.mipmap.connected_full);
             break;
           default:
-            menu.getItem(0).setIcon(R.mipmap.ic_battery_unknown_white_24dp);
+            menu.getItem(0).setIcon(R.mipmap.not_connected);
             break;
         }
         menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.getItem(0).setVisible(true);
+        */
       } else {
         Log.d("DEBUG", "false");
 
@@ -667,25 +667,26 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void memeConnectCallback(boolean b) {
     Log.d("MAIN", "meme connected. " + b + " " + lastConnectedMemeID);
 
-    memeConnectProgressDialog.dismiss();
+    if (memeConnectProgressDialog != null) {
+      memeConnectProgressDialog.dismiss();
+    }
 
     if (b) {
       autoSaveValue("LAST_CONNECTED_MEME_ID", lastConnectedMemeID);
     }
 
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        if (getSupportActionBar() != null) {
-          getSupportActionBar()
-              .setBackgroundDrawable(new ColorDrawable(Color.rgb(0x3F, 0x51, 0xB5)));
+    if (handler != null) {
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          Toast.makeText(MainActivity.this, getString(R.string.meme_connected),
+              Toast.LENGTH_SHORT).show();
         }
-
-        Toast.makeText(MainActivity.this, getString(R.string.meme_connected),
-            Toast.LENGTH_SHORT).show();
-      }
-    });
-    invalidateOptionsMenu();
+      });
+    }
+    batteryStatus = 5;
+    updateActionBarLogo();
+    //invalidateOptionsMenu();
 
     memeLib.setAutoConnect(true);
     memeLib.startDataReport(this);
@@ -698,11 +699,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     handler.post(new Runnable() {
       @Override
       public void run() {
-        if (getSupportActionBar() != null) {
-          getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(127, 127, 127)));
-        }
-
-        invalidateOptionsMenu();
+        //invalidateOptionsMenu();
+        updateActionBarLogo();
         if (basicConfigFragment != null) {
           basicConfigFragment.setSwConnect(false);
         }
@@ -755,17 +753,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         public void memeFoundCallback(String s) {
           Log.d("MAIN", getString(R.string.meme_found, s));
 
-          memeConnectProgressDialog.setMessage("Found: " + s);
+          if (memeConnectProgressDialog != null) {
+            memeConnectProgressDialog.setMessage("Found: " + s);
+          }
 
           scannedMemeList.add(s);
 
           if (getScannedMemeSize() > 0 && scannedMemeList.contains(lastConnectedMemeID)) {
             stopScan();
 
-            handler.removeCallbacksAndMessages(null);
+            if (handler != null) {
+              handler.removeCallbacksAndMessages(null);
+            }
 
             Log.d("MAIN", "connect and stop callbacks");
-            memeConnectProgressDialog.setMessage("Connect to: " + s);
+            if (memeConnectProgressDialog != null) {
+              memeConnectProgressDialog.setMessage("Connect to: " + s);
+            }
 
             connectToMeme(lastConnectedMemeID);
           }
@@ -988,10 +992,78 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void updateActionBar(String title) {
+    Log.d("DEBUG", "updateActionBar 0");
+
     ActionBar target = getSupportActionBar();
-    target.setTitle(title);
-    target.setDisplayHomeAsUpEnabled(false);
-    invalidateOptionsMenu();
+    if (target != null) {
+      Log.d("DEBUG", "updateActionBar 1");
+
+      target.setTitle(String.format("  %s", title));
+      target.setDisplayHomeAsUpEnabled(false);
+      //invalidateOptionsMenu();
+
+
+      target.setDisplayShowHomeEnabled(true);
+      target.setDisplayUseLogoEnabled(true);
+
+      switch (batteryStatus) {
+        case 1:
+          target.setLogo(R.mipmap.connected_caution);
+          break;
+        case 2:
+          target.setLogo(R.mipmap.connected_30);
+          break;
+        case 3:
+          target.setLogo(R.mipmap.connected_50);
+          break;
+        case 4:
+          target.setLogo(R.mipmap.connected_80);
+          break;
+        case 5:
+          target.setLogo(R.mipmap.connected_full);
+          break;
+        default:
+          target.setLogo(R.mipmap.not_connected);
+          break;
+      }
+    }
+  }
+
+  void updateActionBarLogo() {
+    final ActionBar target = getSupportActionBar();
+    if (target != null) {
+      target.setDisplayHomeAsUpEnabled(false);
+      //invalidateOptionsMenu();
+
+      target.setDisplayShowHomeEnabled(true);
+      target.setDisplayUseLogoEnabled(true);
+
+      handler.post(new Runnable() {
+        @Override
+        public void run() {
+          switch (batteryStatus) {
+            case 1:
+              target.setLogo(R.mipmap.connected_caution);
+              break;
+            case 2:
+              target.setLogo(R.mipmap.connected_30);
+              break;
+            case 3:
+              target.setLogo(R.mipmap.connected_50);
+              break;
+            case 4:
+              target.setLogo(R.mipmap.connected_80);
+              break;
+            case 5:
+              target.setLogo(R.mipmap.connected_full);
+              break;
+            default:
+              target.setLogo(R.mipmap.not_connected);
+              break;
+          }
+        }
+      });
+    }
   }
 
   void transitToFragment(Fragment next) {
@@ -1113,8 +1185,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   void renewBatteryState(int status) {
+    Log.d("DEBUG", "renewBatteryState");
+
     batteryStatus = status;
-    invalidateOptionsMenu();
+    //invalidateOptionsMenu();
+    updateActionBarLogo();
   }
 
   int getRootCardId(int position) {
