@@ -435,45 +435,79 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         ((MainActivity) getActivity()).autoSaveValue("ENABLE_CAMERA", isChecked);
-      }
-    });
 
-    spotifyEnableSwitch = (Switch) view.findViewById(R.id.enable_spotify);
-    spotifyEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_SPOTIFY", true));
-    spotifyEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        ((MainActivity) getActivity()).autoSaveValue("ENABLE_SPOTIFY", isChecked);
+        setSwitchOnAtLeastOne();
       }
-    });
+  });
 
-    remoEnableSwitch = (Switch) view.findViewById(R.id.enable_remo);
-    remoEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_REMO", true));
-    remoEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        ((MainActivity) getActivity()).autoSaveValue("ENABLE_REMO", isChecked);
-      }
-    });
+  spotifyEnableSwitch =(Switch)view.findViewById(R.id.enable_spotify);
+    spotifyEnableSwitch.setChecked(((MainActivity)
 
-    hueEnableSwitch = (Switch) view.findViewById(R.id.enable_hue);
-    hueEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_HUE", true));
-    hueEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        ((MainActivity) getActivity()).autoSaveValue("ENABLE_HUE", isChecked);
-      }
-    });
+  getActivity()).
 
-    eyevdjEnableSwitch = (Switch) view.findViewById(R.id.enable_eyevdj);
-    eyevdjEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_EYEVDJ", true));
-    eyevdjEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        ((MainActivity) getActivity()).autoSaveValue("ENABLE_EYEVDJ", isChecked);
-      }
-    });
-  }
+  getSavedValue("ENABLE_SPOTIFY",true));
+    spotifyEnableSwitch.setOnCheckedChangeListener(new
+
+  OnCheckedChangeListener() {
+    @Override
+    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
+      ((MainActivity) getActivity()).autoSaveValue("ENABLE_SPOTIFY", isChecked);
+
+      setSwitchOnAtLeastOne();
+    }
+  });
+
+  remoEnableSwitch =(Switch)view.findViewById(R.id.enable_remo);
+    remoEnableSwitch.setChecked(((MainActivity)
+
+  getActivity()).
+
+  getSavedValue("ENABLE_REMO",true));
+    remoEnableSwitch.setOnCheckedChangeListener(new
+
+  OnCheckedChangeListener() {
+    @Override
+    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
+      ((MainActivity) getActivity()).autoSaveValue("ENABLE_REMO", isChecked);
+
+      setSwitchOnAtLeastOne();
+    }
+  });
+
+  hueEnableSwitch =(Switch)view.findViewById(R.id.enable_hue);
+    hueEnableSwitch.setChecked(((MainActivity)
+
+  getActivity()).
+
+  getSavedValue("ENABLE_HUE",true));
+    hueEnableSwitch.setOnCheckedChangeListener(new
+
+  OnCheckedChangeListener() {
+    @Override
+    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
+      ((MainActivity) getActivity()).autoSaveValue("ENABLE_HUE", isChecked);
+
+      setSwitchOnAtLeastOne();
+    }
+  });
+
+  eyevdjEnableSwitch =(Switch)view.findViewById(R.id.enable_eyevdj);
+    eyevdjEnableSwitch.setChecked(((MainActivity)
+
+  getActivity()).
+
+  getSavedValue("ENABLE_EYEVDJ",true));
+    eyevdjEnableSwitch.setOnCheckedChangeListener(new
+
+  OnCheckedChangeListener() {
+    @Override
+    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
+      ((MainActivity) getActivity()).autoSaveValue("ENABLE_EYEVDJ", isChecked);
+
+      setSwitchOnAtLeastOne();
+    }
+  });
+}
 
   @Override
   public void onDestroyView() {
@@ -546,5 +580,27 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
     */
+  }
+
+  void setSwitchOnAtLeastOne() {
+    if (((MainActivity) getActivity()).getEnabledCardNum() == 1) {
+      if (cameraEnableSwitch.isChecked()) {
+        cameraEnableSwitch.setEnabled(false);
+      } else if (spotifyEnableSwitch.isChecked()) {
+        spotifyEnableSwitch.setEnabled(false);
+      } else if (remoEnableSwitch.isChecked()) {
+        remoEnableSwitch.setEnabled(false);
+      } else if (hueEnableSwitch.isChecked()) {
+        hueEnableSwitch.setEnabled(false);
+      } else if (eyevdjEnableSwitch.isChecked()) {
+        eyevdjEnableSwitch.setEnabled(false);
+      }
+    } else {
+      cameraEnableSwitch.setEnabled(true);
+      spotifyEnableSwitch.setEnabled(true);
+      remoEnableSwitch.setEnabled(true);
+      hueEnableSwitch.setEnabled(true);
+      eyevdjEnableSwitch.setEnabled(true);
+    }
   }
 }
