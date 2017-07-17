@@ -64,6 +64,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   private Switch hueEnableSwitch;
   private Switch eyevdjEnableSwitch;
 
+  ProgressDialogFragment memeScanProgressDialog;
+
   private ArrayAdapter<String> adapter;
 
   private String selectedMemeID;
@@ -150,7 +152,12 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         if (b) {
           if (((MainActivity) getActivity()).checkAppIDandSecret()) {
             Log.d("BASIC", "SCAN Start");
-            Toast.makeText(getActivity(), "SCANNING...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "SCANNING...", Toast.LENGTH_SHORT).show();
+
+            memeScanProgressDialog = ProgressDialogFragment.newInstance("meme_scan");
+            //memeConnectProgressDialog.setDialogListener(this);
+            memeScanProgressDialog.setCancelable(false);
+            memeScanProgressDialog.show(getFragmentManager(), "dialog");
 
             ((MainActivity) getActivity()).startScan();
 
@@ -178,7 +185,10 @@ public class BasicConfigFragment extends ConfigFragmentBase {
           }
         } else {
           Log.d("BASIC", "SCAN Stop");
-          Toast.makeText(getActivity(), "SCAN STOPPED.", Toast.LENGTH_SHORT).show();
+          //Toast.makeText(getActivity(), "SCAN STOPPED.", Toast.LENGTH_SHORT).show();
+          if (memeScanProgressDialog != null) {
+            memeScanProgressDialog.dismiss();
+          }
 
           ((MainActivity) getActivity()).stopScan();
         }

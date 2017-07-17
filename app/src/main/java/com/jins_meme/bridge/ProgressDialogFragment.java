@@ -42,6 +42,24 @@ public class ProgressDialogFragment extends DialogFragment {
     progress = new ProgressDialog(getActivity());
 
     switch (type) {
+      case "meme_scan":
+        progress.setMax(100);
+        progress.setMessage(getString(R.string.meme_scanning));
+        progress.setTitle(getString(R.string.meme_scan_connect_title));
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setCancelable(false);
+        /*
+        progress.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel),
+            new OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i) {
+                if (mListener != null) {
+                  mListener.doNegativeClick("meme_connect");
+                }
+              }
+            });
+            */
+        break;
       case "meme_connect":
         progress.setMax(100);
         progress.setMessage(getString(R.string.meme_scanning));
