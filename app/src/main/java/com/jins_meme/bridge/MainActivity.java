@@ -1301,6 +1301,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   }
 
+  void logout() {
+    mPlayer.logout();
+  }
+
   private void onAuthenticationComplete(AuthenticationResponse authResponse, String clientID) {
     Log.d("DEBUG", "Got authentication token");
     if (mPlayer == null) {
@@ -1393,6 +1397,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void onLoggedOut() {
     Log.d("DEBUG", "SPOTIFY:: User logged out.");
+
+    isAuthenticated = false;
   }
 
   @Override
