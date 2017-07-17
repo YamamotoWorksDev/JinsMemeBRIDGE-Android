@@ -66,7 +66,6 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
@@ -94,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
 
-  //private ProgressDialog memeConnectProgressDialog;
   private ProgressDialogFragment memeConnectProgressDialog;
   private Handler handler;
   private FrameLayout mainLayout;
@@ -142,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private HueMenuFragment hueMenu;
   private RemoMenuFragment remoMenu;
   private CameraMenuFragment cameraMenu;
-
   private VDJMenuFragment vdjMenu;
   /*
    * MODIFY YOURSELF
@@ -258,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onCreateOptionsMenu(Menu menu) {
     int index = 0;
 
-    //menu.add(0, index++, 0, R.string.battery);
     menu.add(0, index++, 0, R.string.basic_conf);
 
     /*
