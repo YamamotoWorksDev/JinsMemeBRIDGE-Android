@@ -309,6 +309,10 @@ public class Camera2BasicFragment extends Fragment {
     private CameraCaptureSession.CaptureCallback mCaptureCallback
             = new CameraCaptureSession.CaptureCallback() {
 
+        private Integer mPrevAfState;
+        private int mSameAfStateCount = 0;
+        private final int SAME_AF_STATE_COUNT_MAX = 20;
+
         private void process(CaptureResult result) {
             switch (mState) {
                 case STATE_PREVIEW: {
@@ -317,20 +321,31 @@ public class Camera2BasicFragment extends Fragment {
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                    if (afState == null || afState == CaptureResult.CONTROL_AF_STATE_INACTIVE) {
+                    if (afState == null) {
+                        mState = STATE_PICTURE_TAKEN;
                         captureStillPicture();
-                    } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState ||
-                            CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState) {
+                    } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState) {
                         // CONTROL_AE_STATE can be null on some devices
                         Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                         if (aeState == null ||
-                                aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
+                            aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
                             mState = STATE_PICTURE_TAKEN;
                             captureStillPicture();
                         } else {
                             runPrecaptureSequence();
                         }
                     }
+                    else if(mPrevAfState == afState) {
+                        if(++mSameAfStateCount == SAME_AF_STATE_COUNT_MAX) {
+                            mState = STATE_PICTURE_TAKEN;
+                            captureStillPicture();
+                            mSameAfStateCount = 0;
+                        }
+                    }
+                    else {
+                        mSameAfStateCount = 0;
+                    }
+                    mPrevAfState = afState;
                     break;
                 }
                 case STATE_WAITING_PRECAPTURE: {

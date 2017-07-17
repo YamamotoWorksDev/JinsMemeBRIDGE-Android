@@ -138,19 +138,17 @@ public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtime
     @Override
     public void onResume() {
         super.onResume();
-        if(isPermissionRequested) {
-            if(checkIfAllRequiedPermissionGranted()) {
-                mCamera.reopenCamera();
-            }
-            else {
-                mHandler.post(new Runnable() {
-                    public void run() {
-                        mListener.backToPreviousMenu();
-                    }
-                });
-            }
-            isPermissionRequested = false;
+        if(checkIfAllRequiedPermissionGranted()) {
+            mCamera.reopenCamera();
         }
+        else if(isPermissionRequested) {
+            mHandler.post(new Runnable() {
+                public void run() {
+                    mListener.backToPreviousMenu();
+                }
+            });
+        }
+        isPermissionRequested = false;
     }
 
     @Override
