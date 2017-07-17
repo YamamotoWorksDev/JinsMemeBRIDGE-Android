@@ -282,48 +282,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
 
+    //debug Log.d("DEBUG", "onPrepareOptionsMenu");
+
     String barTitle;
     if (getSupportActionBar() != null && getSupportActionBar().getTitle() != null) {
       barTitle = getSupportActionBar().getTitle().toString();
 
-      Log.d("DEBUG", "Title = " + barTitle);
-
-      if (barTitle.contains(getString(R.string.app_name))) {
-        Log.d("DEBUG", "true");
-
-        /*
-        switch (batteryStatus) {
-          case 1:
-            menu.getItem(0).setIcon(R.mipmap.connected_caution);
-            break;
-          case 2:
-            menu.getItem(0).setIcon(R.mipmap.connected_30);
-            break;
-          case 3:
-            menu.getItem(0).setIcon(R.mipmap.connected_50);
-            break;
-          case 4:
-            menu.getItem(0).setIcon(R.mipmap.connected_80);
-            break;
-          case 5:
-            menu.getItem(0).setIcon(R.mipmap.connected_full);
-            break;
-          default:
-            menu.getItem(0).setIcon(R.mipmap.not_connected);
-            break;
-        }
-        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.getItem(0).setVisible(true);
-        */
-      } else {
-        Log.d("DEBUG", "false");
-
-        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.getItem(0).setVisible(false);
-      }
+      //debug Log.d("DEBUG", "Title = " + barTitle);
 
       if (!barTitle.contains(getString(R.string.app_name))) {
-        for (int i = 1; i < menu.size(); i++) {
+        for (int i = 0; i < menu.size(); i++) {
           MenuItem item = menu.getItem(i);
           String title = item.getTitle().toString();
           if (barTitle.contains(title)) {
@@ -333,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           }
         }
       } else {
-        for (int i = 1; i < menu.size(); i++) {
+        for (int i = 0; i < menu.size(); i++) {
           menu.getItem(i).setVisible(true);
         }
       }
