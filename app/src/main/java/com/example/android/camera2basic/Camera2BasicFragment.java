@@ -102,24 +102,29 @@ public class Camera2BasicFragment extends Fragment {
     private static final int STATE_PREVIEW = 0;
 
     /**
+     * Camera state: Shoot triggered.
+     */
+    private static final int STATE_TRIGGERED = 1;
+
+    /**
      * Camera state: Waiting for the focus to be locked.
      */
-    private static final int STATE_WAITING_LOCK = 1;
+    private static final int STATE_WAITING_LOCK = 2;
 
     /**
      * Camera state: Waiting for the exposure to be precapture state.
      */
-    private static final int STATE_WAITING_PRECAPTURE = 2;
+    private static final int STATE_WAITING_PRECAPTURE = 3;
 
     /**
      * Camera state: Waiting for the exposure state to be something other than precapture.
      */
-    private static final int STATE_WAITING_NON_PRECAPTURE = 3;
+    private static final int STATE_WAITING_NON_PRECAPTURE = 4;
 
     /**
      * Camera state: Picture was taken.
      */
-    private static final int STATE_PICTURE_TAKEN = 4;
+    private static final int STATE_PICTURE_TAKEN = 5;
 
     /**
      * Max preview width that is guaranteed by Camera2 API
@@ -258,14 +263,6 @@ public class Camera2BasicFragment extends Fragment {
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-            long currentTimeMillis = System.currentTimeMillis();
-            Date date = new Date(currentTimeMillis);
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
-            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/" + getString(R.string.app_name));
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            mFile = new File(dir, format.format(currentTimeMillis)+".jpg");
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
         }
 
@@ -792,6 +789,18 @@ public class Camera2BasicFragment extends Fragment {
      * Initiate a still image capture.
      */
     public void takePicture() {
+        if(mState != STATE_PREVIEW) {
+            return;
+        }
+        mState = STATE_TRIGGERED;
+        long currentTimeMillis = System.currentTimeMillis();
+        Date date = new Date(currentTimeMillis);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/" + getString(R.string.app_name));
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        mFile = new File(dir, format.format(currentTimeMillis)+".jpg");
         lockFocus();
     }
 
