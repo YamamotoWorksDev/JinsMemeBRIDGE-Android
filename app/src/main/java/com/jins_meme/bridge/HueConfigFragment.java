@@ -114,10 +114,6 @@ public class HueConfigFragment extends ConfigFragmentBase {
 
     hueController = new HueController(getContext(), getFragmentManager());
 
-    isConnectionCheck = true;
-    ConnectCheckThread cct = new ConnectCheckThread();
-    cct.start();
-
     swConnect = (Switch) view.findViewById(R.id.hue_connect);
     swConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       @Override
@@ -125,6 +121,10 @@ public class HueConfigFragment extends ConfigFragmentBase {
         Log.d("HUE", "swConnect = " + b);
 
         if (b) {
+          isConnectionCheck = true;
+          ConnectCheckThread cct = new ConnectCheckThread();
+          cct.start();
+
           if (HueController.getConnectionState() != 4) {
             /*
             isConnectionCheck = true;
@@ -369,6 +369,8 @@ public class HueConfigFragment extends ConfigFragmentBase {
     @Override
     public void run() {
       while (isConnectionCheck) {
+        Log.d("HUE", "connection state = " + HueController.getConnectionState());
+
         if (HueController.getConnectionState() == -1 || HueController.getConnectionState() == -2) {
           isConnectionCheck = false;
 

@@ -66,7 +66,6 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
@@ -94,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private SharedPreferences preferences;
   private SharedPreferences.Editor editor;
 
-  //private ProgressDialog memeConnectProgressDialog;
   private ProgressDialogFragment memeConnectProgressDialog;
   private Handler handler;
   private FrameLayout mainLayout;
@@ -142,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private HueMenuFragment hueMenu;
   private RemoMenuFragment remoMenu;
   private CameraMenuFragment cameraMenu;
-
   private VDJMenuFragment vdjMenu;
   /*
    * MODIFY YOURSELF
@@ -258,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onCreateOptionsMenu(Menu menu) {
     int index = 0;
 
-    //menu.add(0, index++, 0, R.string.battery);
     menu.add(0, index++, 0, R.string.basic_conf);
 
     /*
@@ -282,48 +278,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
 
+    //debug Log.d("DEBUG", "onPrepareOptionsMenu");
+
     String barTitle;
     if (getSupportActionBar() != null && getSupportActionBar().getTitle() != null) {
       barTitle = getSupportActionBar().getTitle().toString();
 
-      Log.d("DEBUG", "Title = " + barTitle);
-
-      if (barTitle.contains(getString(R.string.app_name))) {
-        Log.d("DEBUG", "true");
-
-        /*
-        switch (batteryStatus) {
-          case 1:
-            menu.getItem(0).setIcon(R.mipmap.connected_caution);
-            break;
-          case 2:
-            menu.getItem(0).setIcon(R.mipmap.connected_30);
-            break;
-          case 3:
-            menu.getItem(0).setIcon(R.mipmap.connected_50);
-            break;
-          case 4:
-            menu.getItem(0).setIcon(R.mipmap.connected_80);
-            break;
-          case 5:
-            menu.getItem(0).setIcon(R.mipmap.connected_full);
-            break;
-          default:
-            menu.getItem(0).setIcon(R.mipmap.not_connected);
-            break;
-        }
-        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.getItem(0).setVisible(true);
-        */
-      } else {
-        Log.d("DEBUG", "false");
-
-        menu.getItem(0).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.getItem(0).setVisible(false);
-      }
+      //debug Log.d("DEBUG", "Title = " + barTitle);
 
       if (!barTitle.contains(getString(R.string.app_name))) {
-        for (int i = 1; i < menu.size(); i++) {
+        for (int i = 0; i < menu.size(); i++) {
           MenuItem item = menu.getItem(i);
           String title = item.getTitle().toString();
           if (barTitle.contains(title)) {
@@ -333,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           }
         }
       } else {
-        for (int i = 1; i < menu.size(); i++) {
+        for (int i = 0; i < menu.size(); i++) {
           menu.getItem(i).setVisible(true);
         }
       }
@@ -1337,6 +1301,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   }
 
+  void logout() {
+    mPlayer.logout();
+  }
+
   private void onAuthenticationComplete(AuthenticationResponse authResponse, String clientID) {
     Log.d("DEBUG", "Got authentication token");
     if (mPlayer == null) {
@@ -1429,6 +1397,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void onLoggedOut() {
     Log.d("DEBUG", "SPOTIFY:: User logged out.");
+
+    isAuthenticated = false;
   }
 
   @Override

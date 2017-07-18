@@ -176,10 +176,6 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
     savedAlbumUriList = new ArrayList<>();
     followedArtistUriList = new ArrayList<>();
 
-    if (((MainActivity) getActivity()).authenticate()) {
-      getPlaylist();
-    }
-
     swUse = (Switch) view.findViewById(R.id.spotify_use);
     swUse.setChecked(((MainActivity) getActivity()).getSavedValue("SPOTIFY_USE", false));
     swUse.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -188,11 +184,13 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
         ((MainActivity) getActivity()).autoSaveValue("SPOTIFY_USE", b);
         
         if (b) {
-          Log.d("SPOTIFY", "Use Spotify.");
+          Log.d("DEBUG", "SPOTIFY_CONFIG:: Use Spotify.");
 
           ((MainActivity) getActivity()).authenticate();
         } else {
-          Log.d("SPOTIFY", "Not Use Spotify.");
+          Log.d("DEBUG", "SPOTIFY_CONFIG:: Not Use Spotify.");
+
+          ((MainActivity) getActivity()).logout();
         }
       }
     });
@@ -295,6 +293,10 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
           Log.d("DEBUG", "SPOTIFY:: nothing selected");
         }
       });
+    }
+
+    if (swUse.isChecked() && ((MainActivity) getActivity()).authenticate()) {
+      getPlaylist();
     }
   }
 
