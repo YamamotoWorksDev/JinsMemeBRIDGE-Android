@@ -60,6 +60,7 @@
 
   <string name="meme_config_blink">瞬目（まばたき） [%1$d]</string>
   <string name="meme_config_angle">キャンセル・ポーズ機能の有効角度 [ロール: %1$d]</string>
+  <string name="meme_config_pause_time">ポーズに入るまでの時間 [%1$.1fsec]</string>
 
   <string name="spotify_loading">ユーザーのプレイリスト情報を読み出し中です。</string>
   <string name="spotify_cat_user">ユーザープレイリスト</string>

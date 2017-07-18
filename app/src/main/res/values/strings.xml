@@ -60,6 +60,7 @@
 
   <string name="meme_config_blink">BLINK (%1$d)</string>
   <string name="meme_config_angle">CANCEL/PAUSE ANGLE(ROLL: %1$d)</string>
+  <string name="meme_config_pause_time">PAUSE ENABLE TIME (%1$.1fsec)</string>
 
   <string name="spotify_loading">Now loading your playlists&#8230;</string>
   <string name="spotify_cat_user">USER PLAYLIST</string>

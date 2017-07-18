@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private SimpleTimer cancelTimer = new SimpleTimer(TIMER_ID_UI_CANCEL);
   private SimpleTimer pauseTimer = new SimpleTimer(TIMER_ID_UI_PAUSE);
   private boolean memeInteractionFlagPrepareCancel = false;
-  private float PAUSE_WAIT_TIME = 2.5f;
-  private float CANCEL_WAIT_TIME = 2.5f;
+  private float pauseWaitTime = 2.5f;
+  private float cancelWaitTime = 2.5f;
   private float CANCEL_REFRACTORY_TIME = 1.f;
 
   private static final int BATTERY_CHECK_INTERVAL = 2000;
@@ -664,6 +664,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       @Override
       public void run() {
         //invalidateOptionsMenu();
+        batteryStatus = 0;
         updateActionBarLogo();
         if (basicConfigFragment != null) {
           basicConfigFragment.setSwConnect(false);
@@ -794,9 +795,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       if (Math.abs(roll) > getRollThreshold()) {
         if(!memeInteractionFlagPrepareCancel) {
           if(!isUIPaused) {
-            cancelTimer.startTimer(CANCEL_WAIT_TIME, true);
+            cancelTimer.startTimer(cancelWaitTime, true);
           }
-          pauseTimer.startTimer(PAUSE_WAIT_TIME, true);
+          pauseTimer.startTimer(pauseWaitTime, true);
         }
         memeInteractionFlagPrepareCancel = true;
       } else if (Math.abs(roll) <= getRollThreshold()) {
@@ -1067,6 +1068,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     return preferences.getInt(key, initValue);
   }
 
+  float getSavedValue(String key, float initValue) {
+    return preferences.getFloat(key, initValue);
+  }
+
   void autoSaveValue(String key, String text) {
     Log.d("DEBUG", "SAVE PARAM:: " + key + " -> " + text);
 
@@ -1099,6 +1104,20 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
 
     editor.putInt(key, value);
+    editor.apply();
+  }
+
+  void autoSaveValue(String key, float value) {
+    Log.d("DEBUG", "SAVE PARAM:: " + key + " -> " + value);
+
+    switch (key) {
+      case "PAUSE_TIME":
+        pauseWaitTime = value;
+        cancelWaitTime = value;
+        break;
+    }
+
+    editor.putFloat(key, value);
     editor.apply();
   }
 

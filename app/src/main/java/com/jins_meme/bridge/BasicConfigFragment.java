@@ -54,10 +54,12 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   private EditText etAppSecret;
   private TextView tvBlinkTitle;
   private TextView tvRollTitle;
+  private TextView tvPauseTimeTitle;
   private SeekBar sbBlinkThreshold;
   private SeekBar sbUpDownThreshold;
   private SeekBar sbLeftRightThreshold;
   private SeekBar sbRollThreshold;
+  private SeekBar sbPauseTime;
   private ImageButton ibRestart;
   private ImageButton ibLock;
 
@@ -110,10 +112,12 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     etAppSecret = null;
     tvBlinkTitle = null;
     tvRollTitle = null;
+    tvPauseTimeTitle = null;
     sbBlinkThreshold = null;
     sbUpDownThreshold = null;
     sbLeftRightThreshold = null;
     sbRollThreshold = null;
+    sbPauseTime = null;
     ibRestart = null;
     ibLock = null;
     cameraEnableSwitch = null;
@@ -433,6 +437,34 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         Log.d("BASIC", "roll th. = " + value);
         Toast.makeText(getActivity(), "ROLL THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
         tvRollTitle.setText(getString(R.string.meme_config_angle, value));
+      }
+    });
+
+    tvPauseTimeTitle = (TextView) view.findViewById(R.id.pause_time_title);
+    tvPauseTimeTitle.setText(getString(R.string.meme_config_pause_time,
+        ((MainActivity) getActivity()).getSavedValue("PAUSE_TIME", 2.5f)));
+
+    sbPauseTime = (SeekBar) view.findViewById(R.id.pause_time);
+    sbPauseTime.setProgress((int) (((MainActivity) getActivity()).getSavedValue("PAUSE_TIME", 2.5f) * 10) - 10);
+    sbPauseTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        float value = (seekBar.getProgress() + 10) / 10.0f;
+        tvPauseTimeTitle.setText(getString(R.string.meme_config_pause_time, value));
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+        layout.requestFocus();
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        float value = (seekBar.getProgress() + 10) / 10.0f;
+        ((MainActivity) getActivity()).autoSaveValue("PAUSE_TIME", value);
+        Log.d("BASIC", "pause time = " + value);
+        Toast.makeText(getActivity(), "PAUSE TIME: " + value, Toast.LENGTH_SHORT).show();
+        tvPauseTimeTitle.setText(getString(R.string.meme_config_pause_time, value));
       }
     });
 
