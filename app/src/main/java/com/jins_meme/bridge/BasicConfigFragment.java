@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnScrollChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -32,6 +33,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -43,6 +45,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
   private Handler handler;
 
+  private ScrollView scrollView;
   private LinearLayout layout;
   private Switch swScan;
   private Switch swConnect;
@@ -133,11 +136,28 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
     Log.d("BASIC", "onViewCreated");
 
+    scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
+    scrollView.setOnScrollChangeListener(new OnScrollChangeListener() {
+      @Override
+      public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        Log.d("DEBUG", "view scroll " + scrollX + " " + scrollY + " " + oldScrollX + " " + oldScrollY);
+
+        if (scrollY - oldScrollY > 3000) {
+          handler.post(new Runnable() {
+            @Override
+            public void run() {
+              scrollView.setScrollY(0);
+            }
+          });
+        }
+      }
+    });
+
     layout = (LinearLayout) view.findViewById(R.id.basic_layout);
     layout.setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View view, MotionEvent motionEvent) {
-        Log.d("DEBUG", "view touch.");
+        Log.d("DEBUG", "view touch. " + scrollView.getScrollY());
 
         layout.requestFocus();
 
@@ -448,14 +468,10 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
         setSwitchOnAtLeastOne();
       }
-  });
+    });
 
-  spotifyEnableSwitch =(Switch)view.findViewById(R.id.enable_spotify);
-    spotifyEnableSwitch.setChecked(((MainActivity)
-
-  getActivity()).
-
-  getSavedValue("ENABLE_SPOTIFY",true));
+    spotifyEnableSwitch =(Switch)view.findViewById(R.id.enable_spotify);
+    spotifyEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_SPOTIFY",true));
     spotifyEnableSwitch.setOnCheckedChangeListener(new
 
   OnCheckedChangeListener() {
@@ -464,15 +480,11 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       ((MainActivity) getActivity()).autoSaveValue("ENABLE_SPOTIFY", isChecked);
 
       setSwitchOnAtLeastOne();
-    }
+      }
   });
 
-  remoEnableSwitch =(Switch)view.findViewById(R.id.enable_remo);
-    remoEnableSwitch.setChecked(((MainActivity)
-
-  getActivity()).
-
-  getSavedValue("ENABLE_REMO",true));
+    remoEnableSwitch =(Switch)view.findViewById(R.id.enable_remo);
+    remoEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_REMO",true));
     remoEnableSwitch.setOnCheckedChangeListener(new
 
   OnCheckedChangeListener() {
@@ -481,15 +493,11 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       ((MainActivity) getActivity()).autoSaveValue("ENABLE_REMO", isChecked);
 
       setSwitchOnAtLeastOne();
-    }
+      }
   });
 
   hueEnableSwitch =(Switch)view.findViewById(R.id.enable_hue);
-    hueEnableSwitch.setChecked(((MainActivity)
-
-  getActivity()).
-
-  getSavedValue("ENABLE_HUE",true));
+  hueEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_HUE",true));
     hueEnableSwitch.setOnCheckedChangeListener(new
 
   OnCheckedChangeListener() {
@@ -502,11 +510,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   });
 
   eyevdjEnableSwitch =(Switch)view.findViewById(R.id.enable_eyevdj);
-    eyevdjEnableSwitch.setChecked(((MainActivity)
-
-  getActivity()).
-
-  getSavedValue("ENABLE_EYEVDJ",true));
+  eyevdjEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_EYEVDJ",true));
     eyevdjEnableSwitch.setOnCheckedChangeListener(new
 
   OnCheckedChangeListener() {
