@@ -510,7 +510,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       handler.postDelayed(new Runnable() {
         @Override
         public void run() {
-          startScan();
+          startScan(true);
 
           handler.postDelayed(new Runnable() {
             @Override
@@ -699,7 +699,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   }
 
-  public void startScan() {
+  public void startScan(final boolean isConnect) {
     Log.d("MAIN", "start scannig... " + lastConnectedMemeID);
 
     if (scannedMemeList != null) {
@@ -731,12 +731,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
               handler.removeCallbacksAndMessages(null);
             }
 
-            Log.d("MAIN", "connect and stop callbacks");
-            if (memeConnectProgressDialog != null) {
-              memeConnectProgressDialog.setMessage("Connect to: " + s);
-            }
+            if (isConnect) {
+              Log.d("MAIN", "connect and stop callbacks");
+              if (memeConnectProgressDialog != null) {
+                memeConnectProgressDialog.setMessage("Connect to: " + s);
+              }
 
-            connectToMeme(lastConnectedMemeID);
+              connectToMeme(lastConnectedMemeID);
+            }
           }
         }
       });

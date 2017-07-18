@@ -183,7 +183,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
             memeScanProgressDialog.setCancelable(false);
             memeScanProgressDialog.show(getFragmentManager(), "dialog");
 
-            ((MainActivity) getActivity()).startScan();
+            ((MainActivity) getActivity()).startScan(false);
 
             adapter.clear();
             //spMemeList.setAdapter(adapter);
