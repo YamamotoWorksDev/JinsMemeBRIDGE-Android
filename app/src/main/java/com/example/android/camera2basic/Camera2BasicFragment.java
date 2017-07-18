@@ -733,6 +733,8 @@ public class Camera2BasicFragment extends Fragment {
                                         mCaptureCallback, mBackgroundHandler);
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
                             }
                         }
 
