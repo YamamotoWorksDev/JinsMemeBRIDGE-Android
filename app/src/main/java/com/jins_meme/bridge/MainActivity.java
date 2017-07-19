@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   private static int[] enableId = {R.string.camera, R.string.spotify, R.string.remo, R.string.hue, R.string.vdj};
 
+  private boolean isNetworkEnable = false;
+
   private Player mPlayer;
   private static boolean isAuthenticated = false;
   private BroadcastReceiver mNetworkStateReceiver;
@@ -188,6 +190,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     return isAuthenticated;
   }
 
+  public boolean isNetworkEnabled() {
+    return isNetworkEnable;
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -236,9 +242,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
+    /*
     if (Build.VERSION.SDK_INT >= 23) {
       requestGPSPermission();
     }
+    */
 
     mNetworkStateReceiver = new BroadcastReceiver() {
       @Override
@@ -392,6 +400,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     isForeground = true;
 
+    if (Build.VERSION.SDK_INT >= 23) {
+      requestGPSPermission();
+    }
+
     Log.d("DEBUG", "onResume..." + scannedMemeList.size());
   }
 
@@ -472,25 +484,29 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     if (networkInfo == null || !networkInfo.isConnected()) {
+      isNetworkEnable = false;
       AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("network");
       alertDialogFragment.setCancelable(false);
       alertDialogFragment.setDialogListener(this);
       alertDialogFragment.show(getSupportFragmentManager(), "dialog");
     } else {
+      isNetworkEnable = true;
       checkBluetoothEnable();
     }
   }
 
   private void checkBluetoothEnable() {
-    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
-      Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-      startActivityForResult(intent, 0);
-    } else if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-      Log.d("MAIN", "Initialize MEME LIB");
-      initMemeLib();
+    if (!isMemeConnected()) {
+      BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+      if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(intent, 0);
+      } else if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+        Log.d("MAIN", "Initialize MEME LIB");
+        initMemeLib();
 
-      scanAndConnectToLastConnectedMeme();
+        scanAndConnectToLastConnectedMeme();
+      }
     }
   }
 
