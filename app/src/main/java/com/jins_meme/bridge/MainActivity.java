@@ -1335,7 +1335,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   boolean authenticate() {
     //Log.d("DEBUG", "SPOTIFY:: authenticate " + getRedirectUri().toString());
 
-    if (!isAuthenticated && getSavedValue("SPOTIFY_USE", false)) {
+    if (isNetworkEnable && !isAuthenticated && getSavedValue("SPOTIFY_USE", false)) {
       AuthenticationRequest.Builder builder = new Builder(getString(R.string.spotify_client_id),
           Type.TOKEN,
           "jins-meme-bridge-login://callback");

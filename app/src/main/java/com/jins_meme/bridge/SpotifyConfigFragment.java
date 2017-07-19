@@ -197,6 +197,7 @@ public class SpotifyConfigFragment extends ConfigFragmentBase {
       });
     } else {
       swUse.setEnabled(false);
+      swUse.setChecked(false);
     }
 
     swShuffle = (Switch) view.findViewById(R.id.enable_shuffle);
