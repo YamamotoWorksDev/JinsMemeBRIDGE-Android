@@ -780,8 +780,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     int eyeBlinkStrength = memeRealtimeData.getBlinkStrength();
     int eyeBlinkSpeed = memeRealtimeData.getBlinkSpeed();
 
-    //int eyeUp = memeRealtimeData.getEyeMoveUp();
-    //int eyeDown = memeRealtimeData.getEyeMoveDown();
+    int eyeUp = memeRealtimeData.getEyeMoveUp();
+    int eyeDown = memeRealtimeData.getEyeMoveDown();
     int eyeLeft = memeRealtimeData.getEyeMoveLeft();
     int eyeRight = memeRealtimeData.getEyeMoveRight();
 
@@ -820,12 +820,23 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                     accepter.onMemeBlinked();
                   }
                 });
+              } else if (mMemeDataFilter.isUp()) {
+                Log.d("EYE", "up = " + eyeUp);
+              } else if (mMemeDataFilter.isDown()) {
+                Log.d("EYE", "down = " + eyeDown);
+
+                if(!memeInteractionFlagPrepareCancel) {
+                  if(!isUIPaused) {
+                    cancelTimer.startTimer(cancelWaitTime, true);
+                  }
+                }
+                memeInteractionFlagPrepareCancel = true;
               } else if (mMemeDataFilter.isLeft()) {
                 Log.d("EYE", "left = " + eyeLeft);
                 handler.post(new Runnable() {
                   @Override
                   public void run() {
-                    accepter.onMemeMoveLeft();
+                    accepter.onMemeMoveRight();
                   }
                 });
               } else if (mMemeDataFilter.isRight()) {
@@ -833,14 +844,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 handler.post(new Runnable() {
                   @Override
                   public void run() {
-                    accepter.onMemeMoveRight();
+                    accepter.onMemeMoveLeft();
                   }
                 });
               }
             }
           }
         }
-        memeInteractionFlagPrepareCancel = false;
+        if (!mMemeDataFilter.isDown()) {
+          memeInteractionFlagPrepareCancel = false;
+        }
       }
     }
   }
