@@ -50,6 +50,7 @@ import android.provider.MediaStore.Images;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -71,7 +72,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -250,11 +250,6 @@ public class Camera2BasicFragment extends Fragment {
     private ImageReader mImageReader;
 
     /**
-     * This is the output file for our picture.
-     */
-    private File mFile;
-
-    /**
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
      * still image is ready to be saved.
      */
@@ -263,7 +258,15 @@ public class Camera2BasicFragment extends Fragment {
 
         @Override
         public void onImageAvailable(ImageReader reader) {
-            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/" + getString(R.string.app_name));
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
+            File file = new File(dir, format.format(System.currentTimeMillis())+".jpg");
+            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), file, getActivity()));
+            showToast("写真を保存しました : " + file.getName());
+            Log.d(TAG, file.toString());
         }
 
     };
@@ -793,14 +796,6 @@ public class Camera2BasicFragment extends Fragment {
             return;
         }
         mState = STATE_TRIGGERED;
-        long currentTimeMillis = System.currentTimeMillis();
-        Date date = new Date(currentTimeMillis);
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
-        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/" + getString(R.string.app_name));
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        mFile = new File(dir, format.format(currentTimeMillis)+".jpg");
         lockFocus();
     }
 
@@ -870,15 +865,6 @@ public class Camera2BasicFragment extends Fragment {
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    ContentValues values = new ContentValues();
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    values.put(Images.Media.MIME_TYPE, "image/jpeg");
-                    values.put(Images.Media.TITLE, mFile.getName());
-                    values.put("_data", mFile.getPath());
-                    contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-                    showToast("写真を保存しました : " + mFile.getName());
-                    Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }
             };
@@ -937,17 +923,13 @@ public class Camera2BasicFragment extends Fragment {
      */
     private static class ImageSaver implements Runnable {
 
-        /**
-         * The JPEG image
-         */
         private final Image mImage;
-        /**
-         * The file we save the image into.
-         */
+        private final Context mContext;
         private final File mFile;
 
-        public ImageSaver(Image image, File file) {
+        public ImageSaver(Image image, File file, Context context) {
             mImage = image;
+            mContext = context;
             mFile = file;
         }
 
@@ -958,8 +940,15 @@ public class Camera2BasicFragment extends Fragment {
             buffer.get(bytes);
             FileOutputStream output = null;
             try {
+                AppCompatActivity activity = ((AppCompatActivity)(mContext));
                 output = new FileOutputStream(mFile);
                 output.write(bytes);
+                ContentValues values = new ContentValues();
+                ContentResolver contentResolver = activity.getContentResolver();
+                values.put(Images.Media.MIME_TYPE, "image/jpeg");
+                values.put(Images.Media.TITLE, mFile.getName());
+                values.put("_data", mFile.getPath());
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
