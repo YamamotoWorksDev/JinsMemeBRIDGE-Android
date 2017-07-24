@@ -105,4 +105,8 @@
   <string name="osc_track">/track</string>
   <string name="osc_effect">/effect</string>
   <string name="osc_logo">/logo</string>
+
+  <string name="remo_set_label_dialog_title">SET SIGNAL LABEL</string>
+  <string name="remo_set_label_dialog_ok">OK</string>
+  <string name="remo_set_label_dialog_cancel">CANCEL</string>
 </resources>
