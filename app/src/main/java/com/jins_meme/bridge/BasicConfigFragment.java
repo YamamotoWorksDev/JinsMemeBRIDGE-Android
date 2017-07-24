@@ -368,6 +368,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
 
+    /*
     sbUpDownThreshold = (SeekBar) view.findViewById(R.id.updown_threshold);
     sbUpDownThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("UD_TH", 0));
     sbUpDownThreshold.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -389,6 +390,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         Toast.makeText(getActivity(), "UP/DOWN THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
       }
     });
+    */
 
     sbLeftRightThreshold = (SeekBar) view.findViewById(R.id.leftright_threshold);
     sbLeftRightThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("LR_TH", 0));

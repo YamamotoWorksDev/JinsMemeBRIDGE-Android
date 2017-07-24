@@ -840,13 +840,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 Log.d("EYE", "up = " + eyeUp);
               } else if (mMemeDataFilter.isDown()) {
                 Log.d("EYE", "down = " + eyeDown);
-
-                if(!memeInteractionFlagPrepareCancel) {
-                  if(!isUIPaused) {
-                    cancelTimer.startTimer(cancelWaitTime, true);
-                  }
-                }
-                memeInteractionFlagPrepareCancel = true;
               } else if (mMemeDataFilter.isLeft()) {
                 Log.d("EYE", "left = " + eyeLeft);
                 handler.post(new Runnable() {

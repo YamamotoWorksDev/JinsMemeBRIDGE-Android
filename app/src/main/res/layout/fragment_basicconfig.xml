@@ -151,6 +151,7 @@
                           android:progress="40"/>
                     </LinearLayout>
                 </LinearLayout>
+                <!--
                 <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -173,6 +174,7 @@
                       android:max="3"
                       android:progress="0"/>
                 </LinearLayout>
+                -->
                 <LinearLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
