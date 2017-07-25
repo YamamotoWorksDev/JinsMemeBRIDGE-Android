@@ -23,7 +23,7 @@ import android.view.MotionEvent;
 
 public class PauseActionDetector extends FrameLayout implements SimpleTimer.OnResultListener {
 
-  private float allowSlideRadius = 1;
+  private float allowSlideRadius = 10;
   private float longPressDuration = 1;
   private PointF touchedPoint;
   SimpleTimer longPressTimer;
