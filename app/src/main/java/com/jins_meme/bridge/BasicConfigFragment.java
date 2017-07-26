@@ -56,10 +56,10 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   private TextView tvRollTitle;
   private TextView tvPauseTimeTitle;
   private SeekBar sbBlinkThreshold;
-  private SeekBar sbUpDownThreshold;
   private SeekBar sbLeftRightThreshold;
   private SeekBar sbRollThreshold;
   private SeekBar sbPauseTime;
+  private Switch swDirection;
   private ImageButton ibRestart;
   private ImageButton ibLock;
 
@@ -114,10 +114,10 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     tvRollTitle = null;
     tvPauseTimeTitle = null;
     sbBlinkThreshold = null;
-    sbUpDownThreshold = null;
     sbLeftRightThreshold = null;
     sbRollThreshold = null;
     sbPauseTime = null;
+    swDirection = null;
     ibRestart = null;
     ibLock = null;
     cameraEnableSwitch = null;
@@ -481,6 +481,15 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     setEnableRestart(false);
     */
 
+    swDirection = (Switch) view.findViewById(R.id.card_slide_direction);
+    swDirection.setChecked(((MainActivity) getActivity()).getSavedValue("MENU_SLIDE_DIRECTION", false));
+    swDirection.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        ((MainActivity) getActivity()).autoSaveValue("MENU_SLIDE_DIRECTION", isChecked);
+      }
+    });
+
     ibLock = (ImageButton) view.findViewById(R.id.lock);
     ibLock.setOnClickListener(new OnClickListener() {
       @Override
@@ -560,20 +569,6 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-
-    handler = null;
-
-    swScan = null;
-    swConnect = null;
-    spMemeList = null;
-    etAppId = null;
-    etAppSecret = null;
-    tvBlinkTitle = null;
-    sbBlinkThreshold = null;
-    sbUpDownThreshold = null;
-    sbLeftRightThreshold = null;
-    ibRestart = null;
-    ibLock = null;
   }
 
   private void setSelection(@NonNull String item) {

@@ -853,20 +853,38 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 Log.d("EYE", "down = " + eyeDown);
               } else if (mMemeDataFilter.isLeft()) {
                 Log.d("EYE", "left = " + eyeLeft);
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    accepter.onMemeMoveRight();
-                  }
-                });
+                if (getSavedValue("MENU_SLIDE_DIRECTION", false)) {
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveLeft();
+                    }
+                  });
+                } else {
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveRight();
+                    }
+                  });
+                }
               } else if (mMemeDataFilter.isRight()) {
                 Log.d("EYE", "right = " + eyeRight);
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    accepter.onMemeMoveLeft();
-                  }
-                });
+                if (getSavedValue("MENU_SLIDE_DIRECTION", false)) {
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveRight();
+                    }
+                  });
+                } else {
+                  handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                      accepter.onMemeMoveLeft();
+                    }
+                  });
+                }
               }
             }
           }

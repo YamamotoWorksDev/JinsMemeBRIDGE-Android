@@ -254,6 +254,26 @@
             android:text="ポーズ機能が有効になる時間を調整します"
             android:textSize="12sp"/>
         </LinearLayout>
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="10dp"
+          android:layout_marginBottom="5dp"
+          android:orientation="vertical">
+          <Switch
+            android:id="@+id/card_slide_direction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:splitTrack="false"
+            android:text="メニューのスライド方向"/>
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:text="視線を左右に動かしたときのカードの移動方向を変更します"
+            android:textSize="12sp"/>
+        </LinearLayout>
       </LinearLayout>
       <LinearLayout
         android:layout_width="match_parent"

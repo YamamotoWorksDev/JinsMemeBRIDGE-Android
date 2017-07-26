@@ -255,6 +255,26 @@
                       android:text="Adjust the time until enabling the pause function."
                       android:textSize="12sp"/>
                 </LinearLayout>
+                <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dp"
+                  android:layout_marginBottom="5dp"
+                  android:orientation="vertical">
+                    <Switch
+                      android:id="@+id/card_slide_direction"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:checked="true"
+                      android:splitTrack="false"
+                      android:text="MENU SLIDE DIRECTION"/>
+                    <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginBottom="15dp"
+                      android:text="Change the moving direction when your eye move left or right."
+                      android:textSize="12sp"/>
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
               android:layout_width="match_parent"
