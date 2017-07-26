@@ -148,7 +148,8 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="山本製作所"
+                  android:autoLink="web"
+                  android:text="山本製作所  http://made-in-yamamoto.com"
                   android:textSize="12sp"/>
               </LinearLayout>
               <LinearLayout
@@ -165,7 +166,8 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="あのラボ"
+                  android:autoLink="web"
+                  android:text="あのラボ  http://annolab.com"
                   android:textSize="12sp"/>
               </LinearLayout>
               <LinearLayout
@@ -182,7 +184,8 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="フリーランス"
+                  android:autoLink="web"
+                  android:text="フリーランス  http://niimi.tk"
                   android:textSize="12sp"/>
               </LinearLayout>
             </LinearLayout>
@@ -218,7 +221,100 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="インビジブル・デザインズ・ラボ"
+                  android:autoLink="web"
+                  android:text="インビジブル・デザインズ・ラボ  http://invisi.jp"
+                  android:textSize="12sp"/>
+              </LinearLayout>
+            </LinearLayout>
+          </LinearLayout>
+          <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="15dp"
+            android:text="考案者"
+            android:textColor="@color/no3"/>
+          <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:divider="@drawable/border_subline"
+              android:orientation="vertical"
+              android:showDividers="middle">
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="武藤 将胤"
+                  android:textColor="#000000"/>
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:autoLink="web"
+                  android:text="With ALS  http://withals.com"
+                  android:textSize="12sp"/>
+              </LinearLayout>
+            </LinearLayout>
+          </LinearLayout>
+          <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="15dp"
+            android:text="サポート企業"
+            android:textColor="@color/no3"/>
+          <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:divider="@drawable/border_subline"
+              android:orientation="vertical"
+              android:showDividers="middle">
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="（株）JINS"
+                  android:textColor="#000000"/>
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:autoLink="web"
+                  android:text="https://www.jins.com"
+                  android:textSize="12sp"/>
+              </LinearLayout>
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="（株）博報堂"
+                  android:textColor="#000000"/>
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:autoLink="web"
+                  android:text="http://www.hakuhodo.co.jp"
                   android:textSize="12sp"/>
               </LinearLayout>
             </LinearLayout>

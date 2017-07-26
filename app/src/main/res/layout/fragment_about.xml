@@ -122,7 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            android:text="PROGRAMMER"
+            android:text="Programmer"
             android:textColor="@color/no3"/>
           <LinearLayout
             android:layout_width="match_parent"
@@ -148,7 +148,7 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Yamamoto Works Ltd."
+                  android:text="Yamamoto Works Ltd.  http://made-in-yamamoto.com"
                   android:textSize="12sp"/>
               </LinearLayout>
               <LinearLayout
@@ -165,7 +165,7 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Anno Lab inc."
+                  android:text="Anno Lab inc. http://annolab.com"
                   android:textSize="12sp"/>
               </LinearLayout>
               <LinearLayout
@@ -182,7 +182,7 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Freelance"
+                  android:text="Freelance http://niimi.tk"
                   android:textSize="12sp"/>
               </LinearLayout>
             </LinearLayout>
@@ -218,7 +218,99 @@
                 <TextView
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:text="Invisible Designs Lab"
+                  android:text="Invisible Designs Lab http://invisi.jp"
+                  android:textSize="12sp"/>
+              </LinearLayout>
+            </LinearLayout>
+          </LinearLayout>
+          <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="15dp"
+            android:text="Inventor"
+            android:textColor="@color/no3"/>
+          <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:divider="@drawable/border_subline"
+              android:orientation="vertical"
+              android:showDividers="middle">
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Masatane Muto"
+                  android:textColor="#000000"/>
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:autoLink="web"
+                  android:text="With ALS  http://withals.com"
+                  android:textSize="12sp"/>
+              </LinearLayout>
+            </LinearLayout>
+          </LinearLayout>
+          <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="15dp"
+            android:text="Supporter"
+            android:textColor="@color/no3"/>
+          <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:divider="@drawable/border_subline"
+              android:orientation="vertical"
+              android:showDividers="middle">
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="JINS Inc."
+                  android:textColor="#000000"/>
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:autoLink="web"
+                  android:text="https://www.jins.com"
+                  android:textSize="12sp"/>
+              </LinearLayout>
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="HAKUHODO Inc."
+                  android:textColor="#000000"/>
+                <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:autoLink="web"
+                  android:text="http://www.hakuhodo.co.jp"
                   android:textSize="12sp"/>
               </LinearLayout>
             </LinearLayout>
