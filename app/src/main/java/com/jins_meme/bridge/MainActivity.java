@@ -242,11 +242,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     transaction.add(R.id.container, rootMenu);
     transaction.commit();
 
-    /*
-    if (Build.VERSION.SDK_INT >= 23) {
-      requestGPSPermission();
+    if (preferences.getBoolean("SHOW_WELCOME", true)) {
+      showWelcom();
+    } else {
+      if (Build.VERSION.SDK_INT >= 23) {
+        requestGPSPermission();
+      }
     }
-    */
 
     mNetworkStateReceiver = new BroadcastReceiver() {
       @Override
@@ -400,9 +402,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     isForeground = true;
 
-    if (Build.VERSION.SDK_INT >= 23) {
-      requestGPSPermission();
-    }
+    //if (Build.VERSION.SDK_INT >= 23) {
+    //  requestGPSPermission();
+    //}
+
 
     Log.d("DEBUG", "onResume..." + scannedMemeList.size());
   }
@@ -422,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   protected void onStop() {
     super.onStop();
 
-    Log.d("MAIN", "onStop...");
+    Log.d("DEBUG", "MAIN:: onStop...");
   }
 
   @Override
@@ -460,7 +463,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
      */
     // ***ConfigFragment = null;
 
-    Log.d("MAIN", "onDestroy...");
+    Log.d("DEBUG", "MAIN:: onDestroy...");
+  }
+
+  private void showWelcom() {
+    AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance("welcome");
+    alertDialogFragment.setCancelable(false);
+    alertDialogFragment.setDialogListener(this);
+    alertDialogFragment.show(getSupportFragmentManager(), "dialog");
   }
 
   private void checkAirplaneMode() {
@@ -502,7 +512,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(intent, 0);
       } else if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-        Log.d("MAIN", "Initialize MEME LIB");
+        Log.d("DEBUG", "MAIN:: Initialize MEME LIB");
         initMemeLib();
 
         scanAndConnectToLastConnectedMeme();
@@ -513,10 +523,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private void scanAndConnectToLastConnectedMeme() {
     lastConnectedMemeID = preferences.getString("LAST_CONNECTED_MEME_ID", null);
 
-    Log.d("MAIN", "last connected meme ID = " + lastConnectedMemeID);
+    Log.d("DEBUG", "MAIN:: last connected meme ID = " + lastConnectedMemeID);
 
     if (lastConnectedMemeID != null) {
-      Log.d("MAIN", "SCAN Start");
+      Log.d("DEBUG", "MAIN:: SCAN Start");
 
       memeConnectProgressDialog = ProgressDialogFragment.newInstance("meme_connect");
       memeConnectProgressDialog.setDialogListener(this);
@@ -526,6 +536,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       handler.postDelayed(new Runnable() {
         @Override
         public void run() {
+          Log.d("DEBUG", "hoge");
           startScan(true);
 
           handler.postDelayed(new Runnable() {
@@ -592,7 +603,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if (requestCode == 0) {
       if (resultCode == RESULT_OK) {
-        Log.d("MAIN", "Bluetooth ON");
+        Log.d("DEBUG", "MAIN:: Bluetooth ON");
       } else {
         finishAndRemoveTask();
       }
@@ -600,11 +611,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       processRequestToken(requestCode, resultCode, data);
     } else {
       if (resultCode == RESULT_OK) {
-        Log.d("MAIN", "Auth OK");
+        Log.d("DEBUG", "MAIN:: Auth OK");
 
         basicConfigFragment.unlockAppIDandSecret();
       } else {
-        Log.d("MAIN", "Auth NG");
+        Log.d("DEBUG", "MAIN:: Auth NG");
 
         basicConfigFragment.lockAppIDandSecret();
       }
@@ -645,7 +656,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void memeConnectCallback(boolean b) {
-    Log.d("MAIN", "meme connected. " + b + " " + lastConnectedMemeID);
+    Log.d("DEBUG", "MAIN:: meme connected. " + b + " " + lastConnectedMemeID);
 
     if (memeConnectProgressDialog != null) {
       memeConnectProgressDialog.dismiss();
@@ -674,7 +685,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void memeDisconnectCallback() {
-    Log.d("MAIN", "meme disconnected.");
+    Log.d("DEBUG", "MAIN:: meme disconnected.");
 
     handler.post(new Runnable() {
       @Override
@@ -696,10 +707,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     appID = preferences.getString("APP_ID", getString(R.string.meme_app_id));
     appSecret = preferences.getString("APP_SECRET", getString(R.string.meme_app_secret));
 
-    Log.d("MAIN", "APP_ID: " + appID + " APP_SECRET: " + appSecret);
+    Log.d("DEBUG", "MAIN:: APP_ID: " + appID + " APP_SECRET: " + appSecret);
 
     if (appID != null && appID.length() > 0 && appSecret != null && appSecret.length() > 0) {
-      Log.d("MAIN", "Initialized MemeLib with " + appID + " / and " + appSecret);
+      Log.d("DEBUG", "MAIN:: Initialized MemeLib with " + appID + " / and " + appSecret);
 
       MemeLib.setAppClientID(this, appID, appSecret);
       memeLib = MemeLib.getInstance();
@@ -716,14 +727,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void startScan(final boolean isConnect) {
-    Log.d("MAIN", "start scannig... " + lastConnectedMemeID);
+    Log.d("DEBUG", "MAIN:: start scannig... " + lastConnectedMemeID);
 
     if (scannedMemeList != null) {
       scannedMemeList.clear();
     }
 
     if (memeLib == null) {
-      Log.d("MAIN", "memeLib is null!");
+      Log.d("DEBUG", "MAIN:: memeLib is null!");
     }
 
     if (memeLib != null) {
@@ -732,7 +743,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       MemeStatus status = memeLib.startScan(new MemeScanListener() {
         @Override
         public void memeFoundCallback(String s) {
-          Log.d("MAIN", getString(R.string.meme_found, s));
+          Log.d("DEBUG", "MAIN:: " + getString(R.string.meme_found, s));
 
           if (memeConnectProgressDialog != null) {
             memeConnectProgressDialog.setMessage("Found: " + s);
@@ -748,7 +759,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
             }
 
             if (isConnect) {
-              Log.d("MAIN", "connect and stop callbacks");
+              Log.d("DEBUG", "MAIN:: connect and stop callbacks");
               if (memeConnectProgressDialog != null) {
                 memeConnectProgressDialog.setMessage("Connect to: " + s);
               }
@@ -759,7 +770,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         }
       });
 
-      Log.d("MAIN", "MemeStatus = " + status);
+      Log.d("DEBUG", "MAIN:: MemeStatus = " + status);
 
       switch (status) {
         case MEME_ERROR_SDK_AUTH:
@@ -771,19 +782,19 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void stopScan() {
-    Log.d("MAIN", "stop scannig...");
+    Log.d("DEBUG", "MAIN:: stop scannig...");
 
     if (memeLib != null && memeLib.isScanning()) {
       memeLib.stopScan();
 
-      Log.d("MAIN", "scan stopped.");
+      Log.d("DEBUG", "MAIN:: scan stopped.");
     }
   }
 
   @Override
   public void memeRealtimeCallback(MemeRealtimeData memeRealtimeData) {
     if (++batteryCheckCount > BATTERY_CHECK_INTERVAL) {
-      Log.d("DEBUG", "battery status = " + memeRealtimeData.getPowerLeft());
+      Log.d("DEBUG", "MAIN:: battery status = " + memeRealtimeData.getPowerLeft());
       renewBatteryState(memeRealtimeData.getPowerLeft());
 
       batteryCheckCount = 0;
@@ -958,7 +969,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void onBackPressed() {
-    Log.d("MAIN", "press back!");
+    Log.d("DEBUG", "MAIN:: press back!");
     setUIPaused(false);
     cancel(false);
   }
@@ -1298,6 +1309,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void doPositiveClick(String type) {
     switch (type) {
+      case "welcome":
+        if (Build.VERSION.SDK_INT >= 23) {
+          requestGPSPermission();
+        }
+        editor.putBoolean("SHOW_WELCOME", false);
+        editor.apply();
+        break;
       case "network":
         checkBluetoothEnable();
         break;
@@ -1311,10 +1329,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   public void doNegativeClick(String type) {
     switch (type) {
       case "meme_connect":
+        Log.d("DEBUG", "meme_connect cancel");
         stopScan();
         handler.removeCallbacksAndMessages(null);
         break;
       default:
+        Log.d("DEBUG", "default");
         handler.removeCallbacksAndMessages(null);
         finishAndRemoveTask();
         break;
