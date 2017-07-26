@@ -40,6 +40,18 @@ public class AlertDialogFragment extends DialogFragment {
     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 
     switch (type) {
+      case "welcome":
+        alert.setTitle(getString(R.string.welcome_title));
+        alert.setMessage(getString(R.string.welcome_message));
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i) {
+            if (mListener != null) {
+              mListener.doPositiveClick("welcome");
+            }
+          }
+        });
+        break;
       case "airplane":
         alert.setTitle(getString(R.string.airplane_mode_on_title));
         alert.setMessage(getString(R.string.airplane_mode_on_explain));
@@ -48,7 +60,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Quit App...");
 
-            mListener.doNegativeClick("airplane");
+            if (mListener != null) {
+              mListener.doNegativeClick("airplane");
+            }
           }
         });
         break;
@@ -58,7 +72,9 @@ public class AlertDialogFragment extends DialogFragment {
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
-            mListener.doPositiveClick("network");
+            if (mListener != null) {
+              mListener.doPositiveClick("network");
+            }
           }
         });
         alert.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
@@ -66,7 +82,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Quit App...");
 
-            mListener.doNegativeClick("network");
+            if (mListener != null) {
+              mListener.doNegativeClick("network");
+            }
           }
         });
         break;
@@ -78,7 +96,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Close Alert Dialog...");
 
-            mListener.doPositiveClick("meme");
+            if (mListener != null) {
+              mListener.doPositiveClick("meme");
+            }
           }
         });
         alert.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
@@ -86,7 +106,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Quit App...");
 
-            mListener.doNegativeClick("meme");
+            if (mListener != null) {
+              mListener.doNegativeClick("meme");
+            }
           }
         });
         break;
@@ -98,7 +120,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Quit App...");
 
-            mListener.doNegativeClick("meme");
+            if (mListener != null) {
+              mListener.doNegativeClick("meme");
+            }
           }
         });
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -106,7 +130,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Close Alert Dialog...");
 
-            mListener.doPositiveClick("meme");
+            if (mListener != null) {
+              mListener.doPositiveClick("meme");
+            }
           }
         });
         break;
@@ -118,7 +144,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Quit App...");
 
-            mListener.doNegativeClick("midi");
+            if (mListener != null) {
+              mListener.doNegativeClick("midi");
+            }
           }
         });
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -126,7 +154,9 @@ public class AlertDialogFragment extends DialogFragment {
           public void onClick(DialogInterface dialogInterface, int i) {
             Log.d("DEBUG", "Close Alert Dialog...");
 
-            mListener.doPositiveClick("midi");
+            if (mListener != null) {
+              mListener.doPositiveClick("midi");
+            }
           }
         });
         break;
