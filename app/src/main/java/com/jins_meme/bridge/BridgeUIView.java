@@ -1,5 +1,5 @@
 /**
- * MenuFragment.java
+ * BridgeUIView.java
  *
  * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
  *
