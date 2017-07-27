@@ -14,6 +14,17 @@
   <string name="com_spotify_sdk_redirect_scheme"></string>
   <string name="com_spotify_sdk_redirect_host"></string>
 
+  <string name="welcome_title">ようこそ！</string>
+  <string name="welcome_message">
+    JINS MEME BRIDGEをインストールして頂きありがとうございます。\n\n
+    このアプリはJINS MEMEを利用して写真を撮ったり、音楽を聴いたり(<b>※1</b>)、
+    さらには家電(<b>※2</b>)や照明(<b>※3</b>)のコントロールを実現するアプリです。\n\n
+    JINS MEMEを用いての操作が前提ですが、MEMEをお持ちで無い方でも指先でのタップ、スワイプ操作でこのアプリをお試し頂けます。\n\n
+    <b>※1</b>：要Spotify Premiumアカウント\n
+    <b>※2</b>：要IRKitもしくはNatureRemo\n
+    <b>※3</b>：要Philips Hue及びHue Bridge\n
+  </string>
+
   <string name="ok">OK</string>
   <string name="exit">EXIT</string>
   <string name="succeeded">成功しました</string>
