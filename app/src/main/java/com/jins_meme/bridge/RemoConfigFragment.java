@@ -67,12 +67,14 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private TextView tvSignalLabel5;
   private TextView tvDeviceInfo;
 
-  private ProgressDialog progressDialog;
+  private ProgressDialog receiveDialog;
+  private ProgressDialog scanDialog;
+  private ProgressDialog selectDialog;
 
   private int slotIndex;
 
   private MainActivity mainActivity;
-  private RelativeLayout layout;
+
 
   private ArrayAdapter<String> adapter;
   private HashMap<String, String> deviceMap;
@@ -94,7 +96,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     SENDING
   }
   private State state;
-  private State currentState;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -227,7 +229,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 //          swConnect.setChecked(false);
           setExist(false);
 
-          progressDialog.dismiss();
+          receiveDialog.dismiss();
         }
       }
 
@@ -404,7 +406,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   }
   private void changeState(State newState) {
     Log.d(TAG, "changeState: " + newState);
-    currentState = state;
     state = newState;
   }
   private void setExist(boolean isExist) {
@@ -443,7 +444,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
       final AlertDialog dialog;
 
-      builder.setTitle("Select a device");
+      builder.setTitle(getString(R.string.remo_select_dialog));
 
       builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
         @Override
@@ -481,6 +482,28 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         }
       }, scanTimeoutDuration);
     }
+  }
+  
+  private void showScanDialog() {
+    scanDialog = new ProgressDialog(mainActivity);
+    scanDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        scanDialog.cancel();
+      }
+    });
+    scanDialog.setOnCancelListener(new OnCancelListener() {
+      @Override
+      public void onCancel(DialogInterface dialogInterface) {
+
+      }
+    });
+    scanDialog.setMessage(getString(R.string.remo_scan_dialog));
+    scanDialog.show();
+  }
+
+  private void showSelectDialog() {
+
   }
   private void showSetSignalLabelDialog(final TextView labelTextView, final String saveId) {
 
@@ -521,13 +544,13 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 
     TextView irkit = new TextView(mainActivity);
     irkit.setClickable(true);
-    irkit.setText("Open \"IRKit Simple Remort\"");
+    irkit.setText(getString(R.string.remo_open_app_irkit));
     irkit.setPadding((int)density*24,(int)density*24,(int)density*24,(int)density*24);
 
     TextView remo = new TextView(mainActivity);
     remo.setClickable(true);
 
-    remo.setText("Open \"Nature Remo - Smart AC\"");
+    remo.setText(getString(R.string.remo_open_app_remo));
     remo.setPadding((int)density*24,(int)density*24,(int)density*24,(int)density*24);
 
     layout.addView(irkit);
@@ -542,7 +565,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     irkit.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        String packageName = "com.getirkit.irkitsimpleremote"; //AndroidManifest.xmlのpackageNameに相当
+        String packageName = "com.getirkit.irkitsimpleremote";
 
         PackageManager pm = mainActivity.getPackageManager();
         Intent intent = pm.getLaunchIntentForPackage(packageName);
@@ -559,7 +582,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     remo.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        String packageName = "global.nature.remo"; //AndroidManifest.xmlのpackageNameに相当
+        String packageName = "global.nature.remo";
 
         PackageManager pm = mainActivity.getPackageManager();
         Intent intent = pm.getLaunchIntentForPackage(packageName);
@@ -591,14 +614,14 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       slotIndex = i;
       String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
       remoController.recevieMessages(address);
-      progressDialog = new ProgressDialog(mainActivity);
-      progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+      receiveDialog = new ProgressDialog(mainActivity);
+      receiveDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-          progressDialog.cancel();
+          receiveDialog.cancel();
         }
       });
-      progressDialog.setOnCancelListener(new OnCancelListener() {
+      receiveDialog.setOnCancelListener(new OnCancelListener() {
         @Override
         public void onCancel(DialogInterface dialogInterface) {
           Log.d(TAG, "onCancel: ");
@@ -606,15 +629,14 @@ public class RemoConfigFragment extends ConfigFragmentBase {
           remoController.cancelReceiveMessages();
         }
       });
-      progressDialog.setMessage("Aim your remote at IRKit and press a button briefly");
-      progressDialog.show();
+      receiveDialog.setMessage(getString(R.string.remo_receive_dialog));
+      receiveDialog.show();
     }
   }
   private void receivedMessages(String messages, String key, TextView labelTextView, String labelKey) {
-    progressDialog.setMessage("Receveing...");
     mainActivity.autoSaveValue(key, messages);
     changeState(State.IDLE);
-    progressDialog.dismiss();
+    receiveDialog.dismiss();
     showSetSignalLabelDialog(labelTextView, labelKey);
 
   }

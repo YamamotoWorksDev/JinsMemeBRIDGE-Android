@@ -120,4 +120,10 @@
   <string name="remo_set_label_dialog_title">信号のラベルを設定</string>
   <string name="remo_set_label_dialog_ok">OK</string>
   <string name="remo_set_label_dialog_cancel">CANCEL</string>
+  <string name="remo_scan_dialog">デバイスを探索しています。</string>
+  <string name="remo_select_dialog">デバイスを選択してください。</string>
+  <string name="remo_receive_dialog">IRKit または Nature Remo に向けて、リモコンのボタンを押してください。</string>
+  <string name="remo_wifi_setting_dialog_title">wifi の設定はお済みですか？</string>
+  <string name="remo_open_app_irkit">"IRKit Simple Remort" を開く</string>
+  <string name="remo_open_app_remo">"Nature Remo - Smart AC" を開く</string>
 </resources>

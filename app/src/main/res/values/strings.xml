@@ -119,4 +119,10 @@
   <string name="remo_set_label_dialog_title">SET SIGNAL LABEL</string>
   <string name="remo_set_label_dialog_ok">OK</string>
   <string name="remo_set_label_dialog_cancel">CANCEL</string>
+  <string name="remo_scan_dialog">Scanning device...</string>
+  <string name="remo_select_dialog">Select a device</string>
+  <string name="remo_receive_dialog">Aim your remote at IRKit or Nature Remo and press a button briefly</string>
+  <string name="remo_wifi_setting_dialog_title">Did wifi setting ?</string>
+  <string name="remo_open_app_irkit">Open "IRKit Simple Remort"</string>
+  <string name="remo_open_app_remo">Open "Nature Remo - Smart AC"</string>
 </resources>
