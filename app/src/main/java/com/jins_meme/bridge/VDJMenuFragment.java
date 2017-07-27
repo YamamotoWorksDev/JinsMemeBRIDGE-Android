@@ -160,26 +160,27 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         new Thread(new Runnable() {
           @Override
           public void run() {
-            if (finalNote != lastNote) {
+            //if (finalNote != lastNote) {
               Log.d("DEBUG", "note on " + finalNote);
               memeMIDI.sendNote(midiChannel, finalNote, 127);
+
               memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_track));
               memeOSC.setTypeTag("ii");
               memeOSC.addArgument(midiChannel);
               memeOSC.addArgument(finalNote);
               memeOSC.flushMessage();
-            }
+            //}
 
             try {
               Thread.sleep(500);
             } catch (InterruptedException e) {
               e.printStackTrace();
             } finally {
-              if (finalNote != lastNote) {
+              //if (finalNote != lastNote) {
                 Log.d("DEBUG", "note off " + finalNote);
                 memeMIDI.sendNote(midiChannel, finalNote, 0);
                 lastNote = finalNote;
-              }
+              //}
 
               mHandler.post(new Runnable() {
                 @Override
@@ -198,10 +199,12 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
     final CardAdapter.MyCardHolder mych_fx;
 
     switch (id) {
+      ///* MFT
       case R.string.effect6:
         ++noteFx;
       case R.string.effect5:
         ++noteFx;
+        //*/
       case R.string.effect4:
         ++noteFx;
       case R.string.effect3:
@@ -245,6 +248,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         break;
     }
 
+    ///* MFT
     note = 60;
     switch (id) {
       case R.string.logo4:
@@ -289,6 +293,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         }).start();
         break;
     }
+    //*/
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
@@ -374,6 +379,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         case R.string.effect4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect4);
           break;
+        ///* MFT
         case R.string.effect5:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect5);
           break;
@@ -395,6 +401,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         case R.string.logo4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
           break;
+          //*/
       }
 
       ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
@@ -412,7 +419,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         case R.string.track14:
         case R.string.track58:
         case R.string.effect:
-        case R.string.logo:
+        case R.string.logo: // MFT comment out
           return CardFunction.ENTER_MENU;
         default:
           return CardFunction.END;
@@ -453,14 +460,17 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
             case 3:
               id = R.string.effect4;
               break;
+            ///* MFT
             case 4:
               id = R.string.effect5;
               break;
             case 5:
               id = R.string.effect6;
               break;
+              //*/
           }
           break;
+        ///* MFT
         case R.string.logo:
           switch (position) {
             case 0:
@@ -477,6 +487,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
               break;
           }
           break;
+          //*/
         case R.string.track14:
           switch (position) {
             case 0:
@@ -518,12 +529,14 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
     public int getChildCardCount(int parent_id) {
       switch (parent_id) {
         case NO_ID:
-        case R.string.logo:
+          //return 3;// MFT
+        case R.string.logo: // MFT comment out
         case R.string.track14:
         case R.string.track58:
           return 4;
         case R.string.effect:
-          return 6;
+          return 6;// MFT
+          //return 4;
       }
       return 0;
     }
