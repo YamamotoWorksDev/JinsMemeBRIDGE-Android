@@ -9,6 +9,7 @@
 
 package com.jins_meme.bridge;
 
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.wifi.SupplicantState;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -85,6 +87,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   }
 
   enum  State {
+    WIFI_ERROR,
     IDLE,
     SCAN,
     RECEIVEING,
@@ -132,7 +135,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     state = State.IDLE;
     mainActivity = ((MainActivity) getActivity());
 
-    tvDeviceInfo = (TextView)view.findViewById(R.id.remo_info);
+    tvDeviceInfo = (TextView) view.findViewById(R.id.remo_info);
 
     deviceMap = new HashMap<String, String>();
 
@@ -150,9 +153,11 @@ public class RemoConfigFragment extends ConfigFragmentBase {
           setExist(result);
         }
       }
+
       @Override
       public void onServiceAdded(ServiceEvent serviceEvent) {
       }
+
       @Override
       public void onServiceRemoved(final ServiceEvent serviceEvent) {
         Log.d(TAG, "onServiceRemoved: " + serviceEvent.getName());
@@ -168,6 +173,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
           }
         });
       }
+
       @Override
       public void onServiceResolved(final ServiceEvent serviceEvent) {
         Log.d(TAG, "onServiceResolved: " + serviceEvent.getName());
@@ -193,30 +199,30 @@ public class RemoConfigFragment extends ConfigFragmentBase {
         changeState(State.IDLE);
         if (isSuccess) {
 
-            receiveHandler.post(new Runnable() {
-              @Override
-              public void run() {
+          receiveHandler.post(new Runnable() {
+            @Override
+            public void run() {
 
-                switch (slotIndex) {
-                  case 1:
-                    receivedMessages(messages, "REMO_SIGNAL_1", tvSignalLabel1, "REMO_SIGNAL_1_NAME");
-                    break;
-                  case 2:
-                    receivedMessages(messages, "REMO_SIGNAL_2", tvSignalLabel2, "REMO_SIGNAL_2_NAME");
-                    break;
-                  case 3:
-                    receivedMessages(messages, "REMO_SIGNAL_3", tvSignalLabel3, "REMO_SIGNAL_3_NAME");
-                    break;
-                  case 4:
-                    receivedMessages(messages, "REMO_SIGNAL_4", tvSignalLabel4, "REMO_SIGNAL_4_NAME");
-                    break;
-                  case 5:
-                    receivedMessages(messages, "REMO_SIGNAL_5", tvSignalLabel5, "REMO_SIGNAL_5_NAME");
-                    break;
-                }
-                return;
+              switch (slotIndex) {
+                case 1:
+                  receivedMessages(messages, "REMO_SIGNAL_1", tvSignalLabel1, "REMO_SIGNAL_1_NAME");
+                  break;
+                case 2:
+                  receivedMessages(messages, "REMO_SIGNAL_2", tvSignalLabel2, "REMO_SIGNAL_2_NAME");
+                  break;
+                case 3:
+                  receivedMessages(messages, "REMO_SIGNAL_3", tvSignalLabel3, "REMO_SIGNAL_3_NAME");
+                  break;
+                case 4:
+                  receivedMessages(messages, "REMO_SIGNAL_4", tvSignalLabel4, "REMO_SIGNAL_4_NAME");
+                  break;
+                case 5:
+                  receivedMessages(messages, "REMO_SIGNAL_5", tvSignalLabel5, "REMO_SIGNAL_5_NAME");
+                  break;
               }
-            });
+              return;
+            }
+          });
         } else {
 //          swConnect.setChecked(false);
           setExist(false);
@@ -224,6 +230,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
           progressDialog.dismiss();
         }
       }
+
       @Override
       public void onSendMessages(String messages, boolean isSuccess) {
         Log.d(TAG, "onSendMessages: " + messages + " " + isSuccess);
@@ -240,13 +247,9 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     llScan.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-//        if (state != State.CHECK_EXIST) {
-          startScan();
-//          layout.requestFocus();
-//        }
+        startScan();
       }
     });
-
 
     llReceiveSignal1 = (LinearLayout) view.findViewById(R.id.remo_signal_1_receive);
     llReceiveSignal1.setOnClickListener(new OnClickListener() {
@@ -371,22 +374,32 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     final String address = mainActivity.getSavedValue("REMO_DEVICE_ADDRESS");
     final String name = mainActivity.getSavedValue("REMO_DEVICE_NAME");
 
-    if (address != null) {
+    SupplicantState wifiState = remoController.getWifiState();
+    Log.d(TAG, "onViewCreated: " + wifiState);
+
+    if (wifiState == SupplicantState.COMPLETED) {
+      state = State.IDLE;
+
+      if (address != null) {
 //      tvName.setText(name);
 //      tvAddress.setText(address);
-      tvDeviceInfo.setText(name + " " + address);
+        tvDeviceInfo.setText(name + " " + address);
 
-      checkState = CheckState.CHECK;
+        checkState = CheckState.CHECK;
 
-      Handler handler = new Handler();
-      handler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          remoController.checkExist(address);
-        }
-      }, 1000);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            remoController.checkExist(address);
+          }
+        }, 1000);
+      } else {
+        setExist(false);
+      }
     } else {
-      setExist(false);
+      state = State.WIFI_ERROR;
+      showWifiErrorDialog();
     }
   }
   private void changeState(State newState) {
@@ -413,53 +426,61 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 
 
   private void startScan() {
-    changeState(State.SCAN);
-    remoController.startDiscovery();
+    SupplicantState wifiState = remoController.getWifiState();
+    Log.d(TAG, "startScan: " + wifiState);
 
-    deviceMap = new HashMap<String, String>();
-    adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1, new ArrayList<String>());
-    final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-    final AlertDialog dialog;
+    if (wifiState != SupplicantState.COMPLETED) {
+      changeState(State.WIFI_ERROR);
+      showWifiErrorDialog();
+      return;
+    } else {
+      changeState(State.SCAN);
+      remoController.startDiscovery();
 
-    builder.setTitle("Select a device");
+      deviceMap = new HashMap<String, String>();
+      adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1,
+          new ArrayList<String>());
+      final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+      final AlertDialog dialog;
 
-    builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
-        remoController.stopDiscovery();
-        setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
-        setExist(true);
-      }
-    });
-    builder.setOnCancelListener(new OnCancelListener() {
-      @Override
-      public void onCancel(DialogInterface dialogInterface) {
-        Log.d(TAG, "onCancel: ");
-        remoController.stopDiscovery();
-        changeState(State.IDLE);
+      builder.setTitle("Select a device");
 
-        scanDialogHandler.removeCallbacksAndMessages(null);
-      }
-    });
-
-    dialog = builder.create();
-    dialog.show();
-
-
-    scanDialogHandler = new Handler();
-
-
-    scanDialogHandler.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        Log.d(TAG, "state: " + state + " deviceMap.size: " + deviceMap.size());
-        if (state == State.SCAN && deviceMap.size() == 0) {
-          dialog.cancel();
-          showDeviceSettingDialog();
+      builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+          Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
+          remoController.stopDiscovery();
+          setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
+          setExist(true);
         }
-      }
-    }, scanTimeoutDuration);
+      });
+      builder.setOnCancelListener(new OnCancelListener() {
+        @Override
+        public void onCancel(DialogInterface dialogInterface) {
+          Log.d(TAG, "onCancel: ");
+          remoController.stopDiscovery();
+          changeState(State.IDLE);
+
+          scanDialogHandler.removeCallbacksAndMessages(null);
+        }
+      });
+
+      dialog = builder.create();
+      dialog.show();
+
+      scanDialogHandler = new Handler();
+
+      scanDialogHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          Log.d(TAG, "state: " + state + " deviceMap.size: " + deviceMap.size());
+          if (state == State.SCAN && deviceMap.size() == 0) {
+            dialog.cancel();
+            showDeviceSettingDialog();
+          }
+        }
+      }, scanTimeoutDuration);
+    }
   }
   private void showSetSignalLabelDialog(final TextView labelTextView, final String saveId) {
 
@@ -471,20 +492,23 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 
     dialog.setPositiveButton(getString(R.string.remo_set_label_dialog_ok), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int whichButton) {
-        // OKボタンをタップした時の処理をここに記述
         mainActivity.autoSaveValue(saveId, editText.getText().toString());
         labelTextView.setText(editText.getText().toString());
       }
     });
 
-    dialog.setNegativeButton(getString(R.string.remo_set_label_dialog_cancel), new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int whichButton) {
-        // キャンセルボタンをタップした時の処理をここに記述
-      }
-    });
-
     dialog.show();
   }
+
+  private void showWifiErrorDialog() {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+
+    builder.setTitle(getString(R.string.not_connected_network_title));
+    builder.setMessage(getString(R.string.not_connected_network_explain));
+    builder.setPositiveButton(getString(R.string.ok), null);
+    builder.show();
+  }
+
   private Handler scanDialogHandler;
 
   private void showDeviceSettingDialog() {

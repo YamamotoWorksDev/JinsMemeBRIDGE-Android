@@ -10,6 +10,8 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -95,6 +97,13 @@ public class RemoController {
 
   public void checkExist(String address) {
     getExist(address);
+  }
+
+  public SupplicantState getWifiState() {
+    WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+    SupplicantState state = wifiInfo.getSupplicantState();
+    return state;
   }
 
 
