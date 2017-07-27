@@ -57,8 +57,8 @@
   <string name="not_selected_midi_title">MIDI未選択</string>
   <string name="not_selected_midi_explain">一旦アプリを終了し、「USBの使用」をMIDIに変更して下さい。</string>
 
-  <string name="camera_error">This device doesn\'t support Camera2 API.</string>
-  <string name="request_permission">Camera permission is required.</string>
+  <string name="camera_error">このデバイスはCamera2 APIに対応していません。</string>
+  <string name="request_permission">カメラのパーミッションが必要です。</string>
 
   <string name="hue_error_title">Hue Bridge接続・認証エラー</string>
   <string name="hue_error_message">Hue Bridgeが正しく動いているか、端末がWi-Fiに接続している確認して下さい。</string>
