@@ -69,6 +69,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     Log.d("DEBUG", "ROOT:: onViewCreated");
 
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
     ((MainActivity) getActivity()).updateActionBar(" JINS MEME BRIDGE");
   }
 

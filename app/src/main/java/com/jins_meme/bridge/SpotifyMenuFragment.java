@@ -49,6 +49,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
     super.onViewCreated(view, savedInstanceState);
 
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
     ((MainActivity) getActivity()).authenticate();
   }
 

@@ -57,6 +57,8 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     super.onViewCreated(view, savedInstanceState);
 
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
+
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());
     memeMIDI.initPort();
@@ -129,7 +131,9 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onExitCard(int id) {
-    Log.d("DEBUG", "VDJ:: onExitCard");
+    Log.d("DEBUG", "VDJ:: onExitCard " + id);
+
+    moveToFit();
   }
 
   @Override
