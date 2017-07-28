@@ -1,6 +1,15 @@
+<!--
+  - strings.xml
+  -
+  - Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.), Shunichi Yamamoto(Yamamoto Works Ltd.) and Taiki Niimi(Freelance)
+  -
+  - This software is released under the MIT License.
+  - http://opensource.org/licenses/mit-license.php
+  -->
+
 <resources>
   <string name="app_name">BRIDGE</string>
-  <string name="actionbar_title">JINS MEME BRIDGE</string>
+  <string name="actionbar_title"> </string>
 
   <!-- PLEASE INPUT YOUR APP_ID & APP_SECRET -->
   <string name="meme_app_id"></string>
