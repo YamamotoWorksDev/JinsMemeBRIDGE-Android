@@ -5,8 +5,9 @@
               tools:context="com.jins_meme.bridge.CameraMenuFragment"
               android:orientation="vertical">
     <FrameLayout
+      android:id="@+id/camera"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="3"
-      android:id="@+id/camera"/>
+      android:background="@color/no1"/>
 </LinearLayout>
