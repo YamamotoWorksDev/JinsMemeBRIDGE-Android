@@ -54,6 +54,8 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     super.onViewCreated(view, savedInstanceState);
 
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
+
     mHue = new HueController(getContext(), getFragmentManager());
   }
 
