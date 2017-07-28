@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -66,6 +67,8 @@ public class CameraMenuFragment extends MenuFragmentBase implements
   @Override
   public void onViewCreated(final View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no1);
   }
 
   @Override
