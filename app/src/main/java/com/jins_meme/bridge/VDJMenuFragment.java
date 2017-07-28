@@ -81,8 +81,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
       memeOSC.closeSocket();
       memeOSC = null;
     }
-
-    Log.d("FRAGMENT", "onDestroy...");
   }
 
   @Override
@@ -124,7 +122,9 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
-    Log.d("DEBUG", "VDJ:: onEnterCard");
+    Log.d("DEBUG", "VDJ:: onEnterCard " + id);
+
+    moveToFit();
   }
 
   @Override
@@ -309,29 +309,15 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-      //return new MyCardHolder(mInflater.inflate(R.layout.card_vdj, parent, false));
       return new MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
     }
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
       ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
-      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
 
-      /*
-      switch (id) {
-        case R.string.track14:
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("1-4");
-          break;
-        case R.string.track58:
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("5-8");
-          break;
-        default:
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
-          break;
-      }
-      */
-      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((MyCardHolder) cardHolder).mSubtitle.setText("");
 
       switch (id) {
         case R.string.track14:

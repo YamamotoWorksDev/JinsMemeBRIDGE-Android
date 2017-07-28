@@ -13,6 +13,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ public class BridgeUIView extends RecyclerView {
   private CardLayoutManager mLayoutManager;
   private ScrollController mScrollController;
   private TouchListener mTouchListener;
+
+  private static long selectedId;
 
   public BridgeUIView(Context context) {
     super(context);
@@ -47,8 +50,9 @@ public class BridgeUIView extends RecyclerView {
   @Override
   public void setAdapter(RecyclerView.Adapter adapter) {
     super.setAdapter(adapter);
-    ((Adapter)adapter).setTouchEnabler(mTouchListener);
+    ((Adapter) adapter).setTouchEnabler(mTouchListener);
   }
+
   public void move(int amount) {
     int toIndex = getCurrentCenteredItemPosition() + amount;
     if (0 <= toIndex && toIndex < getAdapter().getItemCount()) {
@@ -62,6 +66,45 @@ public class BridgeUIView extends RecyclerView {
     }
   }
 
+  public void moveToFit() {
+    int pos = getCurrentCenteredItemPosition();
+    View targetLeft = mLayoutManager.findViewByPosition(pos - 1);
+    View targetCenter = mLayoutManager.findViewByPosition(pos);
+    View targetRight = mLayoutManager.findViewByPosition(pos + 1);
+
+    long posLeftId   = ((Adapter) getAdapter()).getItemId(pos - 1);
+    long posCenterId = ((Adapter) getAdapter()).getItemId(pos);
+    long posRightId  = ((Adapter) getAdapter()).getItemId(pos + 1);
+
+    //Log.d("DEBUG", "pos = " + selectedId + " " + pos0 + " " + pos1 + " " + pos2);
+
+    if (targetLeft != null && selectedId == posLeftId) {
+      Log.d("DEBUG", "left");
+      smoothScrollBy(targetLeft.getLeft() - 10, 0);
+    } else if (targetCenter != null && selectedId == posCenterId) {
+      Log.d("DEBUG", "center");
+      smoothScrollBy(targetCenter.getLeft() - 10, 0);
+    } else if (targetRight != null && selectedId == posRightId) {
+      Log.d("DEBUG", "right");
+      smoothScrollBy(targetRight.getLeft() - 10, 0);
+    }
+
+    /*
+    if (lt != null) {
+      Log.d("DEBUG",
+          "-1 = " + getCurrentCenteredItemPosition() + " " + lt.getLeft() + " " + lt.getId());
+    }
+    if (target != null) {
+      Log.d("DEBUG",
+          " 0 = " + getCurrentCenteredItemPosition() + " " + target.getLeft() + " " + target.getId());
+    }
+    if (rt != null) {
+      Log.d("DEBUG",
+          "+1 = " + getCurrentCenteredItemPosition() + " " + rt.getLeft() + " " + rt.getId());
+    }
+    */
+  }
+
   public void enter() {
     mLayoutManager.findViewByPosition(getCurrentCenteredItemPosition()).callOnClick();
   }
@@ -69,9 +112,10 @@ public class BridgeUIView extends RecyclerView {
   public void reset() {
     ((Adapter) getAdapter()).reset();
   }
+
   public boolean back() {
-    Adapter adapter = (Adapter)getAdapter();
-    if(adapter.isAtTop()) {
+    Adapter adapter = (Adapter) getAdapter();
+    if (adapter.isAtTop()) {
       return false;
     }
     adapter.back();
@@ -148,24 +192,33 @@ public class BridgeUIView extends RecyclerView {
     }
 
     void enter(int id) {
+      Log.d("DEBUG", "BridgeUIView:: enter " + id);
+
+      selectedId = id;
+
       mListener.onEnterCard(id);
       mHistory.push(id);
       notifyDataSetChanged();
     }
+
     void reset() {
       mHistory.clear();
       notifyDataSetChanged();
     }
+
     void end(int id) {
+      Log.d("DEBUG", "BridgeUIView:: end " + id);
+
       mListener.onEndCardSelected(id);
     }
 
     boolean isAtTop() {
       return mHistory.empty();
     }
+
     void back() {
       mListener.onExitCard(getSelectedCardId());
-      if(!mHistory.empty()) {
+      if (!mHistory.empty()) {
         mHistory.pop();
         notifyDataSetChanged();
       }
@@ -239,17 +292,17 @@ public class BridgeUIView extends RecyclerView {
 
   private class CardDecoration extends RecyclerView.ItemDecoration {
 
-    private View prev=null;
+    private View prev = null;
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, State state) {
       super.onDrawOver(c, parent, state);
       View view = ((BridgeUIView) (parent)).getCurrentCenteredItem();
-      if(prev != view) {
-        if(prev != null) {
+      if (prev != view) {
+        if (prev != null) {
           prev.setActivated(false);
         }
-        if(view != null) {
+        if (view != null) {
           view.setActivated(true);
         }
         prev = view;
@@ -287,20 +340,24 @@ public class BridgeUIView extends RecyclerView {
   private class TouchListener implements View.OnTouchListener {
 
     private boolean isEnabled = true;
+
     public void setEnabled(boolean enabled) {
       isEnabled = enabled;
     }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
       return !isEnabled;
     }
   }
+
   private class ScrollController implements RecyclerView.OnItemTouchListener {
 
     private boolean isEnabled = true;
 
     public ScrollController() {
     }
+
     public void setEnabled(boolean enabled) {
       isEnabled = enabled;
     }
