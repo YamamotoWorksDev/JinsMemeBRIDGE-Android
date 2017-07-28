@@ -11,6 +11,7 @@ package com.jins_meme.bridge;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,10 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
   @Override
   public void onResume() {
     super.onResume();
-    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.actionbar_title));
+
+    Log.d("DEBUG", "BASE:: onResume");
+
+    ((MainActivity)getActivity()).updateActionBarLogo(((MainActivity) getActivity()).isCameraMenuFragment());
   }
 
   public void setTouchEnabled(boolean enabled) {

@@ -36,8 +36,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -122,6 +124,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private Player mPlayer;
   private static boolean isAuthenticated = false;
   private BroadcastReceiver mNetworkStateReceiver;
+
+  private boolean isCameraMenuFragment = false;
+
+  void setIsCameraMenuFragment(boolean flag) {
+    isCameraMenuFragment = flag;
+  }
+
+  boolean isCameraMenuFragment() {
+    return isCameraMenuFragment;
+  }
 
   private final Player.OperationCallback mOperationCallback = new OperationCallback() {
     @Override
@@ -208,7 +220,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     editor = preferences.edit();
 
     if (getSupportActionBar() != null) {
-      updateActionBar(getResources().getString(R.string.actionbar_title));
+      //updateActionBar(getResources().getString(R.string.actionbar_title));
+      updateActionBarLogo(isCameraMenuFragment);
     }
 
     rootMenu = new RootMenuFragment();
@@ -676,7 +689,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       });
     }
     batteryStatus = 5;
-    updateActionBarLogo();
+    updateActionBarLogo(isCameraMenuFragment);
     //invalidateOptionsMenu();
 
     memeLib.setAutoConnect(true);
@@ -692,7 +705,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       public void run() {
         //invalidateOptionsMenu();
         batteryStatus = 0;
-        updateActionBarLogo();
+        updateActionBarLogo(isCameraMenuFragment);
         if (basicConfigFragment != null) {
           basicConfigFragment.setSwConnect(false);
         }
@@ -990,6 +1003,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("DEBUG", "MAIN:: press back!");
     setUIPaused(false);
     cancel(false);
+
+    isCameraMenuFragment = false;
   }
 
   public boolean cancel(boolean allow_finish) {
@@ -1018,7 +1033,29 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
   }
 
-  void updateActionBar(String title) {
+  void changeSettingButton(boolean isRev) {
+    final String overflowDesc = "test";//getString(R.string.accessibility_overflow);
+
+    final ViewGroup decor = (ViewGroup) getWindow().getDecorView();
+
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        final ArrayList<View> outViews = new ArrayList<>();
+
+        decor.findViewsWithText(outViews, overflowDesc, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+
+        if (outViews.isEmpty()) {
+          return;
+        }
+
+        final ImageButton overflow = (ImageButton) outViews.get(0);
+        overflow.setImageResource(R.drawable.setting_rev);
+      }
+    });
+  }
+
+  void updateActionBar(String title, boolean isRev) {
     Log.d("DEBUG", "updateActionBar 0");
 
     ActionBar target = getSupportActionBar();
@@ -1027,36 +1064,66 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       target.setTitle(String.format("  %s", title));
       target.setDisplayHomeAsUpEnabled(false);
-      //invalidateOptionsMenu();
-
 
       target.setDisplayShowHomeEnabled(true);
-      target.setDisplayUseLogoEnabled(true);
+      target.setDisplayUseLogoEnabled(false);
 
+      if (isRev) {
+        target.setBackgroundDrawable(getDrawable(R.color.no1));
+      } else {
+        target.setBackgroundDrawable(getDrawable(R.color.no4));
+      }
+
+      /*
       switch (batteryStatus) {
         case 1:
-          target.setLogo(R.drawable.connected_caution);
+          if (isRev) {
+
+          } else {
+            target.setLogo(R.drawable.connected_caution);
+          }
           break;
         case 2:
-          target.setLogo(R.drawable.connected_30);
+          if (isRev) {
+
+          } else {
+            target.setLogo(R.drawable.connected_30);
+          }
           break;
         case 3:
-          target.setLogo(R.drawable.connected_50);
+          if (isRev) {
+
+          } else {
+            target.setLogo(R.drawable.connected_50);
+          }
           break;
         case 4:
-          target.setLogo(R.drawable.connected_80);
+          if (isRev) {
+
+          } else {
+            target.setLogo(R.drawable.connected_80);
+          }
           break;
         case 5:
-          target.setLogo(R.drawable.connected_full);
+          if (isRev) {
+
+          } else {
+            target.setLogo(R.drawable.connected_full);
+          }
           break;
         default:
-          target.setLogo(R.drawable.not_connected);
+          if (isRev) {
+
+          } else {
+            target.setLogo(R.drawable.not_connected);
+          }
           break;
       }
+      */
     }
   }
 
-  void updateActionBarLogo() {
+  void updateActionBarLogo(final boolean isRev) {
     final ActionBar target = getSupportActionBar();
     if (target != null) {
       target.setDisplayHomeAsUpEnabled(false);
@@ -1065,27 +1132,59 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       target.setDisplayShowHomeEnabled(true);
       target.setDisplayUseLogoEnabled(true);
 
+      Log.d("DEBUG", "MAIN:: updateActionBarLogo " + isRev);
+
+      if (isRev) {
+        target.setBackgroundDrawable(getDrawable(R.color.no1));
+      } else {
+        target.setBackgroundDrawable(getDrawable(R.color.no4));
+      }
+
       handler.post(new Runnable() {
         @Override
         public void run() {
           switch (batteryStatus) {
             case 1:
-              target.setLogo(R.drawable.connected_caution);
+              if (isRev) {
+                target.setLogo(R.drawable.connected_caution_rev);
+              } else {
+                target.setLogo(R.drawable.connected_caution);
+              }
               break;
             case 2:
-              target.setLogo(R.drawable.connected_30);
+              if (isRev) {
+                target.setLogo(R.drawable.connected_30_rev);
+              } else {
+                target.setLogo(R.drawable.connected_30);
+              }
               break;
             case 3:
-              target.setLogo(R.drawable.connected_50);
+              if (isRev) {
+                target.setLogo(R.drawable.connected_50_rev);
+              } else {
+                target.setLogo(R.drawable.connected_50);
+              }
               break;
             case 4:
-              target.setLogo(R.drawable.connected_80);
+              if (isRev) {
+                target.setLogo(R.drawable.connected_80_rev);
+              } else {
+                target.setLogo(R.drawable.connected_80);
+              }
               break;
             case 5:
-              target.setLogo(R.drawable.connected_full);
+              if (isRev) {
+                target.setLogo(R.drawable.connected_full_rev);
+              } else {
+                target.setLogo(R.drawable.connected_full);
+              }
               break;
             default:
-              target.setLogo(R.drawable.not_connected);
+              if (isRev) {
+                target.setLogo(R.drawable.not_connected_rev);
+              } else {
+                target.setLogo(R.drawable.not_connected);
+              }
               break;
           }
         }
@@ -1234,7 +1333,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     batteryStatus = status;
     //invalidateOptionsMenu();
-    updateActionBarLogo();
+    updateActionBarLogo(isCameraMenuFragment);
   }
 
   int getRootCardId(int position) {

@@ -101,7 +101,7 @@ public class HueConfigFragment extends ConfigFragmentBase {
   @Override
   public void onResume() {
     super.onResume();
-    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.hue_conf_title));
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.hue_conf_title), false);
   }
 
   @Override

@@ -79,7 +79,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   @Override
   public void onResume() {
     super.onResume();
-    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.midi_conf_title));
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.midi_conf_title), false);
   }
 
   @Override

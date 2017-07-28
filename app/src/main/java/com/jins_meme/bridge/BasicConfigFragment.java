@@ -131,7 +131,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   public void onResume() {
     super.onResume();
     ((MainActivity) getActivity())
-        .updateActionBar(getResources().getString(R.string.basic_conf_title));
+        .updateActionBar(getResources().getString(R.string.basic_conf_title), false);
   }
 
   @Override

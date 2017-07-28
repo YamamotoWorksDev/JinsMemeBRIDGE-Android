@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,8 @@ public class CameraMenuFragment extends MenuFragmentBase implements
   public void onViewCreated(final View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    Log.d("DEBUG", "CAMERA:: onViewCreated");
+
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no1);
   }
 
@@ -86,6 +89,11 @@ public class CameraMenuFragment extends MenuFragmentBase implements
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+
+    Log.d("DEBUG", "CAMERA:: onAttach");
+
+    ((MainActivity) getActivity()).setIsCameraMenuFragment(true);
+
     if (context instanceof RootMenuFragment.OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener) context;
     } else {
@@ -101,6 +109,9 @@ public class CameraMenuFragment extends MenuFragmentBase implements
   @Override
   public void onDetach() {
     super.onDetach();
+
+    Log.d("DEBUG", "CAMERA:: onDetach");
+
     mCamera = null;
     mListener = null;
   }
