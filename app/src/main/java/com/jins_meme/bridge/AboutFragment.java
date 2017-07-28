@@ -46,7 +46,7 @@ public class AboutFragment extends ConfigFragmentBase {
   @Override
   public void onResume() {
     super.onResume();
-    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.about_title));
+    ((MainActivity)getActivity()).updateActionBar(getResources().getString(R.string.about_title), false);
   }
 
   @Override

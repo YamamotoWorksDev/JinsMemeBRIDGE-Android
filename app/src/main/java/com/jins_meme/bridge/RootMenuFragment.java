@@ -44,6 +44,9 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+
+    Log.d("DEBUG", "ROOT:: onAttach");
+
     if (context instanceof OnFragmentInteractionListener) {
       mListener = (OnFragmentInteractionListener) context;
     } else {
@@ -55,6 +58,9 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
   @Override
   public void onDetach() {
     super.onDetach();
+
+    Log.d("DEBUG", "ROOT:: onDetach");
+
     mListener = null;
   }
 
@@ -70,7 +76,11 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
     Log.d("DEBUG", "ROOT:: onViewCreated");
 
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
-    ((MainActivity) getActivity()).updateActionBar(" JINS MEME BRIDGE");
+    //((MainActivity) getActivity()).updateActionBar("", false);
+    //((MainActivity) getActivity()).updateActionBarLogo(false);
+    ((MainActivity) getActivity()).setIsCameraMenuFragment(false);
+
+    ((MainActivity) getActivity()).changeSettingButton(true);
   }
 
   public interface OnFragmentInteractionListener {
