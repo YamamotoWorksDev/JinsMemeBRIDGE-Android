@@ -53,6 +53,8 @@ public class AboutFragment extends ConfigFragmentBase {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
+
     PackageManager packageManager = getActivity().getPackageManager();
     String versionName = "0.0.0";
     try {
