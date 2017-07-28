@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -69,7 +70,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
 
   private ProgressDialog receiveDialog;
   private ProgressDialog scanDialog;
-  private ProgressDialog selectDialog;
+  private AlertDialog selectDialog;
 
   private int slotIndex;
 
@@ -172,6 +173,11 @@ public class RemoConfigFragment extends ConfigFragmentBase {
             deviceMap.remove(name);
             adapter.remove(name);
             adapter.notifyDataSetChanged();
+
+            if (deviceMap.size() == 0) {
+              selectDialog.dismiss();
+              showScanDialog();
+            }
           }
         });
       }
@@ -184,9 +190,16 @@ public class RemoConfigFragment extends ConfigFragmentBase {
           public void run() {
             String name = serviceEvent.getName();
             String address = serviceEvent.getInfo().getHostAddresses()[0];
+
+            if (deviceMap.size() == 0) {
+              scanDialog.dismiss();
+              showSelectDialog();
+            }
+
             deviceMap.put(name, address);
             adapter.add(name);
             adapter.notifyDataSetChanged();
+
             return;
           }
         });
@@ -226,7 +239,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
             }
           });
         } else {
-//          swConnect.setChecked(false);
           setExist(false);
 
           receiveDialog.dismiss();
@@ -383,8 +395,6 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       state = State.IDLE;
 
       if (address != null) {
-//      tvName.setText(name);
-//      tvAddress.setText(address);
         tvDeviceInfo.setText(name + " " + address);
 
         checkState = CheckState.CHECK;
@@ -411,17 +421,11 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private void setExist(boolean isExist) {
     Log.d(TAG, "setExist: " + isExist);
     if (isExist) {
-//      tvAddress.setTextColor(Color.GREEN);
-//      tvName.setTextColor(Color.GREEN);
       tvDeviceInfo.setTextColor(Color.GREEN);
       checkState = CheckState.EXIST;
-//      changeState(State.EXIST);
     } else {
       tvDeviceInfo.setTextColor(Color.RED);
-//      tvAddress.setTextColor(Color.RED);
-//      tvName.setTextColor(Color.RED);
       checkState = CheckState.LOST;
-//      changeState(State.LOST);
     }
   }
 
@@ -437,53 +441,11 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     } else {
       changeState(State.SCAN);
       remoController.startDiscovery();
-
       deviceMap = new HashMap<String, String>();
-      adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1,
-          new ArrayList<String>());
-      final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-      final AlertDialog dialog;
-
-      builder.setTitle(getString(R.string.remo_select_dialog));
-
-      builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-          Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
-          remoController.stopDiscovery();
-          setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
-          setExist(true);
-        }
-      });
-      builder.setOnCancelListener(new OnCancelListener() {
-        @Override
-        public void onCancel(DialogInterface dialogInterface) {
-          Log.d(TAG, "onCancel: ");
-          remoController.stopDiscovery();
-          changeState(State.IDLE);
-
-          scanDialogHandler.removeCallbacksAndMessages(null);
-        }
-      });
-
-      dialog = builder.create();
-      dialog.show();
-
-      scanDialogHandler = new Handler();
-
-      scanDialogHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          Log.d(TAG, "state: " + state + " deviceMap.size: " + deviceMap.size());
-          if (state == State.SCAN && deviceMap.size() == 0) {
-            dialog.cancel();
-            showDeviceSettingDialog();
-          }
-        }
-      }, scanTimeoutDuration);
+      showScanDialog();
     }
   }
-  
+
   private void showScanDialog() {
     scanDialog = new ProgressDialog(mainActivity);
     scanDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
@@ -495,15 +457,64 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     scanDialog.setOnCancelListener(new OnCancelListener() {
       @Override
       public void onCancel(DialogInterface dialogInterface) {
+        Log.d(TAG, "scan dialog onCancel: ");
+        remoController.stopDiscovery();
+        changeState(State.IDLE);
 
+        scanDialogHandler.removeCallbacksAndMessages(null);
+      }
+    });
+    scanDialog.setOnDismissListener(new OnDismissListener() {
+      @Override
+      public void onDismiss(DialogInterface dialogInterface) {
+        Log.d(TAG, "scan dialog onDismiss: ");
+        scanDialogHandler.removeCallbacksAndMessages(null);
       }
     });
     scanDialog.setMessage(getString(R.string.remo_scan_dialog));
     scanDialog.show();
+    scanDialogHandler = new Handler();
+
+    scanDialogHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        Log.d(TAG, "state: " + state + " deviceMap.size: " + deviceMap.size());
+        if (state == State.SCAN && deviceMap.size() == 0) {
+          scanDialog.cancel();
+          showDeviceSettingDialog();
+        }
+      }
+    }, scanTimeoutDuration);
   }
 
   private void showSelectDialog() {
+    adapter = new ArrayAdapter<String>(mainActivity, android.R.layout.simple_list_item_1,
+        new ArrayList<String>());
+    final AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
 
+
+    builder.setTitle(getString(R.string.remo_select_dialog));
+
+    builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Log.d(TAG, "onClick: " + adapter.getItem(i) + " " + deviceMap.get(adapter.getItem(i)));
+        remoController.stopDiscovery();
+        setDevice(adapter.getItem(i), deviceMap.get(adapter.getItem(i)));
+        setExist(true);
+      }
+    });
+    builder.setOnCancelListener(new OnCancelListener() {
+      @Override
+      public void onCancel(DialogInterface dialogInterface) {
+        Log.d(TAG, "select dialog onCancel: ");
+        remoController.stopDiscovery();
+        changeState(State.IDLE);
+      }
+    });
+
+    selectDialog = builder.create();
+    selectDialog.show();
   }
   private void showSetSignalLabelDialog(final TextView labelTextView, final String saveId) {
 
@@ -556,7 +567,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     layout.addView(irkit);
     layout.addView(remo);
 
-    builder.setTitle("Did wifi setting ?");
+    builder.setTitle(getString(R.string.remo_wifi_setting_dialog_title));
     builder.setView(layout);
 
     dialog = builder.create();
@@ -602,8 +613,7 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     address = address.replaceAll("/","");
     ((MainActivity) getActivity()).autoSaveValue("REMO_DEVICE_NAME", name);
     ((MainActivity) getActivity()).autoSaveValue("REMO_DEVICE_ADDRESS", address);
-//    tvName.setText(name);
-//    tvAddress.setText(address);
+
     tvDeviceInfo.setText(name + " " + address);
   }
 
