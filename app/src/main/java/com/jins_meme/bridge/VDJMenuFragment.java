@@ -434,23 +434,23 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           break;
         case R.string.effect:
           switch (position) {
-            case 0:
+            case 2:
               id = R.string.effect1;
               break;
-            case 1:
+            case 3:
               id = R.string.effect2;
               break;
-            case 2:
+            case 4:
               id = R.string.effect3;
               break;
-            case 3:
+            case 5:
               id = R.string.effect4;
               break;
             ///* MFT
-            case 4:
+            case 0:
               id = R.string.effect5;
               break;
-            case 5:
+            case 1:
               id = R.string.effect6;
               break;
               //*/
@@ -459,16 +459,16 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         ///* MFT
         case R.string.logo:
           switch (position) {
-            case 0:
+            case 3:
               id = R.string.logo1;
               break;
-            case 1:
+            case 0:
               id = R.string.logo2;
               break;
-            case 2:
+            case 1:
               id = R.string.logo3;
               break;
-            case 3:
+            case 2:
               id = R.string.logo4;
               break;
           }
@@ -492,16 +492,16 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           break;
         case R.string.track58:
           switch (position) {
-            case 0:
+            case 1:
               id = R.string.track5;
               break;
-            case 1:
+            case 2:
               id = R.string.track6;
               break;
-            case 2:
+            case 3:
               id = R.string.track7;
               break;
-            case 3:
+            case 0:
               id = R.string.track8;
               break;
           }
