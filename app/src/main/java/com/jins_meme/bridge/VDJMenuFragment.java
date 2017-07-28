@@ -81,8 +81,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
       memeOSC.closeSocket();
       memeOSC = null;
     }
-
-    Log.d("FRAGMENT", "onDestroy...");
   }
 
   @Override
@@ -124,7 +122,9 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
-    Log.d("DEBUG", "VDJ:: onEnterCard");
+    Log.d("DEBUG", "VDJ:: onEnterCard " + id);
+
+    moveToFit();
   }
 
   @Override
@@ -309,29 +309,15 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
     @Override
     public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-      //return new MyCardHolder(mInflater.inflate(R.layout.card_vdj, parent, false));
       return new MyCardHolder(mInflater.inflate(R.layout.card_default, parent, false));
     }
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
       ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
-      ((CardAdapter.MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+      ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
 
-      /*
-      switch (id) {
-        case R.string.track14:
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("1-4");
-          break;
-        case R.string.track58:
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("5-8");
-          break;
-        default:
-          ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
-          break;
-      }
-      */
-      ((CardAdapter.MyCardHolder) cardHolder).mSubtitle.setText("");
+      ((MyCardHolder) cardHolder).mSubtitle.setText("");
 
       switch (id) {
         case R.string.track14:
@@ -448,23 +434,23 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           break;
         case R.string.effect:
           switch (position) {
-            case 0:
+            case 2:
               id = R.string.effect1;
               break;
-            case 1:
+            case 3:
               id = R.string.effect2;
               break;
-            case 2:
+            case 4:
               id = R.string.effect3;
               break;
-            case 3:
+            case 5:
               id = R.string.effect4;
               break;
             ///* MFT
-            case 4:
+            case 0:
               id = R.string.effect5;
               break;
-            case 5:
+            case 1:
               id = R.string.effect6;
               break;
               //*/
@@ -473,16 +459,16 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
         ///* MFT
         case R.string.logo:
           switch (position) {
-            case 0:
+            case 3:
               id = R.string.logo1;
               break;
-            case 1:
+            case 0:
               id = R.string.logo2;
               break;
-            case 2:
+            case 1:
               id = R.string.logo3;
               break;
-            case 3:
+            case 2:
               id = R.string.logo4;
               break;
           }
@@ -506,16 +492,16 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
           break;
         case R.string.track58:
           switch (position) {
-            case 0:
+            case 1:
               id = R.string.track5;
               break;
-            case 1:
+            case 2:
               id = R.string.track6;
               break;
-            case 2:
+            case 3:
               id = R.string.track7;
               break;
-            case 3:
+            case 0:
               id = R.string.track8;
               break;
           }

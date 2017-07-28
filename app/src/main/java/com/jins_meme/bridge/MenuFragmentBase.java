@@ -72,4 +72,8 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
     mView.move(1);
   }
 
+  public void moveToFit() {
+    mView.moveToFit();
+  }
+
 }

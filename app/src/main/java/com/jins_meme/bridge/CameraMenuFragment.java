@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -42,318 +43,354 @@ import java.util.ArrayList;
  * Use the {@link CameraMenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CameraMenuFragment extends MenuFragmentBase implements MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener, Camera2BasicFragment.IListener {
+public class CameraMenuFragment extends MenuFragmentBase implements
+    MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener,
+    Camera2BasicFragment.IListener {
 
-    private static final String[] REQUIED_PERMISSIONS = {android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+  private static final String[] REQUIED_PERMISSIONS = {android.Manifest.permission.CAMERA,
+      android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-    Camera2BasicFragment mCamera;
-    private OnFragmentInteractionListener mListener;
-    Handler mHandler = new Handler();
+  Camera2BasicFragment mCamera;
+  private OnFragmentInteractionListener mListener;
+  Handler mHandler = new Handler();
 
-    public CameraMenuFragment() {
-        // Required empty public constructor
+  public CameraMenuFragment() {
+    // Required empty public constructor
+  }
+
+  @Override
+  protected Adapter createAdapter() {
+    return new CardAdapter(getContext(), this);
+  }
+
+  @Override
+  public void onViewCreated(final View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    View uiView = super.onCreateView(inflater, container, savedInstanceState);
+    ViewGroup parent = (LinearLayout) inflater.inflate(R.layout.fragment_camera, container, false);
+    parent.addView(uiView);
+    ((LayoutParams) uiView.getLayoutParams()).height = 0;
+    ((LayoutParams) uiView.getLayoutParams()).weight = 1;
+    // Inflate the layout for this fragment
+    return parent;
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    if (context instanceof RootMenuFragment.OnFragmentInteractionListener) {
+      mListener = (OnFragmentInteractionListener) context;
+    } else {
+      throw new RuntimeException(context.toString()
+          + " must implement OnFragmentInteractionListener");
     }
+    mCamera = Camera2BasicFragment.newInstance();
+    mCamera.setListener(this);
+    FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+    transaction.add(R.id.camera, mCamera).commit();
+  }
 
-    @Override
-    protected Adapter createAdapter() {
-        return new CardAdapter(getContext(), this);
-    }
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    mCamera = null;
+    mListener = null;
+  }
 
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
+  private boolean isPermissionRequested = false;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View uiView = super.onCreateView(inflater, container, savedInstanceState);
-        ViewGroup parent = (LinearLayout)inflater.inflate(R.layout.fragment_camera, container, false);
-        parent.addView(uiView);
-        ((LayoutParams) uiView.getLayoutParams()).height = 0;
-        ((LayoutParams) uiView.getLayoutParams()).weight = 1;
-        // Inflate the layout for this fragment
-        return parent;
+  @Override
+  public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+    Animation anim = super.onCreateAnimation(transit, enter, nextAnim);
+    if (anim == null) {
+      if (enter) {
+        anim = AnimationUtils.loadAnimation(getContext(), R.anim.config_in);
+      } else {
+        anim = AnimationUtils.loadAnimation(getContext(), R.anim.config_out);
+      }
     }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof RootMenuFragment.OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                + " must implement OnFragmentInteractionListener");
+    if (enter && anim != null) {
+      anim.setAnimationListener(new AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {
         }
-        mCamera = Camera2BasicFragment.newInstance();
-        mCamera.setListener(this);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.camera, mCamera).commit();
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCamera = null;
-        mListener = null;
-    }
-
-    private boolean isPermissionRequested = false;
-
-    @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        Animation anim = super.onCreateAnimation(transit, enter, nextAnim);
-        if(anim == null) {
-            if(enter) {
-                anim = AnimationUtils.loadAnimation(getContext(), R.anim.config_in);
-            }
-            else {
-                anim = AnimationUtils.loadAnimation(getContext(), R.anim.config_out);
-            }
+        @Override
+        public void onAnimationRepeat(Animation animation) {
         }
-        if(enter && anim != null) {
-            anim.setAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (checkIfAllRequiedPermissionGranted()) {
-                        mCamera.reopenCamera();
-                    }
-                    else {
-                        isPermissionRequested = true;
-                        requestPermissions(getPermissionsNotGrantedYet(), getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
-                    }
-                }
-            });
-        }
-        return anim;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(checkIfAllRequiedPermissionGranted()) {
+        @Override
+        public void onAnimationEnd(Animation animation) {
+          if (checkIfAllRequiedPermissionGranted()) {
             mCamera.reopenCamera();
+          } else {
+            isPermissionRequested = true;
+            requestPermissions(getPermissionsNotGrantedYet(),
+                getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA));
+          }
         }
-        else if(isPermissionRequested) {
-            mHandler.post(new Runnable() {
-                public void run() {
-                    mListener.backToPreviousMenu();
-                }
-            });
+      });
+    }
+    return anim;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (checkIfAllRequiedPermissionGranted()) {
+      mCamera.reopenCamera();
+    } else if (isPermissionRequested) {
+      mHandler.post(new Runnable() {
+        public void run() {
+          mListener.backToPreviousMenu();
         }
-        isPermissionRequested = false;
+      });
     }
+    isPermissionRequested = false;
+  }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mCamera.closeCamera();
+  @Override
+  public void onPause() {
+    super.onPause();
+    mCamera.closeCamera();
+  }
+
+  public void shoot() {
+    if (!isCameraReady()) {
+      return;
     }
+    mCamera.takePicture();
+  }
 
-    public void shoot() {
-        if(!isCameraReady()) {
-            return;
+  public void toggleFrontRear() {
+    if (!isCameraReady()) {
+      return;
+    }
+    toggleCamera();
+  }
+
+
+  private void toggleCamera() {
+    Integer lens = mCamera.getCurrentLensFacing();
+    switch (lens) {
+      case CameraCharacteristics.LENS_FACING_FRONT:
+        mCamera.openCamera(CameraCharacteristics.LENS_FACING_BACK);
+        break;
+      case CameraCharacteristics.LENS_FACING_BACK:
+        mCamera.openCamera(CameraCharacteristics.LENS_FACING_FRONT);
+        break;
+    }
+  }
+
+  private boolean isCameraOpened = false;
+
+  @Override
+  public void onCameraOpened() {
+    isCameraOpened = true;
+  }
+
+  @Override
+  public void onCameraClosed() {
+    isCameraOpened = false;
+  }
+
+  boolean isCameraReady() {
+    return mCamera != null && isCameraOpened && !mCamera.isCameraProcessing();
+  }
+
+  @Override
+  public void onEnterCard(int id) {
+  }
+
+  @Override
+  public void onExitCard(int id) {
+
+  }
+
+  @Override
+  public void onEndCardSelected(int id) {
+    switch (id) {
+      case R.string.photoshoot:
+        shoot();
+
+        final CardAdapter.MyCardHolder mch = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
+        mch.setIcon(R.drawable.button_shoot_on, R.drawable.button_shoot_off, 500);
+        break;
+      case R.string.switch_fr:
+        toggleFrontRear();
+        break;
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
+    if (requestCode == getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA)) {
+      for (int i = 0; i < grantResults.length; ++i) {
+        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+          return;
         }
-        mCamera.takePicture();
+      }
+    } else {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+  }
 
-    public void toggleFrontRear() {
-        if(!isCameraReady()) {
-            return;
-        }
-        toggleCamera();
-    }
-
-
-    private void toggleCamera() {
-        Integer lens = mCamera.getCurrentLensFacing();
-        switch(lens) {
-            case CameraCharacteristics.LENS_FACING_FRONT:
-                mCamera.openCamera(CameraCharacteristics.LENS_FACING_BACK);
-                break;
-            case CameraCharacteristics.LENS_FACING_BACK:
-                mCamera.openCamera(CameraCharacteristics.LENS_FACING_FRONT);
-                break;
-        }
-    }
-
-    private boolean isCameraOpened = false;
-    @Override
-    public void onCameraOpened() {
-        isCameraOpened = true;
-    }
-
-    @Override
-    public void onCameraClosed() {
-        isCameraOpened = false;
-    }
-
-    boolean isCameraReady() {
-        return mCamera != null && isCameraOpened && !mCamera.isCameraProcessing();
-    }
-
-    @Override
-    public void onEnterCard(int id) {
-    }
-
-    @Override
-    public void onExitCard(int id) {
-
-    }
-
-    @Override
-    public void onEndCardSelected(int id) {
-        switch(id) {
-            case R.string.photoshoot:
-                shoot();
-                break;
-            case R.string.switch_fr:
-                toggleFrontRear();
-                break;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-        @NonNull int[] grantResults) {
-        if (requestCode == getResources().getInteger(R.integer.PERMISSION_REQUEST_CODE_CAMERA)) {
-            for(int i = 0; i < grantResults.length; ++i) {
-                if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private boolean checkIfAllRequiedPermissionGranted() {
-        for(String permission : REQUIED_PERMISSIONS) {
-            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-    private String[] getPermissionsNotGrantedYet() {
-        ArrayList<String> ret = new ArrayList<String>();
-        for(String permission : REQUIED_PERMISSIONS) {
-            if(ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
-                ret.add(permission);
-            }
-        }
-        return ret.toArray(new String[]{});
-    }
-    private boolean shouldShowRequestAnyPermissionRationale(String[] permissions) {
-        for(String permission : permissions) {
-            if(shouldShowRequestPermissionRationale(permission)) {
-                return true;
-            }
-        }
+  private boolean checkIfAllRequiedPermissionGranted() {
+    for (String permission : REQUIED_PERMISSIONS) {
+      if (ContextCompat.checkSelfPermission(getActivity(), permission)
+          != PackageManager.PERMISSION_GRANTED) {
         return false;
+      }
+    }
+    return true;
+  }
+
+  private String[] getPermissionsNotGrantedYet() {
+    ArrayList<String> ret = new ArrayList<String>();
+    for (String permission : REQUIED_PERMISSIONS) {
+      if (ContextCompat.checkSelfPermission(getActivity(), permission)
+          != PackageManager.PERMISSION_GRANTED) {
+        ret.add(permission);
+      }
+    }
+    return ret.toArray(new String[]{});
+  }
+
+  private boolean shouldShowRequestAnyPermissionRationale(String[] permissions) {
+    for (String permission : permissions) {
+      if (shouldShowRequestPermissionRationale(permission)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  public interface OnFragmentInteractionListener {
+
+    void backToPreviousMenu();
+  }
+
+  private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
+
+    Context mContext;
+    LayoutInflater mInflater;
+
+    CardAdapter(Context context, IResultListener listener) {
+      super(listener);
+      mContext = context;
+      mInflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
+      return new MyCardHolder(mInflater.inflate(R.layout.card_smalltext, parent, false));
+    }
+
+    @Override
+    public void onBindCardHolder(CardHolder cardHolder, int id) {
+      //MyCardHolder ch = (MyCardHolder) cardHolder;
+      //ch.mTitle.setText(getResources().getString(id));
+
+      switch (id) {
+        case R.string.photoshoot:
+          ((CardAdapter.MyCardHolder) cardHolder).mIcon.setImageResource(R.drawable.button_shoot_off);
+          break;
+        case R.string.switch_fr:
+          ((CardAdapter.MyCardHolder) cardHolder).mIcon.setImageResource(R.drawable.button_front_rear);
+          break;
+      }
     }
 
 
-    public interface OnFragmentInteractionListener {
-        void backToPreviousMenu();
+    @Override
+    public CardFunction getCardFunction(int id) {
+      return CardFunction.END;
     }
 
-    private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
+    @Override
+    public int getCardId(int parent_id, int position) {
+      int id = NO_ID;
+      switch (position) {
+        case 0:
+          id = R.string.photoshoot;
+          break;
+        case 1:
+          id = R.string.switch_fr;
+          break;
+      }
+      return id;
+    }
 
-        Context mContext;
-        LayoutInflater mInflater;
+    @Override
+    public int getChildCardCount(int parent_id) {
+      switch (parent_id) {
+        case NO_ID:
+          return 2;
+      }
+      return 0;
+    }
 
-        CardAdapter(Context context, IResultListener listener) {
-            super(listener);
-            mContext = context;
-            mInflater = LayoutInflater.from(context);
-        }
+    @Override
+    public int getCardType(int id) {
+      return R.integer.CARD_TYPE_ONLY_TITLE;
+    }
 
-        @Override
-        public CardHolder onCreateCardHolder(ViewGroup parent, int card_type) {
-            return new MyCardHolder(mInflater.inflate(R.layout.card_smalltext, parent, false));
-        }
+    private class MyCardHolder extends CardHolder {
 
-        @Override
-        public void onBindCardHolder(CardHolder cardHolder, int id) {
-            MyCardHolder ch = (MyCardHolder)cardHolder;
-            ch.mTitle.setText(getResources().getString(id));
-        }
+      ImageView mIcon;
+      //TextView mTitle;
+      //TextView mValue;
+      Handler mHandler = new Handler();
 
+      MyCardHolder(View itemView) {
+        super(itemView);
 
-        @Override
-        public CardFunction getCardFunction(int id) {
-            return CardFunction.END;
-        }
+        mIcon = (ImageView) itemView.findViewById(R.id.card_icon);
+        //mTitle = (TextView) itemView.findViewById(R.id.card_text);
+        //mValue = (TextView) itemView.findViewById(R.id.card_select);
+      }
 
-        @Override
-        public int getCardId(int parent_id, int position) {
-            int id = NO_ID;
-            switch (position) {
-                case 0:
-                    id = R.string.photoshoot;
-                    break;
-                case 1:
-                    id = R.string.switch_fr;
-                    break;
-            }
-            return id;
-        }
+      void setText(String text) {
+        //mValue.setText(getString(R.string.selected));
+        //mValue.setText(text);
+      }
 
-        @Override
-        public int getChildCardCount(int parent_id) {
-            switch (parent_id) {
-                case NO_ID:
-                    return 2;
-            }
-            return 0;
-        }
+      void setText(String text, int msec) {
+        //mValue.setText(getString(R.string.selected));
+        //mValue.setText(text);
 
-        @Override
-        public int getCardType(int id) {
-            return R.integer.CARD_TYPE_ONLY_TITLE;
-        }
-
-        private class MyCardHolder extends CardHolder {
-
-            TextView mTitle;
-            TextView mValue;
-            Handler mHandler = new Handler();
-
-            MyCardHolder(View itemView) {
-                super(itemView);
-
-                mTitle = (TextView) itemView.findViewById(R.id.card_text);
-                mValue = (TextView) itemView.findViewById(R.id.card_select);
-            }
-
-            void setText(String text) {
-                //mValue.setText(getString(R.string.selected));
-                mValue.setText(text);
-            }
-
-            void setText(String text, int msec) {
-                //mValue.setText(getString(R.string.selected));
-                mValue.setText(text);
-
+                /*
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mValue.setText(" ");
                     }
                 }, msec);
-            }
+                */
+      }
 
-            void clearText() {
-                mValue.setText(" ");
-            }
-        }
+      void clearText() {
+        //mValue.setText(" ");
+      }
 
-    }}
+      void setIcon(final int onResId, final int offResId, int msec) {
+        mIcon.setImageResource(onResId);
+
+        mHandler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            mIcon.setImageResource(offResId);
+          }
+        }, msec);
+      }
+    }
+
+  }
+}
