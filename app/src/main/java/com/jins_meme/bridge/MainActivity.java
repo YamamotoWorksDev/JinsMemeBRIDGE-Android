@@ -1009,6 +1009,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     return processed;
   }
 
+  void changeMainBackgroud(final int resId) {
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        mainLayout.setBackgroundResource(resId);
+      }
+    });
+  }
+
   void updateActionBar(String title) {
     Log.d("DEBUG", "updateActionBar 0");
 
@@ -1026,22 +1035,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       switch (batteryStatus) {
         case 1:
-          target.setLogo(R.mipmap.connected_caution);
+          target.setLogo(R.drawable.connected_caution);
           break;
         case 2:
-          target.setLogo(R.mipmap.connected_30);
+          target.setLogo(R.drawable.connected_30);
           break;
         case 3:
-          target.setLogo(R.mipmap.connected_50);
+          target.setLogo(R.drawable.connected_50);
           break;
         case 4:
-          target.setLogo(R.mipmap.connected_80);
+          target.setLogo(R.drawable.connected_80);
           break;
         case 5:
-          target.setLogo(R.mipmap.connected_full);
+          target.setLogo(R.drawable.connected_full);
           break;
         default:
-          target.setLogo(R.mipmap.not_connected);
+          target.setLogo(R.drawable.not_connected);
           break;
       }
     }
@@ -1061,22 +1070,22 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         public void run() {
           switch (batteryStatus) {
             case 1:
-              target.setLogo(R.mipmap.connected_caution);
+              target.setLogo(R.drawable.connected_caution);
               break;
             case 2:
-              target.setLogo(R.mipmap.connected_30);
+              target.setLogo(R.drawable.connected_30);
               break;
             case 3:
-              target.setLogo(R.mipmap.connected_50);
+              target.setLogo(R.drawable.connected_50);
               break;
             case 4:
-              target.setLogo(R.mipmap.connected_80);
+              target.setLogo(R.drawable.connected_80);
               break;
             case 5:
-              target.setLogo(R.mipmap.connected_full);
+              target.setLogo(R.drawable.connected_full);
               break;
             default:
-              target.setLogo(R.mipmap.not_connected);
+              target.setLogo(R.drawable.not_connected);
               break;
           }
         }
