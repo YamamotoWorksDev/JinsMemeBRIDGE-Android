@@ -80,7 +80,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
     //((MainActivity) getActivity()).updateActionBarLogo(false);
     ((MainActivity) getActivity()).setIsCameraMenuFragment(false);
 
-    ((MainActivity) getActivity()).changeSettingButton(true);
+    ((MainActivity) getActivity()).changeSettingButton(false);
   }
 
   public interface OnFragmentInteractionListener {

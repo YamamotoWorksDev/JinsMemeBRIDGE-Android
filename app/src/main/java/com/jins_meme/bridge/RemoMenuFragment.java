@@ -66,6 +66,7 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
     mainActivity = ((MainActivity) getActivity());
 
     mainActivity.changeMainBackgroud(R.color.no4);
+    ((MainActivity) getActivity()).changeSettingButton(false);
 
     signalNameMap = new HashMap<>();
     signalNameMap.put(getResources().getString(R.string.signal1), "REMO_SIGNAL_1_NAME");

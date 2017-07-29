@@ -58,6 +58,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
     super.onViewCreated(view, savedInstanceState);
 
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
+    ((MainActivity) getActivity()).changeSettingButton(false);
 
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());

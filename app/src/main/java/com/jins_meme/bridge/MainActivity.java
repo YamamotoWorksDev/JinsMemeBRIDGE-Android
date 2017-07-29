@@ -39,7 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -1033,12 +1033,12 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     });
   }
 
-  void changeSettingButton(boolean isRev) {
-    final String overflowDesc = "test";//getString(R.string.accessibility_overflow);
+  void changeSettingButton(final boolean isRev) {
+    final String overflowDesc = getString(R.string.accessibility_overflow);
 
     final ViewGroup decor = (ViewGroup) getWindow().getDecorView();
 
-    handler.post(new Runnable() {
+    decor.post(new Runnable() {
       @Override
       public void run() {
         final ArrayList<View> outViews = new ArrayList<>();
@@ -1046,11 +1046,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         decor.findViewsWithText(outViews, overflowDesc, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
 
         if (outViews.isEmpty()) {
+          Log.d("DEBUG", "empty...");
           return;
         }
 
-        final ImageButton overflow = (ImageButton) outViews.get(0);
-        overflow.setImageResource(R.drawable.setting_rev);
+        Log.d("DEBUG", "yes...!");
+        //final ImageButton overflow = (ImageButton) outViews.get(0);
+        ImageView overflow = (ImageView) outViews.get(0);
+        if (isRev) {
+          overflow.setImageResource(R.mipmap.ic_setting_rev);
+        } else {
+          overflow.setImageResource(R.mipmap.ic_setting);
+        }
       }
     });
   }
