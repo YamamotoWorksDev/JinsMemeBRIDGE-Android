@@ -76,7 +76,7 @@ public class BridgeUIView extends RecyclerView {
     long posCenterId = ((Adapter) getAdapter()).getItemId(pos);
     long posRightId  = ((Adapter) getAdapter()).getItemId(pos + 1);
 
-    //Log.d("DEBUG", "pos = " + selectedId + " " + pos0 + " " + pos1 + " " + pos2);
+    Log.d("DEBUG", "pos = " + selectedId + " " + posLeftId + " " + posCenterId + " " + posRightId);
 
     if (targetLeft != null && selectedId == posLeftId) {
       Log.d("DEBUG", "left");
