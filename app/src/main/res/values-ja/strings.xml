@@ -135,4 +135,6 @@
   <string name="remo_wifi_setting_dialog_title">wifi の設定はお済みですか？</string>
   <string name="remo_open_app_irkit">"IRKit Simple Remort" を開く</string>
   <string name="remo_open_app_remo">"Nature Remo - Smart AC" を開く</string>
+
+  <string name="accessibility_overflow">overflow</string>
 </resources>
