@@ -134,4 +134,6 @@
   <string name="remo_wifi_setting_dialog_title">Did wifi setting ?</string>
   <string name="remo_open_app_irkit">Open "IRKit Simple Remort"</string>
   <string name="remo_open_app_remo">Open "Nature Remo - Smart AC"</string>
+
+  <string name="accessibility_overflow">overflow</string>
 </resources>
