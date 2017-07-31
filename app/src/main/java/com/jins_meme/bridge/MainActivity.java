@@ -307,9 +307,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     if (getSupportActionBar() != null && getSupportActionBar().getTitle() != null) {
       barTitle = getSupportActionBar().getTitle().toString();
 
-      //debug Log.d("DEBUG", "Title = " + barTitle);
+      Log.d("DEBUG", "Title = " + barTitle);
 
-      if (!barTitle.contains(getString(R.string.app_name))) {
+      if (!barTitle.equals(getString(R.string.actionbar_title))) {
         for (int i = 0; i < menu.size(); i++) {
           MenuItem item = menu.getItem(i);
           String title = item.getTitle().toString();

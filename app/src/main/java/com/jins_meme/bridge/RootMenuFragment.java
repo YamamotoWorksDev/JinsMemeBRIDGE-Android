@@ -76,7 +76,7 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
     Log.d("DEBUG", "ROOT:: onViewCreated");
 
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
-    //((MainActivity) getActivity()).updateActionBar("", false);
+    ((MainActivity) getActivity()).updateActionBar(getString(R.string.actionbar_title), false);
     //((MainActivity) getActivity()).updateActionBarLogo(false);
     ((MainActivity) getActivity()).setIsCameraMenuFragment(false);
 
