@@ -549,7 +549,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       handler.postDelayed(new Runnable() {
         @Override
         public void run() {
-          Log.d("DEBUG", "hoge");
           startScan(true);
 
           handler.postDelayed(new Runnable() {
@@ -1141,15 +1140,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       Log.d("DEBUG", "MAIN:: updateActionBarLogo " + isRev);
 
-      if (isRev) {
-        target.setBackgroundDrawable(getDrawable(R.color.no1));
-      } else {
-        target.setBackgroundDrawable(getDrawable(R.color.no4));
-      }
-
       handler.post(new Runnable() {
         @Override
         public void run() {
+          if (isRev) {
+            target.setBackgroundDrawable(getDrawable(R.color.no1));
+          } else {
+            target.setBackgroundDrawable(getDrawable(R.color.no4));
+          }
+
           switch (batteryStatus) {
             case 1:
               if (isRev) {
