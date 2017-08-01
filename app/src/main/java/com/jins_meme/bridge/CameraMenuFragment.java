@@ -71,7 +71,7 @@ public class CameraMenuFragment extends MenuFragmentBase implements
 
     Log.d("DEBUG", "CAMERA:: onViewCreated");
 
-    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no1);
+    ((MainActivity) getActivity()).changeMainBackgroud(R.color.no0);
     ((MainActivity) getActivity()).changeSettingButton(true);
   }
 

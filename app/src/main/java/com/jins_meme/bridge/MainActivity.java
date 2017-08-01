@@ -1075,7 +1075,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       target.setDisplayUseLogoEnabled(false);
 
       if (isRev) {
-        target.setBackgroundDrawable(getDrawable(R.color.no1));
+        target.setBackgroundDrawable(getDrawable(R.color.no0));
       } else {
         target.setBackgroundDrawable(getDrawable(R.color.no4));
       }
@@ -1144,7 +1144,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         @Override
         public void run() {
           if (isRev) {
-            target.setBackgroundDrawable(getDrawable(R.color.no1));
+            target.setBackgroundDrawable(getDrawable(R.color.no0));
           } else {
             target.setBackgroundDrawable(getDrawable(R.color.no4));
           }
