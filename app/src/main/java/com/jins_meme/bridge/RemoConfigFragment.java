@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -61,6 +62,24 @@ public class RemoConfigFragment extends ConfigFragmentBase {
   private LinearLayout llSignalLabel3;
   private LinearLayout llSignalLabel4;
   private LinearLayout llSignalLabel5;
+
+  private Button bScan;
+  private Button bReceiveSignal1;
+  private Button bReceiveSignal2;
+  private Button bReceiveSignal3;
+  private Button bReceiveSignal4;
+  private Button bReceiveSignal5;
+  private Button bSendSignal1;
+  private Button bSendSignal2;
+  private Button bSendSignal3;
+  private Button bSendSignal4;
+  private Button bSendSignal5;
+  private Button bSignalLabel1;
+  private Button bSignalLabel2;
+  private Button bSignalLabel3;
+  private Button bSignalLabel4;
+  private Button bSignalLabel5;
+
   private TextView tvSignalLabel1;
   private TextView tvSignalLabel2;
   private TextView tvSignalLabel3;
@@ -257,80 +276,80 @@ public class RemoConfigFragment extends ConfigFragmentBase {
       }
     });
 
-    llScan = (LinearLayout) view.findViewById(R.id.remo_scan);
-    llScan.setOnClickListener(new OnClickListener() {
+    bScan = (Button) view.findViewById(R.id.remo_scan);
+    bScan.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         startScan();
       }
     });
 
-    llReceiveSignal1 = (LinearLayout) view.findViewById(R.id.remo_signal_1_receive);
-    llReceiveSignal1.setOnClickListener(new OnClickListener() {
+    bReceiveSignal1 = (Button) view.findViewById(R.id.remo_signal_1_receive);
+    bReceiveSignal1.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         receiveMessages(1);
       }
     });
-    llReceiveSignal2 = (LinearLayout) view.findViewById(R.id.remo_signal_2_receive);
-    llReceiveSignal2.setOnClickListener(new OnClickListener() {
+    bReceiveSignal2 = (Button) view.findViewById(R.id.remo_signal_2_receive);
+    bReceiveSignal2.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         receiveMessages(2);
       }
     });
-    llReceiveSignal3 = (LinearLayout) view.findViewById(R.id.remo_signal_3_receive);
-    llReceiveSignal3.setOnClickListener(new OnClickListener() {
+    bReceiveSignal3 = (Button) view.findViewById(R.id.remo_signal_3_receive);
+    bReceiveSignal3.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         receiveMessages(3);
       }
     });
-    llReceiveSignal4 = (LinearLayout) view.findViewById(R.id.remo_signal_4_receive);
-    llReceiveSignal4.setOnClickListener(new OnClickListener() {
+    bReceiveSignal4 = (Button) view.findViewById(R.id.remo_signal_4_receive);
+    bReceiveSignal4.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         receiveMessages(4);
       }
     });
-    llReceiveSignal5 = (LinearLayout) view.findViewById(R.id.remo_signal_5_receive);
-    llReceiveSignal5.setOnClickListener(new OnClickListener() {
+    bReceiveSignal5 = (Button) view.findViewById(R.id.remo_signal_5_receive);
+    bReceiveSignal5.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         receiveMessages(5);
       }
     });
 
-    llSendSignal1 = (LinearLayout) view.findViewById(R.id.remo_signal_1_send);
-    llSendSignal1.setOnClickListener(new OnClickListener() {
+    bSendSignal1 = (Button) view.findViewById(R.id.remo_signal_1_send);
+    bSendSignal1.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_1");
       }
     });
-    llSendSignal2 = (LinearLayout) view.findViewById(R.id.remo_signal_2_send);
-    llSendSignal2.setOnClickListener(new OnClickListener() {
+    bSendSignal2 = (Button) view.findViewById(R.id.remo_signal_2_send);
+    bSendSignal2.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_2");
       }
     });
-    llSendSignal3 = (LinearLayout) view.findViewById(R.id.remo_signal_3_send);
-    llSendSignal3.setOnClickListener(new OnClickListener() {
+    bSendSignal3 = (Button) view.findViewById(R.id.remo_signal_3_send);
+    bSendSignal3.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_3");
       }
     });
-    llSendSignal4 = (LinearLayout) view.findViewById(R.id.remo_signal_4_send);
-    llSendSignal4.setOnClickListener(new OnClickListener() {
+    bSendSignal4 = (Button) view.findViewById(R.id.remo_signal_4_send);
+    bSendSignal4.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_4");
       }
     });
-    llSendSignal5 = (LinearLayout) view.findViewById(R.id.remo_signal_5_send);
-    llSendSignal5.setOnClickListener(new OnClickListener() {
+    bSendSignal5 = (Button) view.findViewById(R.id.remo_signal_5_send);
+    bSendSignal5.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         sendMessage("REMO_SIGNAL_5");
@@ -349,36 +368,36 @@ public class RemoConfigFragment extends ConfigFragmentBase {
     tvSignalLabel4.setText(mainActivity.getSavedValue("REMO_SIGNAL_4_NAME"));
     tvSignalLabel5.setText(mainActivity.getSavedValue("REMO_SIGNAL_5_NAME"));
 
-    llSignalLabel1 = (LinearLayout) view.findViewById(R.id.remo_signal_1_set_name);
-    llSignalLabel1.setOnClickListener(new OnClickListener() {
+    bSignalLabel1 = (Button) view.findViewById(R.id.remo_signal_1_set_name);
+    bSignalLabel1.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         showSetSignalLabelDialog(tvSignalLabel1, "REMO_SIGNAL_1_NAME");
       }
     });
-    llSignalLabel2 = (LinearLayout) view.findViewById(R.id.remo_signal_2_set_name);
-    llSignalLabel2.setOnClickListener(new OnClickListener() {
+    bSignalLabel2 = (Button) view.findViewById(R.id.remo_signal_2_set_name);
+    bSignalLabel2.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         showSetSignalLabelDialog(tvSignalLabel2, "REMO_SIGNAL_2_NAME");
       }
     });
-    llSignalLabel3 = (LinearLayout) view.findViewById(R.id.remo_signal_3_set_name);
-    llSignalLabel3.setOnClickListener(new OnClickListener() {
+    bSignalLabel3 = (Button) view.findViewById(R.id.remo_signal_3_set_name);
+    bSignalLabel3.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         showSetSignalLabelDialog(tvSignalLabel3, "REMO_SIGNAL_3_NAME");
       }
     });
-    llSignalLabel4 = (LinearLayout) view.findViewById(R.id.remo_signal_4_set_name);
-    llSignalLabel4.setOnClickListener(new OnClickListener() {
+    bSignalLabel4 = (Button) view.findViewById(R.id.remo_signal_4_set_name);
+    bSignalLabel4.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         showSetSignalLabelDialog(tvSignalLabel1, "REMO_SIGNAL_4_NAME");
       }
     });
-    llSignalLabel5 = (LinearLayout) view.findViewById(R.id.remo_signal_5_set_name);
-    llSignalLabel5.setOnClickListener(new OnClickListener() {
+    bSignalLabel5 = (Button) view.findViewById(R.id.remo_signal_5_set_name);
+    bSignalLabel5.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         showSetSignalLabelDialog(tvSignalLabel5, "REMO_SIGNAL_5_NAME");
