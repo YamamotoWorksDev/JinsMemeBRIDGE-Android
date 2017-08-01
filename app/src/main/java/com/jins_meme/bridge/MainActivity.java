@@ -1050,12 +1050,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         decor.findViewsWithText(outViews, overflowDesc, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
 
         if (outViews.isEmpty()) {
-          Log.d("DEBUG", "empty...");
           return;
         }
 
-        Log.d("DEBUG", "yes...!");
-        //final ImageButton overflow = (ImageButton) outViews.get(0);
         ImageView overflow = (ImageView) outViews.get(0);
         if (isRev) {
           overflow.setImageResource(R.mipmap.ic_setting_rev);
