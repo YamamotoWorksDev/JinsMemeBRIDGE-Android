@@ -309,10 +309,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       Log.d("DEBUG", "Title = " + barTitle);
 
-      if (!barTitle.equals(getString(R.string.actionbar_title))) {
+      if (barTitle.length() > 1) {
         for (int i = 0; i < menu.size(); i++) {
           MenuItem item = menu.getItem(i);
           String title = item.getTitle().toString();
+
+          if (title.contains(" (for Eye VDJ)")) {
+            title = title.substring(0, title.indexOf(" (for Eye VDJ)"));
+          }
+
           if (barTitle.contains(title)) {
             item.setVisible(false);
           } else {
