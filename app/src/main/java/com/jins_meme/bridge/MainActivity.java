@@ -1157,44 +1157,44 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           switch (batteryStatus) {
             case 1:
               if (isRev) {
-                target.setLogo(R.drawable.connected_caution_rev);
+                target.setLogo(R.mipmap.connected_caution_rev);
               } else {
-                target.setLogo(R.drawable.connected_caution);
+                target.setLogo(R.mipmap.connected_caution);
               }
               break;
             case 2:
               if (isRev) {
-                target.setLogo(R.drawable.connected_30_rev);
+                target.setLogo(R.mipmap.connected_30_rev);
               } else {
-                target.setLogo(R.drawable.connected_30);
+                target.setLogo(R.mipmap.connected_30);
               }
               break;
             case 3:
               if (isRev) {
-                target.setLogo(R.drawable.connected_50_rev);
+                target.setLogo(R.mipmap.connected_50_rev);
               } else {
-                target.setLogo(R.drawable.connected_50);
+                target.setLogo(R.mipmap.connected_50);
               }
               break;
             case 4:
               if (isRev) {
-                target.setLogo(R.drawable.connected_80_rev);
+                target.setLogo(R.mipmap.connected_80_rev);
               } else {
-                target.setLogo(R.drawable.connected_80);
+                target.setLogo(R.mipmap.connected_80);
               }
               break;
             case 5:
               if (isRev) {
-                target.setLogo(R.drawable.connected_full_rev);
+                target.setLogo(R.mipmap.connected_full_rev);
               } else {
-                target.setLogo(R.drawable.connected_full);
+                target.setLogo(R.mipmap.connected_full);
               }
               break;
             default:
               if (isRev) {
-                target.setLogo(R.drawable.not_connected_rev);
+                target.setLogo(R.mipmap.not_connected_rev);
               } else {
-                target.setLogo(R.drawable.not_connected);
+                target.setLogo(R.mipmap.not_connected);
               }
               break;
           }
