@@ -9,6 +9,7 @@
 
 package com.jins_meme.bridge;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -46,6 +47,25 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
     Log.d("DEBUG", "BASE:: onResume");
 
     ((MainActivity)getActivity()).updateActionBarLogo(((MainActivity) getActivity()).isCameraMenuFragment());
+
+    String id_str = ((Integer)mView.getCurrentParentCardId()).toString();
+    SharedPreferences pref = getPreferences();
+    if(pref.contains(id_str)) {
+      int offset = getPreferences().getInt(id_str, 0);
+      mView.setPosition(offset);
+    }
+    else {
+      mView.setToDefaultPosition(0);
+    }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    String id_str = ((Integer)mView.getCurrentParentCardId()).toString();
+    SharedPreferences.Editor editor = getPreferences().edit();
+    editor.putInt(id_str, mView.getCurrentCenteredItemPosition());
+    editor.apply();
   }
 
   public void setTouchEnabled(boolean enabled) {
@@ -80,4 +100,5 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
     mView.moveToFit();
   }
 
+  abstract protected SharedPreferences getPreferences();
 }

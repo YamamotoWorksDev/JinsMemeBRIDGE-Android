@@ -38,16 +38,6 @@ public class BridgeUIView extends RecyclerView {
   }
 
   @Override
-  protected void onAttachedToWindow() {
-    super.onAttachedToWindow();
-    Adapter adapter = (Adapter) getAdapter();
-    int near = adapter.getItemCount() / 2;
-    int dx = (getWidth() - mLayoutManager.getItemWidth()) / 2;
-    mLayoutManager.scrollToPositionWithOffset(
-        near - near % adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
-  }
-
-  @Override
   public void setAdapter(RecyclerView.Adapter adapter) {
     super.setAdapter(adapter);
     ((Adapter) adapter).setTouchEnabler(mTouchListener);
@@ -122,7 +112,21 @@ public class BridgeUIView extends RecyclerView {
     return true;
   }
 
-  private int getCurrentCenteredItemPosition() {
+  public void setToDefaultPosition(int offset) {
+    Adapter adapter = (Adapter) getAdapter();
+    int near = adapter.getItemCount() / 2 + offset;
+    int dx = (getWidth() - mLayoutManager.getItemWidth()) / 2;
+    mLayoutManager.scrollToPositionWithOffset(
+        near - near % adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
+  }
+  public void setPosition(int position) {
+    Adapter adapter = (Adapter) getAdapter();
+    int near = position;
+    int dx = (getWidth() - mLayoutManager.getItemWidth()) / 2;
+    mLayoutManager.scrollToPositionWithOffset(near, dx);
+  }
+
+  public int getCurrentCenteredItemPosition() {
     int last = mLayoutManager.findLastVisibleItemPosition();
     int center = getWidth() / 2;
     for (int i = mLayoutManager.findFirstVisibleItemPosition(); i <= last; ++i) {
@@ -149,6 +153,10 @@ public class BridgeUIView extends RecyclerView {
   public void setTouchEnabled(boolean enabled) {
     mTouchListener.setEnabled(enabled);
     mScrollController.setEnabled(enabled);
+  }
+
+  public int getCurrentParentCardId() {
+    return ((Adapter)getAdapter()).getSelectedCardId();
   }
 
   public interface IResultListener {

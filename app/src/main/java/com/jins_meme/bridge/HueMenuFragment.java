@@ -10,6 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,6 +71,12 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
     Log.d("FRAGMENT", "onDestroy...");
   }
+
+  @Override
+  protected SharedPreferences getPreferences() {
+    return getContext().getSharedPreferences("hue_menu", Context.MODE_PRIVATE);
+  }
+
   @Override
   public void onDestroyView() {
     super.onDestroyView();

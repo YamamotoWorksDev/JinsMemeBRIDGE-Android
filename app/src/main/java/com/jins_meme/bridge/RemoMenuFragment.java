@@ -10,6 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -41,6 +42,11 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
   private OnFragmentInteractionListener mListener;
 
   private RemoController remoController;
+
+  @Override
+  protected SharedPreferences getPreferences() {
+    return getContext().getSharedPreferences("remo_menu", Context.MODE_PRIVATE);
+  }
 
   private HashMap<String, String> signalNameMap;
 

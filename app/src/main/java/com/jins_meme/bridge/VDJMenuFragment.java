@@ -10,6 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -121,6 +122,11 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   interface OnFragmentInteractionListener {
     void backToPreviousMenu();
+  }
+
+  @Override
+  protected SharedPreferences getPreferences() {
+    return getContext().getSharedPreferences("vdj_menu", Context.MODE_PRIVATE);
   }
 
   @Override

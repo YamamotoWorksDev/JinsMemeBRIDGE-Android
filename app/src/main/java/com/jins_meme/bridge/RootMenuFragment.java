@@ -10,6 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,6 +68,11 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
   @Override
   protected Adapter createAdapter() {
     return new CardAdapter(getContext(), this);
+  }
+
+  @Override
+  protected SharedPreferences getPreferences() {
+    return getContext().getSharedPreferences("root_menu", Context.MODE_PRIVATE);
   }
 
   @Override

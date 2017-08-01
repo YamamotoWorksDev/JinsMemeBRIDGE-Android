@@ -10,6 +10,7 @@
 package com.jins_meme.bridge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraCharacteristics;
 import android.os.Bundle;
@@ -55,6 +56,11 @@ public class CameraMenuFragment extends MenuFragmentBase implements
   Camera2BasicFragment mCamera;
   private OnFragmentInteractionListener mListener;
   Handler mHandler = new Handler();
+
+  @Override
+  protected SharedPreferences getPreferences() {
+    return getContext().getSharedPreferences("camera_menu", Context.MODE_PRIVATE);
+  }
 
   public CameraMenuFragment() {
     // Required empty public constructor
