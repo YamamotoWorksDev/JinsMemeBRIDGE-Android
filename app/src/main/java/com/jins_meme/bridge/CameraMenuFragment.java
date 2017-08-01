@@ -73,6 +73,7 @@ public class CameraMenuFragment extends MenuFragmentBase implements
 
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no0);
     ((MainActivity) getActivity()).changeSettingButton(true);
+    ((MainActivity) getActivity()).setIsCameraMenuFragment(true);
   }
 
   @Override
