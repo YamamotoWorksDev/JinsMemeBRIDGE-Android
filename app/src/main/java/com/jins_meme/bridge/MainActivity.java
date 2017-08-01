@@ -693,7 +693,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       });
     }
     batteryStatus = 5;
-    updateActionBarLogo(isCameraMenuFragment);
+
+    if (getSupportActionBar().getTitle().length() <= 1) {
+      updateActionBarLogo(isCameraMenuFragment);
+    }
     //invalidateOptionsMenu();
 
     memeLib.setAutoConnect(true);
@@ -991,6 +994,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void connectToMeme(String id) {
+    Log.d("DEBUG", "MAIN:: connectToMeme");
+
     lastConnectedMemeID = id;
 
     memeLib.connect(id);
@@ -1132,17 +1137,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   void updateActionBarLogo(final boolean isRev) {
     final ActionBar target = getSupportActionBar();
     if (target != null) {
-      target.setDisplayHomeAsUpEnabled(false);
-      //invalidateOptionsMenu();
-
-      target.setDisplayShowHomeEnabled(true);
-      target.setDisplayUseLogoEnabled(true);
-
       Log.d("DEBUG", "MAIN:: updateActionBarLogo " + isRev);
 
       handler.post(new Runnable() {
         @Override
         public void run() {
+          target.setDisplayHomeAsUpEnabled(false);
+          //invalidateOptionsMenu();
+
+          target.setDisplayShowHomeEnabled(true);
+          target.setDisplayUseLogoEnabled(true);
+
           if (isRev) {
             target.setBackgroundDrawable(getDrawable(R.color.no0));
           } else {
@@ -1339,7 +1344,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     batteryStatus = status;
     //invalidateOptionsMenu();
-    updateActionBarLogo(isCameraMenuFragment);
+
+    if (getSupportActionBar().getTitle().length() <= 1) {
+      updateActionBarLogo(isCameraMenuFragment);
+    }
   }
 
   int getRootCardId(int position) {
