@@ -436,14 +436,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     isForeground = false;
 
-    Log.d("DEBUG", "onPause..." + scannedMemeList.size());
+    Log.d("DEBUG", "MAIN:: onPause..." + scannedMemeList.size());
   }
 
   @Override
   protected void onStop() {
     super.onStop();
 
-    Log.d("DEBUG", "MAIN:: onStop...");
+    Log.d("DEBUG", "MAIN:: onStop... " + isCameraMenuFragment);
   }
 
   @Override
@@ -1007,8 +1007,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("DEBUG", "MAIN:: press back!");
     setUIPaused(false);
     cancel(false);
-
-    isCameraMenuFragment = false;
   }
 
   public boolean cancel(boolean allow_finish) {
