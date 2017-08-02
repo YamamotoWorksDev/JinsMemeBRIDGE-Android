@@ -694,7 +694,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
     batteryStatus = 5;
 
-    if (getSupportActionBar().getTitle().length() <= 1) {
+    Log.d("DEBUG", "MAIN:: memeConnectCallback:: " + getSupportActionBar().getTitle().length());
+    if (getSupportActionBar().getTitle().length() <= 2) {
       updateActionBarLogo(isCameraMenuFragment);
     }
     //invalidateOptionsMenu();
@@ -1345,7 +1346,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     batteryStatus = status;
     //invalidateOptionsMenu();
 
-    if (getSupportActionBar().getTitle().length() <= 1) {
+    if (getSupportActionBar().getTitle().length() <= 2) {
       updateActionBarLogo(isCameraMenuFragment);
     }
   }
