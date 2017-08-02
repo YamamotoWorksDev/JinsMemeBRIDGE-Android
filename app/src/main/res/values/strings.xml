@@ -48,42 +48,42 @@
   <string name="meme_disconnected">JINS MEME DISCONNECTED</string>
 
   <string name="not_found_meme_title">CONNECTION TIMEOUT</string>
-  <string name="not_found_meme_explain">Please go to the BASIC SETTING and rescan.</string>
-  <string name="incorrect_app_id_secret_title">INCORRECT APP_ID &amp; APP_SECRET</string>
-  <string name="incorrect_app_id_secret_explain">Please input the correct APP_ID and APP_SECRET.</string>
+  <string name="not_found_meme_explain">Please go to BASIC SETTING and rescan.</string>
+  <string name="incorrect_app_id_secret_title">INCORRECT APP ID &amp; APP SECRET</string>
+  <string name="incorrect_app_id_secret_explain">Please input the correct APP ID and APP SECRET.</string>
   <string name="not_connected_network_title">NO NETWORK CONNECTION</string>
-  <string name="not_connected_network_explain">Please check your network connection. Some functions needs Wi-Fi or Internet connections.</string>
+  <string name="not_connected_network_explain">Please check your network connection. Some functions require Wi-Fi or Internet connections.</string>
 
   <string name="airplane_mode_on_title">AIRPLANE MODE IS ENABLED</string>
-  <string name="airplane_mode_on_explain">Please disable the airplane mode.</string>
+  <string name="airplane_mode_on_explain">Please disable airplane mode.</string>
 
   <string name="unlock_auth_title">UNLOCK</string>
-  <string name="unlock_auth_explain">Please unlock to edit the APP_ID and APP_SECRET.</string>
+  <string name="unlock_auth_explain">Please unlock to edit the APP ID and APP SECRET.</string>
 
-  <string name="not_selected_midi_title">NOT SELECTED MIDI</string>
-  <string name="not_selected_midi_explain">Please change your USB Connection Type to MIDI and restart.</string>
+  <string name="not_selected_midi_title">MIDI NOT SELECTED</string>
+  <string name="not_selected_midi_explain">Please change your USB Connection type to MIDI and restart.</string>
 
   <string name="camera_error">This device doesn\'t support Camera2 API.</string>
   <string name="request_permission">Camera permission is required.</string>
 
-  <string name="hue_error_title">NOT FOUND / AUTHENTICATED</string>
+  <string name="hue_error_title">UNABLE TO AUTHENTICATE</string>
   <string name="hue_error_message">Please check the Hue Bridge condition or Wi-Fi connection.</string>
-  <string name="hue_searching">Searching Hue Bridge&#8230;</string>
-  <string name="hue_push_link_button">Found Hue Bridge.\n Please push the LINK Button&#8230;</string>
+  <string name="hue_searching">Searching for Hue Bridge&#8230;</string>
+  <string name="hue_push_link_button">Hue Bridge found.\n Please push the LINK button&#8230;</string>
 
-  <string name="selected">selected</string>
-  <string name="pause">pause</string>
+  <string name="selected">Selected</string>
+  <string name="pause">Pause</string>
   <string name="count">%1$d</string>
 
   <string name="meme_config_blink">BLINK (%1$d)</string>
   <string name="meme_config_angle">CANCEL/PAUSE ANGLE(ROLL: %1$d)</string>
   <string name="meme_config_pause_time">PAUSE ENABLE TIME (%1$.1fsec)</string>
 
-  <string name="spotify_loading">Now loading your playlists&#8230;</string>
+  <string name="spotify_loading">Loading your playlists now&#8230;</string>
   <string name="spotify_cat_user">USER PLAYLIST</string>
   <string name="spotify_cat_featured">FEATURED PLAYLIST</string>
-  <string name="spotify_cat_followed">FOLLOWED ARTIST</string>
-  <string name="spotify_cat_saved">SAVED ALBUM</string>
+  <string name="spotify_cat_followed">FOLLOWED ARTISTS</string>
+  <string name="spotify_cat_saved">SAVED ALBUMS</string>
 
   <string-array name="spotify_category">
     <item>USER PLAYLIST</item>
@@ -129,8 +129,8 @@
   <string name="remo_scan_dialog">Scanning device...</string>
   <string name="remo_select_dialog">Select a device</string>
   <string name="remo_receive_dialog">Aim your remote at IRKit or Nature Remo and press a button briefly</string>
-  <string name="remo_wifi_setting_dialog_title">Did wifi setting ?</string>
-  <string name="remo_open_app_irkit">Open "IRKit Simple Remort"</string>
+  <string name="remo_wifi_setting_dialog_title">Is Wi-Fi setup complete?</string>
+  <string name="remo_open_app_irkit">Open "IRKit Simple Remote"</string>
   <string name="remo_open_app_remo">Open "Nature Remo - Smart AC"</string>
 
   <string name="accessibility_overflow">overflow</string>
