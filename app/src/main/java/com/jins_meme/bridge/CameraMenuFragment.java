@@ -47,7 +47,7 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class CameraMenuFragment extends MenuFragmentBase implements
-    MemeRealtimeDataFilter.MemeFilteredDataCallback, IResultListener,
+    MemeRealtimeDataFilter.MemeFilteredDataCallback,
     Camera2BasicFragment.IListener {
 
   private static final String[] REQUIED_PERMISSIONS = {android.Manifest.permission.CAMERA,
@@ -226,16 +226,8 @@ public class CameraMenuFragment extends MenuFragmentBase implements
   }
 
   @Override
-  public void onEnterCard(int id) {
-  }
-
-  @Override
-  public void onExitCard(int id) {
-
-  }
-
-  @Override
   public void onEndCardSelected(int id) {
+    super.onEndCardSelected(id);
     switch (id) {
       case R.string.photoshoot:
         shoot();

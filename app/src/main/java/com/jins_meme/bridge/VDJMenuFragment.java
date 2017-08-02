@@ -33,7 +33,7 @@ import com.jins_meme.bridge.BridgeUIView.IResultListener;
  * {@link VDJMenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class VDJMenuFragment extends MenuFragmentBase implements IResultListener {
+public class VDJMenuFragment extends MenuFragmentBase {
 
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
@@ -131,20 +131,19 @@ public class VDJMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
+    super.onEnterCard(id);
     Log.d("DEBUG", "VDJ:: onEnterCard " + id);
-
-    moveToFit();
   }
 
   @Override
   public void onExitCard(int id) {
+    super.onExitCard(id);
     Log.d("DEBUG", "VDJ:: onExitCard " + id);
-
-    moveToFit();
   }
 
   @Override
   public void onEndCardSelected(int id) {
+    super.onEndCardSelected(id);
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
 
     int note = 24;

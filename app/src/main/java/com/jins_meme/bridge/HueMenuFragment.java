@@ -34,7 +34,7 @@ import java.util.Random;
  * {@link HueMenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class HueMenuFragment extends MenuFragmentBase implements IResultListener {
+public class HueMenuFragment extends MenuFragmentBase {
 
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
@@ -115,16 +115,19 @@ public class HueMenuFragment extends MenuFragmentBase implements IResultListener
 
   @Override
   public void onEnterCard(int id) {
+    super.onEnterCard(id);
     Log.d("DEBUG", "HUE:: onEnterCard");
   }
 
   @Override
   public void onExitCard(int id) {
+    super.onExitCard(id);
     Log.d("DEBUG", "HUE:: onExitCard");
   }
 
   @Override
   public void onEndCardSelected(int id) {
+    super.onEndCardSelected(id);
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
     switch (id) {
       case R.string.random:

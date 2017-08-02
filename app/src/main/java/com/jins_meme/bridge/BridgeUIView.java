@@ -120,7 +120,6 @@ public class BridgeUIView extends RecyclerView {
         near - near % adapter.getChildCardCount(adapter.getSelectedCardId()), dx);
   }
   public void setPosition(int position) {
-    Adapter adapter = (Adapter) getAdapter();
     int near = position;
     int dx = (getWidth() - mLayoutManager.getItemWidth()) / 2;
     mLayoutManager.scrollToPositionWithOffset(near, dx);
@@ -162,9 +161,9 @@ public class BridgeUIView extends RecyclerView {
   public interface IResultListener {
 
     void onEnterCard(int id);
-
+    void onEnteredCard(int id);
     void onExitCard(int id);
-
+    void onExitedCard(int id);
     void onEndCardSelected(int id);
   }
 
@@ -207,6 +206,7 @@ public class BridgeUIView extends RecyclerView {
       mListener.onEnterCard(id);
       mHistory.push(id);
       notifyDataSetChanged();
+      mListener.onEnteredCard(id);
     }
 
     void reset() {
@@ -230,6 +230,7 @@ public class BridgeUIView extends RecyclerView {
         mHistory.pop();
         notifyDataSetChanged();
       }
+      mListener.onExitedCard(getSelectedCardId());
     }
 
     @Override

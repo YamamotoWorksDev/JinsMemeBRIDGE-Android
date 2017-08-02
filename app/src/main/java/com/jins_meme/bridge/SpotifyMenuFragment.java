@@ -27,7 +27,7 @@ import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
 
-public class SpotifyMenuFragment extends MenuFragmentBase implements IResultListener {
+public class SpotifyMenuFragment extends MenuFragmentBase {
 
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
@@ -119,6 +119,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
 
   @Override
   public void onEndCardSelected(int id) {
+    super.onEndCardSelected(id);
     final CardAdapter.MyCardHolder mych = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
 
     if (((MainActivity) getActivity()).isAuthenticated()) {
@@ -168,14 +169,6 @@ public class SpotifyMenuFragment extends MenuFragmentBase implements IResultList
     } else {
       mych.setText("not authenticated", 300);
     }
-  }
-
-  @Override
-  public void onEnterCard(int id) {
-  }
-
-  @Override
-  public void onExitCard(int id) {
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {

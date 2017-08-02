@@ -36,7 +36,7 @@ import java.util.HashMap;
  * to handle interaction events.
  *
  */
-public class RemoMenuFragment extends MenuFragmentBase implements IResultListener {
+public class RemoMenuFragment extends MenuFragmentBase {
   private String TAG = "RemoMenuFragment";
 
   private OnFragmentInteractionListener mListener;
@@ -141,16 +141,8 @@ public class RemoMenuFragment extends MenuFragmentBase implements IResultListene
 
 
   @Override
-  public void onEnterCard(int id) {
-  }
-
-  @Override
-  public void onExitCard(int id) {
-    mListener.backToPreviousMenu();
-  }
-
-  @Override
   public void onEndCardSelected(int id) {
+    super.onEndCardSelected(id);
     if (!isSending) {
       String address;
       String messages;

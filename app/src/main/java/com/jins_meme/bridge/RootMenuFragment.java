@@ -34,7 +34,7 @@ import com.jins_meme.bridge.BridgeUIView.IResultListener;
  * {@link RootMenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class RootMenuFragment extends MenuFragmentBase implements IResultListener {
+public class RootMenuFragment extends MenuFragmentBase {
 
   private OnFragmentInteractionListener mListener;
 
@@ -95,16 +95,8 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
   }
 
   @Override
-  public void onEnterCard(int id) {
-  }
-
-  @Override
-  public void onExitCard(int id) {
-
-  }
-
-  @Override
   public void onEndCardSelected(int id) {
+    super.onEndCardSelected(id);
     mListener.openNextMenu(id);
   }
 

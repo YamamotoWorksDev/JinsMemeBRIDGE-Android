@@ -18,17 +18,62 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.jins_meme.bridge.BridgeUIView.Adapter;
+import com.jins_meme.bridge.BridgeUIView.IResultListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback {
+public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeDataFilter.MemeFilteredDataCallback,
+    IResultListener {
 
   protected BridgeUIView mView = null;
 
   public MenuFragmentBase() {
     // Required empty public constructor
   }
+
+  @Override
+  public void onEnterCard(int id) {
+    saveUIPosition();
+  }
+
+  @Override
+  public void onEnteredCard(int id) {
+    restoreUIPosition();
+  }
+
+  @Override
+  public void onExitCard(int id) {
+    saveUIPosition();
+  }
+  @Override
+  public void onExitedCard(int id) {
+    restoreUIPosition();
+  }
+
+  @Override
+  public void onEndCardSelected(int id) {
+
+  }
+
+  protected void saveUIPosition() {
+    String id_str = ((Integer)mView.getCurrentParentCardId()).toString();
+    SharedPreferences.Editor editor = getPreferences().edit();
+    editor.putInt(id_str, mView.getCurrentCenteredItemPosition());
+    editor.apply();
+  }
+  protected void restoreUIPosition() {
+    String id_str = ((Integer)mView.getCurrentParentCardId()).toString();
+    SharedPreferences pref = getPreferences();
+    if(pref.contains(id_str)) {
+      int offset = getPreferences().getInt(id_str, 0);
+      mView.setPosition(offset);
+    }
+    else {
+      mView.setToDefaultPosition(0);
+    }
+  }
+
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,25 +92,13 @@ public abstract class MenuFragmentBase extends Fragment implements MemeRealtimeD
     Log.d("DEBUG", "BASE:: onResume");
 
     ((MainActivity)getActivity()).updateActionBarLogo(((MainActivity) getActivity()).isCameraMenuFragment());
-
-    String id_str = ((Integer)mView.getCurrentParentCardId()).toString();
-    SharedPreferences pref = getPreferences();
-    if(pref.contains(id_str)) {
-      int offset = getPreferences().getInt(id_str, 0);
-      mView.setPosition(offset);
-    }
-    else {
-      mView.setToDefaultPosition(0);
-    }
+    restoreUIPosition();
   }
 
   @Override
   public void onPause() {
     super.onPause();
-    String id_str = ((Integer)mView.getCurrentParentCardId()).toString();
-    SharedPreferences.Editor editor = getPreferences().edit();
-    editor.putInt(id_str, mView.getCurrentCenteredItemPosition());
-    editor.apply();
+    saveUIPosition();
   }
 
   public void setTouchEnabled(boolean enabled) {
