@@ -45,7 +45,7 @@
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Log in your Premium account"
+            android:text="Log in to your Premium account"
             android:textSize="12sp"/>
         </LinearLayout>
       </LinearLayout>
@@ -63,7 +63,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginBottom="15dp"
-          android:text="HOW TO PLAYING"
+          android:text="PLAYBACK SETTINGS"
           android:textColor="@color/no3"/>
         <LinearLayout
           android:layout_width="match_parent"
@@ -97,7 +97,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginBottom="15dp"
-          android:text="FAVORITE PLAYLIST"
+          android:text="FAVORITE PLAYLISTS"
           android:textColor="@color/no3"/>
         <LinearLayout
           android:layout_width="match_parent"

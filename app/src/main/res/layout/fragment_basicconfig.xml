@@ -84,7 +84,7 @@
                       android:layout_height="wrap_content"
                       android:layout_marginTop="5dp"
                       android:layout_marginBottom="15dp"
-                      android:text="Select the JINS MEME ID which you connect"
+                      android:text="Select the JINS MEME ID to connect with."
                       android:textSize="12sp"/>
                 </LinearLayout>
                 <LinearLayout
@@ -126,7 +126,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_marginBottom="15dp"
-                      android:text="SENSOR ADJUST"
+                      android:text="SENSOR ADJUSTMENTS"
                       android:textColor="@color/no3"/>
                     <LinearLayout
                       android:layout_width="match_parent"
@@ -200,7 +200,7 @@
                       android:layout_height="wrap_content"
                       android:layout_marginTop="5dp"
                       android:layout_marginBottom="25dp"
-                      android:text="Small: increase sensitivity / Large: decreese sensitivity"
+                      android:text="Small: increase sensitivity / Large: decrease sensitivity"
                       android:textSize="12sp"/>
                 </LinearLayout>
                 <LinearLayout
@@ -272,7 +272,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_marginBottom="15dp"
-                      android:text="Change the moving direction when your eye move left or right."
+                      android:text="Change the direction of menu scrolling by moving your eyes left or right."
                       android:textSize="12sp"/>
                 </LinearLayout>
             </LinearLayout>
@@ -297,7 +297,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_marginBottom="15dp"
-                      android:text="機能の使用"
+                      android:text="FUNCTIONS"
                       android:textColor="@color/no3"/>
                     <LinearLayout
                       android:layout_width="match_parent"
@@ -374,7 +374,7 @@
                     <TextView
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Enable Hue function"
+                      android:text="Enable Philips Hue function"
                       android:textSize="12sp"/>
                 </LinearLayout>
                 <LinearLayout
@@ -389,11 +389,11 @@
                       android:layout_height="wrap_content"
                       android:checked="true"
                       android:splitTrack="false"
-                      android:text="EyeVDJ"/>
+                      android:text="EYE VDJ"/>
                     <TextView
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="Enable EyeVDJ function"
+                      android:text="Enable EYE VDJ function"
                       android:textSize="12sp"/>
                 </LinearLayout>
             </LinearLayout>
@@ -418,7 +418,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_marginBottom="15dp"
-                      android:text="FOR DEVELOPER"
+                      android:text="FOR DEVELOPERS"
                       android:textColor="@color/no3"/>
                     <LinearLayout
                       android:layout_width="match_parent"

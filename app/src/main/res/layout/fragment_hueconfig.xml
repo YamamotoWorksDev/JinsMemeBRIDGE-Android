@@ -49,11 +49,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="CONNECT TO Hue Bridge"/>
+            android:text="CONNECT TO HUE BRIDGE"/>
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Search and connect in your local network"
+            android:text="Search and connect to your local network"
             android:textSize="12sp"/>
         </LinearLayout>
       </LinearLayout>
@@ -279,7 +279,7 @@
               <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Adjust the transition time from old setting to new one"
+                android:text="Adjust the transition time from an old setting to a new one"
                 android:textSize="12sp"/>
               <Button
                 android:id="@+id/hue_test"
