@@ -62,7 +62,7 @@
             <TextView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="Search and connect to your local network"
+              android:text="Search and connect to IRKIT or NATURE REMO in your local network"
               android:textSize="12sp"/>
           </LinearLayout>
           <Button
