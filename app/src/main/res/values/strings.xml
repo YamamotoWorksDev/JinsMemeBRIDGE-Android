@@ -25,12 +25,10 @@
 
   <string name="welcome_title">Welcome !</string>
   <string name="welcome_message">
-    Thank you for installing the JINS MEME BRIDGE.\n\n
-    The JINS MEME BRIDGE is possible to take a photo, listen to your favorite music(<b>*1</b>) and control your home electronics(<b>*2</b>) or LED lights(<b>*3</b>) with your "eyes".\n\n
-    This app needs the JINS MEME but you can try it by your fingers(tap and swipe).\n\n
-    <b>*1</b>：Spotify Premium Account\n
-    <b>*2</b>：IRKit or NatureRemo\n
-    <b>*3</b>：Philips Hue and Hue Bridge\n
+    Thank you for downloading JINS MEME BRIDGE!\n\n
+    This app enables you to remotely control the camera device of your smartphone and external equipment by using JINS MEME.\n
+    IRKIT, HUE, the purchase of item devices and registration as a premium user of Spotify is required.\n\n
+    You can operate this with your fingers when JINS MEME is not in use. In addition, the basic project is an open source app, so you can add and expand the function on your own. The project\'s resources are available to the public on GITHUB.
   </string>
 
   <string name="ok">OK</string>

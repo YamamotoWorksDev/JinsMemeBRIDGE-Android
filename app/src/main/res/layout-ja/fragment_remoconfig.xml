@@ -1,17 +1,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#FFFFFF"
+tools:context="com.jins_meme.bridge.RemoConfigFragment">
+
+<ScrollView
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="#FFFFFF"
-  tools:context="com.jins_meme.bridge.RemoConfigFragment">
-
-  <ScrollView
+  android:layout_alignParentBottom="true"
+  android:layout_alignParentStart="true"
+  android:layout_marginBottom="28dp">
+  <LinearLayout
+    android:id="@+id/remo_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:divider="@drawable/border_line"
+    android:orientation="vertical"
+    android:showDividers="middle">
     <LinearLayout
-      android:id="@+id/remo_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="15dp"
       android:divider="@drawable/border_line"
       android:orientation="vertical"
       android:showDividers="middle">
@@ -19,435 +32,627 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
         android:divider="@drawable/border_line"
         android:orientation="vertical"
         android:showDividers="middle">
-        <LinearLayout
-          android:layout_width="match_parent"
+        <TextView
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:divider="@drawable/border_line"
+          android:layout_marginBottom="15dp"
+          android:text="通信"
+          android:textColor="@color/no3"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:showDividers="middle">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp"
+          android:clickable="true">
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="通信"
-            android:textColor="@color/no3"/>
-        </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_scan"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical"
-          android:clickable="true">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="探索開始"/>
           <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ローカルネットワーク内で探索し接続を試みます"
             android:textSize="12sp"/>
         </LinearLayout>
-        <LinearLayout
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_scan"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:textColor="#000"
-            android:text="デバイス情報"/>
-          <TextView
-            android:id="@+id/remo_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="デバイスが見つかってません"
-            android:textSize="12sp"/>
-        </LinearLayout>
+          android:layout_marginTop="6dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="探索"/>
       </LinearLayout>
-
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:divider="@drawable/border_subline"
-        android:orientation="vertical"
-        android:showDividers="middle">
-        <LinearLayout
+        android:orientation="vertical">
+        <TextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:divider="@drawable/border_line"
+          android:textColor="#000"
+          android:text="デバイス情報"/>
+        <TextView
+          android:id="@+id/remo_info"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="デバイスが見つかっていません"
+          android:textSize="12sp"/>
+      </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="15dp"
+      android:divider="@drawable/border_subline"
+      android:orientation="vertical"
+      android:showDividers="middle">
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:divider="@drawable/border_line"
+        android:orientation="vertical"
+        android:showDividers="middle">
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="15dp"
+          android:text="信号 1"
+          android:textColor="@color/no3"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:showDividers="middle">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="信号 1"
-            android:textColor="@color/no3"/>
-        </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_1_receive"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical"
-          android:clickable="true">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 1 を学習"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_1_send"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_1_receive"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="学習"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:clickable="true">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 1 を送信"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_1_set_name"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_1_send"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="送信"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp"
           android:clickable="true">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 1 のラベル"/>
           <TextView
             android:id="@+id/remo_signal_1_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="signal 1 name"
+            android:text="未設定"
             android:textSize="12sp"/>
         </LinearLayout>
+        <Button
+          android:id="@+id/remo_signal_1_set_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="設定"/>
       </LinearLayout>
+    </LinearLayout>
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="15dp"
+      android:divider="@drawable/border_subline"
+      android:orientation="vertical"
+      android:showDividers="middle">
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:divider="@drawable/border_subline"
+        android:layout_marginTop="10dp"
+        android:divider="@drawable/border_line"
         android:orientation="vertical"
         android:showDividers="middle">
-        <LinearLayout
-          android:layout_width="match_parent"
+        <TextView
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:divider="@drawable/border_line"
+          android:layout_marginBottom="15dp"
+          android:text="信号 2"
+          android:textColor="@color/no3"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:showDividers="middle">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="信号 2"
-            android:textColor="@color/no3"/>
-        </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_2_receive"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical"
-          android:clickable="true">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 2 を学習"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_2_send"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_2_receive"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="学習"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:clickable="true">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 2 を送信"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_2_set_name"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_2_send"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="送信"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp"
           android:clickable="true">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 2 のラベル"/>
           <TextView
             android:id="@+id/remo_signal_2_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="signal 2 name"
+            android:text="未設定"
             android:textSize="12sp"/>
         </LinearLayout>
+        <Button
+          android:id="@+id/remo_signal_2_set_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="設定"/>
       </LinearLayout>
+    </LinearLayout>
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="15dp"
+      android:divider="@drawable/border_subline"
+      android:orientation="vertical"
+      android:showDividers="middle">
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:divider="@drawable/border_subline"
+        android:layout_marginTop="10dp"
+        android:divider="@drawable/border_line"
         android:orientation="vertical"
         android:showDividers="middle">
-        <LinearLayout
-          android:layout_width="match_parent"
+        <TextView
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:divider="@drawable/border_line"
+          android:layout_marginBottom="15dp"
+          android:text="信号 3"
+          android:textColor="@color/no3"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:showDividers="middle">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="信号 3"
-            android:textColor="@color/no3"/>
-        </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_3_receive"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical"
-          android:clickable="true">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 3 を学習"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_3_send"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_3_receive"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="学習"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:clickable="true">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 3 を送信"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_3_set_name"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_3_send"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="送信"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp"
           android:clickable="true">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 3 のラベル"/>
           <TextView
             android:id="@+id/remo_signal_3_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="signal 3 name"
+            android:text="未設定"
             android:textSize="12sp"/>
         </LinearLayout>
+        <Button
+          android:id="@+id/remo_signal_3_set_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="設定"/>
       </LinearLayout>
+    </LinearLayout>
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="15dp"
+      android:divider="@drawable/border_subline"
+      android:orientation="vertical"
+      android:showDividers="middle">
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:divider="@drawable/border_subline"
+        android:layout_marginTop="10dp"
+        android:divider="@drawable/border_line"
         android:orientation="vertical"
         android:showDividers="middle">
-        <LinearLayout
-          android:layout_width="match_parent"
+        <TextView
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:divider="@drawable/border_line"
+          android:layout_marginBottom="15dp"
+          android:text="信号 4"
+          android:textColor="@color/no3"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:showDividers="middle">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="信号 4"
-            android:textColor="@color/no3"/>
-        </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_4_receive"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical"
-          android:clickable="true">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 4 を学習"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_4_send"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_4_receive"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="学習"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:clickable="true">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 4 を送信"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_4_set_name"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_4_send"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="送信"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp"
           android:clickable="true">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 4 のラベル"/>
           <TextView
             android:id="@+id/remo_signal_4_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="signal 4 name"
+            android:text="未設定"
             android:textSize="12sp"/>
         </LinearLayout>
+        <Button
+          android:id="@+id/remo_signal_4_set_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="設定"/>
       </LinearLayout>
+    </LinearLayout>
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="15dp"
+      android:layout_marginBottom="15dp"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="15dp"
+      android:divider="@drawable/border_subline"
+      android:orientation="vertical"
+      android:showDividers="middle">
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:divider="@drawable/border_subline"
+        android:layout_marginTop="10dp"
+        android:divider="@drawable/border_line"
         android:orientation="vertical"
         android:showDividers="middle">
-        <LinearLayout
-          android:layout_width="match_parent"
+        <TextView
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:divider="@drawable/border_line"
+          android:layout_marginBottom="15dp"
+          android:text="信号 5"
+          android:textColor="@color/no3"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:showDividers="middle">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:text="信号 5"
-            android:textColor="@color/no3"/>
-        </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_5_receive"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
-          android:orientation="vertical"
-          android:clickable="true">
-          <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 5 を学習"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_5_send"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_5_receive"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="学習"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:clickable="true">
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 5 を送信"/>
         </LinearLayout>
-        <LinearLayout
-          android:id="@+id/remo_signal_5_set_name"
-          android:layout_width="match_parent"
+        <Button
+          android:id="@+id/remo_signal_5_send"
+          android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="15dp"
+          android:layout_marginTop="0dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="送信"/>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:layout_weight="1"
+          android:layout_marginTop="15dp"
+          android:layout_marginBottom="15dp"
           android:clickable="true">
           <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:textColor="#000"
             android:text="信号 5 のラベル"/>
           <TextView
             android:id="@+id/remo_signal_5_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="signal 5 name"
+            android:text="未設定"
             android:textSize="12sp"/>
         </LinearLayout>
+        <Button
+          android:id="@+id/remo_signal_5_set_name"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="6dp"
+          android:layout_marginStart="24dp"
+          android:layout_weight="0.33"
+          android:text="設定"/>
       </LinearLayout>
-
     </LinearLayout>
-  </ScrollView>
+  </LinearLayout>
+</ScrollView>
 </RelativeLayout>

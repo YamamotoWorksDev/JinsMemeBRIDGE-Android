@@ -2,7 +2,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@color/no1"
+  android:background="@color/no0"
   tools:context="com.example.android.camera2basic.Camera2BasicFragment">
     <com.example.android.camera2basic.AutoFitTextureView
       android:id="@+id/texture"

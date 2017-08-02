@@ -202,8 +202,6 @@ public class RootMenuFragment extends MenuFragmentBase implements IResultListene
 
     @Override
     public int getChildCardCount(int parent_id) {
-      Log.d("DEBUG", "ROOT:: getChildCardCount");
-
       switch (parent_id) {
         case NO_ID:
           return ((MainActivity) getActivity()).getEnabledCardNum();

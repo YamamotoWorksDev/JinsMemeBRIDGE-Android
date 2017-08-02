@@ -309,10 +309,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
       Log.d("DEBUG", "Title = " + barTitle);
 
-      if (!barTitle.equals(getString(R.string.actionbar_title))) {
+      if (barTitle.length() > 1) {
         for (int i = 0; i < menu.size(); i++) {
           MenuItem item = menu.getItem(i);
           String title = item.getTitle().toString();
+
+          if (title.contains(" (for Eye VDJ)")) {
+            title = title.substring(0, title.indexOf(" (for Eye VDJ)"));
+          }
+
           if (barTitle.contains(title)) {
             item.setVisible(false);
           } else {
@@ -431,14 +436,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     isForeground = false;
 
-    Log.d("DEBUG", "onPause..." + scannedMemeList.size());
+    Log.d("DEBUG", "MAIN:: onPause..." + scannedMemeList.size());
   }
 
   @Override
   protected void onStop() {
     super.onStop();
 
-    Log.d("DEBUG", "MAIN:: onStop...");
+    Log.d("DEBUG", "MAIN:: onStop... " + isCameraMenuFragment);
   }
 
   @Override
@@ -688,7 +693,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       });
     }
     batteryStatus = 5;
-    updateActionBarLogo(isCameraMenuFragment);
+
+    if (getSupportActionBar().getTitle().length() <= 1) {
+      updateActionBarLogo(isCameraMenuFragment);
+    }
     //invalidateOptionsMenu();
 
     memeLib.setAutoConnect(true);
@@ -986,6 +994,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   public void connectToMeme(String id) {
+    Log.d("DEBUG", "MAIN:: connectToMeme");
+
     lastConnectedMemeID = id;
 
     memeLib.connect(id);
@@ -1002,8 +1012,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     Log.d("DEBUG", "MAIN:: press back!");
     setUIPaused(false);
     cancel(false);
-
-    isCameraMenuFragment = false;
   }
 
   public boolean cancel(boolean allow_finish) {
@@ -1045,12 +1053,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         decor.findViewsWithText(outViews, overflowDesc, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
 
         if (outViews.isEmpty()) {
-          Log.d("DEBUG", "empty...");
           return;
         }
 
-        Log.d("DEBUG", "yes...!");
-        //final ImageButton overflow = (ImageButton) outViews.get(0);
         ImageView overflow = (ImageView) outViews.get(0);
         if (isRev) {
           overflow.setImageResource(R.mipmap.ic_setting_rev);
@@ -1075,7 +1080,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       target.setDisplayUseLogoEnabled(false);
 
       if (isRev) {
-        target.setBackgroundDrawable(getDrawable(R.color.no1));
+        target.setBackgroundDrawable(getDrawable(R.color.no0));
       } else {
         target.setBackgroundDrawable(getDrawable(R.color.no4));
       }
@@ -1132,19 +1137,19 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   void updateActionBarLogo(final boolean isRev) {
     final ActionBar target = getSupportActionBar();
     if (target != null) {
-      target.setDisplayHomeAsUpEnabled(false);
-      //invalidateOptionsMenu();
-
-      target.setDisplayShowHomeEnabled(true);
-      target.setDisplayUseLogoEnabled(true);
-
       Log.d("DEBUG", "MAIN:: updateActionBarLogo " + isRev);
 
       handler.post(new Runnable() {
         @Override
         public void run() {
+          target.setDisplayHomeAsUpEnabled(false);
+          //invalidateOptionsMenu();
+
+          target.setDisplayShowHomeEnabled(true);
+          target.setDisplayUseLogoEnabled(true);
+
           if (isRev) {
-            target.setBackgroundDrawable(getDrawable(R.color.no1));
+            target.setBackgroundDrawable(getDrawable(R.color.no0));
           } else {
             target.setBackgroundDrawable(getDrawable(R.color.no4));
           }
@@ -1152,44 +1157,44 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           switch (batteryStatus) {
             case 1:
               if (isRev) {
-                target.setLogo(R.drawable.connected_caution_rev);
+                target.setLogo(R.mipmap.connected_caution_rev);
               } else {
-                target.setLogo(R.drawable.connected_caution);
+                target.setLogo(R.mipmap.connected_caution);
               }
               break;
             case 2:
               if (isRev) {
-                target.setLogo(R.drawable.connected_30_rev);
+                target.setLogo(R.mipmap.connected_30_rev);
               } else {
-                target.setLogo(R.drawable.connected_30);
+                target.setLogo(R.mipmap.connected_30);
               }
               break;
             case 3:
               if (isRev) {
-                target.setLogo(R.drawable.connected_50_rev);
+                target.setLogo(R.mipmap.connected_50_rev);
               } else {
-                target.setLogo(R.drawable.connected_50);
+                target.setLogo(R.mipmap.connected_50);
               }
               break;
             case 4:
               if (isRev) {
-                target.setLogo(R.drawable.connected_80_rev);
+                target.setLogo(R.mipmap.connected_80_rev);
               } else {
-                target.setLogo(R.drawable.connected_80);
+                target.setLogo(R.mipmap.connected_80);
               }
               break;
             case 5:
               if (isRev) {
-                target.setLogo(R.drawable.connected_full_rev);
+                target.setLogo(R.mipmap.connected_full_rev);
               } else {
-                target.setLogo(R.drawable.connected_full);
+                target.setLogo(R.mipmap.connected_full);
               }
               break;
             default:
               if (isRev) {
-                target.setLogo(R.drawable.not_connected_rev);
+                target.setLogo(R.mipmap.not_connected_rev);
               } else {
-                target.setLogo(R.drawable.not_connected);
+                target.setLogo(R.mipmap.not_connected);
               }
               break;
           }
@@ -1339,7 +1344,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     batteryStatus = status;
     //invalidateOptionsMenu();
-    updateActionBarLogo(isCameraMenuFragment);
+
+    if (getSupportActionBar().getTitle().length() <= 1) {
+      updateActionBarLogo(isCameraMenuFragment);
+    }
   }
 
   int getRootCardId(int position) {

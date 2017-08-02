@@ -6,7 +6,7 @@
   android:layout_height="match_parent"
   android:foreground="?android:attr/selectableItemBackground"
   android:stateListAnimator="@animator/card_raise"
-  card_view:cardBackgroundColor="@color/no1"
+  card_view:cardBackgroundColor="@color/no0"
   card_view:cardElevation="2sp"
   card_view:cardUseCompatPadding="true"
   >
