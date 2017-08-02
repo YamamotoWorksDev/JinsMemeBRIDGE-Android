@@ -259,7 +259,7 @@
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:autoLink="web"
-                  android:text="With ALS  http://withals.com"
+                  android:text="WITH ALS  http://withals.com"
                   android:textSize="12sp"/>
               </LinearLayout>
             </LinearLayout>
