@@ -56,6 +56,7 @@ public class SpotifyMenuFragment extends MenuFragmentBase {
     super.onViewCreated(view, savedInstanceState);
 
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
+    ((MainActivity) getActivity()).updateActionBar(getString(R.string.actionbar_title), false);
     ((MainActivity) getActivity()).changeSettingButton(false);
     ((MainActivity) getActivity()).authenticate();
   }

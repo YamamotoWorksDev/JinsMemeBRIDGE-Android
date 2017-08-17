@@ -59,6 +59,7 @@ public class VDJMenuFragment extends MenuFragmentBase {
     super.onViewCreated(view, savedInstanceState);
 
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
+    ((MainActivity) getActivity()).updateActionBar(getString(R.string.actionbar_title), false);
     ((MainActivity) getActivity()).changeSettingButton(false);
 
     // Initialize MIDI
@@ -170,7 +171,7 @@ public class VDJMenuFragment extends MenuFragmentBase {
         new Thread(new Runnable() {
           @Override
           public void run() {
-            //if (finalNote != lastNote) {
+            if (finalNote != lastNote) {
               Log.d("DEBUG", "note on " + finalNote);
               memeMIDI.sendNote(midiChannel, finalNote, 127);
 
@@ -179,18 +180,18 @@ public class VDJMenuFragment extends MenuFragmentBase {
               memeOSC.addArgument(midiChannel);
               memeOSC.addArgument(finalNote);
               memeOSC.flushMessage();
-            //}
+            }
 
             try {
               Thread.sleep(500);
             } catch (InterruptedException e) {
               e.printStackTrace();
             } finally {
-              //if (finalNote != lastNote) {
+              if (finalNote != lastNote) {
                 Log.d("DEBUG", "note off " + finalNote);
                 memeMIDI.sendNote(midiChannel, finalNote, 0);
                 lastNote = finalNote;
-              //}
+              }
 
               mHandler.post(new Runnable() {
                 @Override
@@ -261,6 +262,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
     ///* MFT
     note = 60;
     switch (id) {
+      case R.string.logo5:
+        ++note;
       case R.string.logo4:
         ++note;
       case R.string.logo3:
@@ -330,10 +333,24 @@ public class VDJMenuFragment extends MenuFragmentBase {
       ((MyCardHolder) cardHolder).mSubtitle.setText("");
 
       switch (id) {
+        /*
         case R.string.track14:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
           break;
         case R.string.track58:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          break;
+          */
+        case R.string.track13:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          break;
+        case R.string.track45:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          break;
+        case R.string.guiterist:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          break;
+        case R.string.rapper:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
           break;
         case R.string.track1:
@@ -375,13 +392,13 @@ public class VDJMenuFragment extends MenuFragmentBase {
         case R.string.effect4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect4);
           break;
-        ///* MFT
         case R.string.effect5:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect5);
           break;
         case R.string.effect6:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
           break;
+        ///* MFT
         case R.string.logo:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo);
           break;
@@ -397,7 +414,10 @@ public class VDJMenuFragment extends MenuFragmentBase {
         case R.string.logo4:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
           break;
-          //*/
+        case R.string.logo5:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo5);
+          break;
+        //*/
       }
 
       ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
@@ -412,8 +432,14 @@ public class VDJMenuFragment extends MenuFragmentBase {
       switch (id) {
         case R.string.back:
           return CardFunction.BACK;
+        /*
         case R.string.track14:
         case R.string.track58:
+        */
+        case R.string.track13:
+        case R.string.track45:
+        case R.string.guiterist:
+        case R.string.rapper:
         case R.string.effect:
         case R.string.logo: // MFT comment out
           return CardFunction.ENTER_MENU;
@@ -428,6 +454,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
       switch (parent_id) {
         case NO_ID:
           switch (position) {
+            // default
+            /*
             case 0:
               id = R.string.track14;
               break;
@@ -438,6 +466,26 @@ public class VDJMenuFragment extends MenuFragmentBase {
               id = R.string.effect;
               break;
             case 3:
+              id = R.string.logo;
+              break;
+            */
+            // for MOVE FES 9/9
+            case 0:
+              id = R.string.track13;
+              break;
+            case 1:
+              id = R.string.track45;
+              break;
+            case 2:
+              id = R.string.guiterist;
+              break;
+            case 3:
+              id = R.string.rapper;
+              break;
+            case 4:
+              id = R.string.effect;
+              break;
+            case 5:
               id = R.string.logo;
               break;
           }
@@ -456,20 +504,18 @@ public class VDJMenuFragment extends MenuFragmentBase {
             case 5:
               id = R.string.effect4;
               break;
-            ///* MFT
             case 0:
               id = R.string.effect5;
               break;
             case 1:
               id = R.string.effect6;
               break;
-              //*/
           }
           break;
         ///* MFT
         case R.string.logo:
           switch (position) {
-            case 3:
+            case 4:
               id = R.string.logo1;
               break;
             case 0:
@@ -481,9 +527,13 @@ public class VDJMenuFragment extends MenuFragmentBase {
             case 2:
               id = R.string.logo4;
               break;
+            case 3:
+              id = R.string.logo5;
+              break;
           }
           break;
-          //*/
+        //*/
+        /*
         case R.string.track14:
           switch (position) {
             case 0:
@@ -516,7 +566,44 @@ public class VDJMenuFragment extends MenuFragmentBase {
               break;
           }
           break;
-
+        */
+        case R.string.track13:
+          switch (position) {
+            case 0:
+              id = R.string.track1;
+              break;
+            case 1:
+              id = R.string.track2;
+              break;
+            case 2:
+              id = R.string.track3;
+              break;
+          }
+          break;
+        case R.string.track45:
+          switch (position) {
+            case 0:
+              id = R.string.track4;
+              break;
+            case 1:
+              id = R.string.track5;
+              break;
+          }
+          break;
+        case R.string.guiterist:
+          switch (position) {
+            case 0:
+              id = R.string.track6;
+              break;
+          }
+          break;
+        case R.string.rapper:
+          switch (position) {
+            case 0:
+              id = R.string.track7;
+              break;
+          }
+          break;
       }
       return id;
     }
@@ -526,10 +613,18 @@ public class VDJMenuFragment extends MenuFragmentBase {
       switch (parent_id) {
         case NO_ID:
           //return 3;// MFT
+          return 6;// MOVE FES 9/9
+        case  R.string.track13:
+          return 3;
+        case  R.string.track45:
+          return 2;
+        case  R.string.guiterist:
+        case  R.string.rapper:
+          return 1;
         case R.string.logo: // MFT comment out
-        case R.string.track14:
-        case R.string.track58:
-          return 4;
+        //case R.string.track14:
+        //case R.string.track58:
+          return 5;
         case R.string.effect:
           return 6;// MFT
           //return 4;

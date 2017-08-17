@@ -72,6 +72,7 @@ public class RemoMenuFragment extends MenuFragmentBase {
     mainActivity = ((MainActivity) getActivity());
 
     mainActivity.changeMainBackgroud(R.color.no4);
+    ((MainActivity) getActivity()).updateActionBar(getString(R.string.actionbar_title), false);
     ((MainActivity) getActivity()).changeSettingButton(false);
 
     signalNameMap = new HashMap<>();
