@@ -1,7 +1,7 @@
 /**
  * MenuFragment.java
  *
- * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
+ * Copyright (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
@@ -164,7 +164,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
       case R.string.track2:
         ++note;
       case R.string.track1:
-        final int finalNote = note > 27 ? note + 8 : note;
+        //final int finalNote = note > 27 ? note + 8 : note;
+        final int finalNote = note;
 
         mych.setText(getString(R.string.selected));
 
@@ -176,9 +177,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
               memeMIDI.sendNote(midiChannel, finalNote, 127);
 
               memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_track));
-              memeOSC.setTypeTag("ii");
-              memeOSC.addArgument(midiChannel);
-              memeOSC.addArgument(finalNote);
+              memeOSC.setTypeTag("i");
+              memeOSC.addArgument(finalNote - 23);
               memeOSC.flushMessage();
             }
 
@@ -211,6 +211,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
 
     switch (id) {
       ///* MFT
+      case R.string.effect7:
+        ++noteFx;
       case R.string.effect6:
         ++noteFx;
       case R.string.effect5:
@@ -234,9 +236,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
             Log.d("DEBUG", "note on " + finalNoteFx);
             memeMIDI.sendNote(midiChannel, finalNoteFx, 127);
             memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_effect));
-            memeOSC.setTypeTag("ii");
-            memeOSC.addArgument(midiChannel);
-            memeOSC.addArgument(finalNoteFx);
+            memeOSC.setTypeTag("i");
+            memeOSC.addArgument(finalNoteFx - 47);
             memeOSC.flushMessage();
 
             try {
@@ -282,9 +283,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
             Log.d("DEBUG", "note on " + finalNote);
             memeMIDI.sendNote(midiChannel, finalNote, 127);
             memeOSC.setAddress(getString(R.string.osc_prefix), getString(R.string.osc_logo));
-            memeOSC.setTypeTag("ii");
-            memeOSC.addArgument(midiChannel);
-            memeOSC.addArgument(finalNote);
+            memeOSC.setTypeTag("i");
+            memeOSC.addArgument(finalNote - 59);
             memeOSC.flushMessage();
 
             try {
@@ -348,10 +348,10 @@ public class VDJMenuFragment extends MenuFragmentBase {
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
           break;
         case R.string.guiterist:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.guiter);
           break;
         case R.string.rapper:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.mic);
           break;
         case R.string.track1:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track1);
@@ -396,6 +396,9 @@ public class VDJMenuFragment extends MenuFragmentBase {
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect5);
           break;
         case R.string.effect6:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
+          break;
+        case R.string.effect7:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
           break;
         ///* MFT
@@ -492,16 +495,16 @@ public class VDJMenuFragment extends MenuFragmentBase {
           break;
         case R.string.effect:
           switch (position) {
-            case 2:
+            case 3:
               id = R.string.effect1;
               break;
-            case 3:
+            case 4:
               id = R.string.effect2;
               break;
-            case 4:
+            case 5:
               id = R.string.effect3;
               break;
-            case 5:
+            case 6:
               id = R.string.effect4;
               break;
             case 0:
@@ -509,6 +512,9 @@ public class VDJMenuFragment extends MenuFragmentBase {
               break;
             case 1:
               id = R.string.effect6;
+              break;
+            case 2:
+              id = R.string.effect7;
               break;
           }
           break;
@@ -626,8 +632,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
         //case R.string.track58:
           return 5;
         case R.string.effect:
-          return 6;// MFT
-          //return 4;
+          return 7;
+          //return 4;// MFT
       }
       return 0;
     }
