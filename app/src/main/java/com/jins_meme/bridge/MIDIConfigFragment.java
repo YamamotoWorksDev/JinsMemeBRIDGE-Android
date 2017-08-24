@@ -1,7 +1,7 @@
 /**
  * MIDIConfigFragment.java
  *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ * Copyright (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php

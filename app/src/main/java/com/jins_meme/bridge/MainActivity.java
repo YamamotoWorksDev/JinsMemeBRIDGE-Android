@@ -1,7 +1,7 @@
 /**
  * MainActivity.java
  *
- * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
+ * Copyright (C) 2017, Nariaki Iwatani(Anno Lab Inc.) and Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php

@@ -1,7 +1,7 @@
 /**
  * RemoConfigFragment.java
  *
- * Copylight (C) 2017, Taiki Niimi(Freelance)
+ * Copyright (C) 2017, Taiki Niimi(Freelance)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php

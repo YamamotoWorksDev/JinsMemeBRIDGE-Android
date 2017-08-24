@@ -1,7 +1,7 @@
 /**
  * PauseActionDetector.java
  *
- * Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
+ * Copyright (C) 2017, Nariaki Iwatani(Anno Lab Inc.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
