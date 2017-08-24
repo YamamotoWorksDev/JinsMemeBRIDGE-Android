@@ -1,7 +1,7 @@
 /**
  * build.gradle
  *
- * Copylight (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
+ * Copyright (C) 2017, Shunichi Yamamoto(Yamamoto Works Ltd.)
  *
  * This software is released under the MIT License.
  * http://opensource.org/licenses/mit-license.php
@@ -27,7 +27,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 25
         versionCode 1
-        versionName "0.9.12"
+        versionName "0.9.15"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
