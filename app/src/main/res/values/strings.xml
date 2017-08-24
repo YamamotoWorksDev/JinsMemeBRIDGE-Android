@@ -1,7 +1,7 @@
 <!--
   - strings.xml
   -
-  - Copylight (C) 2017, Nariaki Iwatani(Anno Lab Inc.), Shunichi Yamamoto(Yamamoto Works Ltd.) and Taiki Niimi(Freelance)
+  - Copyright (C) 2017, Nariaki Iwatani(Anno Lab Inc.), Shunichi Yamamoto(Yamamoto Works Ltd.) and Taiki Niimi(Freelance)
   -
   - This software is released under the MIT License.
   - http://opensource.org/licenses/mit-license.php
@@ -119,9 +119,9 @@
   </string-array>
 
   <string name="osc_prefix">/jins/meme/bridge</string>
-  <string name="osc_track">/track</string>
-  <string name="osc_effect">/effect</string>
-  <string name="osc_logo">/logo</string>
+  <string name="osc_track">/eyevdj/scene</string>
+  <string name="osc_effect">/eyevdj/fxclip</string>
+  <string name="osc_logo">/eyevdj/logo</string>
 
   <string name="remo_set_label_dialog_title">SET SIGNAL LABEL</string>
   <string name="remo_set_label_dialog_ok">OK</string>
