@@ -117,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private static final int BATTERY_CHECK_INTERVAL = 2000;
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
 
-  private static int[] enableId = {R.string.camera, R.string.spotify, R.string.remo, R.string.hue, R.string.vdj};
+  private static int[] enableId = {R.string.camera, R.string.spotify, R.string.remo, R.string.hue,
+      R.string.vdj};
 
   private boolean isNetworkEnable = false;
 
@@ -224,6 +225,13 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       updateActionBarLogo(isCameraMenuFragment);
     }
 
+    // Only use for Eye VDJ
+    /*
+    View decor = this.getWindow().getDecorView();
+    decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+     */
+
     rootMenu = new RootMenuFragment();
     spotifyMenu = new SpotifyMenuFragment();
     hueMenu = new HueMenuFragment();
@@ -234,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     interactionDisableTimer.setListener(this);
     cancelTimer.setListener(this);
     pauseTimer.setListener(this);
-    ((PauseActionDetector)findViewById(R.id.interceptor)).setListaner(this);
+    ((PauseActionDetector) findViewById(R.id.interceptor)).setListaner(this);
 
     basicConfigFragment = new BasicConfigFragment();
     oscConfigFragment = new OSCConfigFragment();
@@ -423,7 +431,6 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     //if (Build.VERSION.SDK_INT >= 23) {
     //  requestGPSPermission();
     //}
-
 
     Log.d("DEBUG", "onResume..." + scannedMemeList.size());
   }
@@ -821,7 +828,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       batteryCheckCount = 0;
     }
 
-    if(isUIDisabled) {
+    if (isUIDisabled) {
       return;
     }
 
@@ -843,8 +850,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
     if (isForeground && memeRealtimeData.getFitError() == MemeFitStatus.MEME_FIT_OK) {
       if (Math.abs(roll) > getRollThreshold()) {
-        if(!memeInteractionFlagPrepareCancel) {
-          if(!isUIPaused) {
+        if (!memeInteractionFlagPrepareCancel) {
+          if (!isUIPaused) {
             cancelTimer.startTimer(cancelWaitTime, true);
           }
           pauseTimer.startTimer(pauseWaitTime, true);
@@ -855,7 +862,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         if (!isUIPaused) {
           pauseTimer.abortTimer();
           cancelTimer.abortTimer();
-          if(!isUIDisabled) {
+          if (!isUIDisabled) {
             mMemeDataFilter.update(memeRealtimeData, getBlinkThreshold(), getUpDownThreshold(),
                 getLeftRightThreshold());
             if (active instanceof MemeRealtimeDataFilter.MemeFilteredDataCallback) {
@@ -919,7 +926,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
 
   @Override
   public void onTimerStarted(int id) {
-    switch(id) {
+    switch (id) {
       case TIMER_ID_UI_DISABLE:
         isUIDisabled = true;
         break;
@@ -929,16 +936,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
     }
   }
+
   @Override
   public void onTimerFinished(int id, boolean completed) {
-    switch(id) {
+    switch (id) {
       case TIMER_ID_UI_DISABLE:
-        if(completed) {
+        if (completed) {
           isUIDisabled = false;
         }
         break;
       case TIMER_ID_UI_CANCEL:
-        if(!completed) {
+        if (!completed) {
           handler.post(new Runnable() {
             @Override
             public void run() {
@@ -950,7 +958,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         }
         break;
       case TIMER_ID_UI_PAUSE:
-        if(completed) {
+        if (completed) {
           handler.post(new Runnable() {
             @Override
             public void run() {
@@ -961,17 +969,19 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         break;
     }
   }
+
   private boolean isUIPaused = false;
   private boolean isUIDisabled = false;
+
   private void setUIPaused(final boolean pause) {
     Fragment active = getSupportFragmentManager().findFragmentById(R.id.container);
-    if(active instanceof MenuFragmentBase) {
+    if (active instanceof MenuFragmentBase) {
       isUIPaused = pause;
       ((MenuFragmentBase) active).setTouchEnabled(!isUIPaused);
       handler.post(new Runnable() {
         @Override
         public void run() {
-          findViewById(R.id.pauseView).setVisibility(pause?View.VISIBLE:View.GONE);
+          findViewById(R.id.pauseView).setVisibility(pause ? View.VISIBLE : View.GONE);
         }
       });
     }
@@ -1442,7 +1452,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
       num--;
     }
     if (!getSavedValue("ENABLE_EYEVDJ", true)) {
-     num--;
+      num--;
     }
     return num;
   }
@@ -1494,7 +1504,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
           Type.TOKEN,
           "jins-meme-bridge-login://callback");
       builder.setShowDialog(false).setScopes(
-          new String[]{"user-read-private", "playlist-read", "playlist-read-private", "user-follow-read", "user-library-read", "streaming"});
+          new String[]{"user-read-private", "playlist-read", "playlist-read-private",
+              "user-follow-read", "user-library-read", "streaming"});
       final AuthenticationRequest request = builder.build();
 
       AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -1517,7 +1528,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         @Override
         public void onInitialized(SpotifyPlayer player) {
           Log.d("DEBUG", "-- Player initialized --");
-          mPlayer.setConnectivityStatus(mOperationCallback, getNetworkConnectivity(MainActivity.this));
+          mPlayer
+              .setConnectivityStatus(mOperationCallback, getNetworkConnectivity(MainActivity.this));
           mPlayer.addNotificationCallback(MainActivity.this);
           mPlayer.addConnectionStateCallback(MainActivity.this);
         }
