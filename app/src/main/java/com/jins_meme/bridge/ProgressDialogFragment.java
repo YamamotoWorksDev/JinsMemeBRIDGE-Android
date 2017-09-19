@@ -18,6 +18,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class ProgressDialogFragment extends DialogFragment {
 
@@ -40,6 +42,9 @@ public class ProgressDialogFragment extends DialogFragment {
     String type = getArguments().getString("type");
 
     progress = new ProgressDialog(getActivity());
+
+    Window window = progress.getWindow();
+    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
 
     switch (type) {
       case "meme_scan":

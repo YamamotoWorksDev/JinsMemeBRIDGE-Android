@@ -17,6 +17,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class AlertDialogFragment extends DialogFragment {
 
@@ -171,7 +173,13 @@ public class AlertDialogFragment extends DialogFragment {
         break;
     }
 
-    return alert.create();
+    Dialog dialog = alert.create();
+
+    Window window = dialog.getWindow();
+    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+    //return alert.create();
+    return dialog;
   }
 
   public void setDialogListener(DialogListener listener) {
