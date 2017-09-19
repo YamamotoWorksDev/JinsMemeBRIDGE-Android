@@ -345,11 +345,11 @@ public class BasicConfigFragment extends ConfigFragmentBase {
             ((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90)));
 
     sbBlinkThreshold = (SeekBar) view.findViewById(R.id.blink_threshold);
-    sbBlinkThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90) - 50);
+    sbBlinkThreshold.setProgress(((MainActivity) getActivity()).getSavedValue("BLINK_TH", 90) - 20);
     sbBlinkThreshold.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        int value = seekBar.getProgress() + 50;
+        int value = seekBar.getProgress() + 20;
         tvBlinkTitle.setText(getString(R.string.meme_config_blink, value));
       }
 
@@ -360,7 +360,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
 
       @Override
       public void onStopTrackingTouch(SeekBar seekBar) {
-        int value = seekBar.getProgress() + 50;
+        int value = seekBar.getProgress() + 20;
         ((MainActivity) getActivity()).autoSaveValue("BLINK_TH", value);
         Log.d("BASIC", "blink th. = " + value);
         Toast.makeText(getActivity(), "BLINK THRESHOLD: " + value, Toast.LENGTH_SHORT).show();
