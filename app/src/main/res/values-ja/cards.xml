@@ -31,42 +31,13 @@
   <string name="signal5">signal 5</string>
 
   <!-- for Eye VDJ -->
-  <!--
-  <string name="vdj">EYE VDJ</string>
-  <string name="track">TRACK</string>
-  <string name="track14">TRACKS1-4</string>
-  <string name="track58">TRACKS5-8</string>
-  <string name="effect">FX</string>
-  <string name="logo">LOGO</string>
-
-  <string name="track1">TRACK1</string>
-  <string name="track2">TRACK2</string>
-  <string name="track3">TRACK3</string>
-  <string name="track4">TRACK4</string>
-  <string name="track5">TRACK5</string>
-  <string name="track6">TRACK6</string>
-  <string name="track7">TRACK7</string>
-  <string name="track8">TRACK8</string>
-
-  <string name="effect1">FX1</string>
-  <string name="effect2">FX2</string>
-  <string name="effect3">FX3</string>
-  <string name="effect4">FX4</string>
-  <string name="effect5">FX5</string>
-  <string name="effect6">FX6</string>
-
-  <string name="logo1">LOGO1</string>
-  <string name="logo2">LOGO2</string>
-  <string name="logo3">LOGO3</string>
-  <string name="logo4">LOGO4</string>
-  -->
-
   <string name="vdj">EYE VDJ</string>
   <string name="track">TRACK</string>
   <string name="track13">SOLO 1&#8211;3</string>
   <string name="track45">SOLO 4&#8211;5</string>
   <string name="guiterist">GUITERIST SESSION</string>
   <string name="rapper">RAPPER SESSION</string>
+  <string name="session">SESSION</string>
   <string name="effect">FX</string>
   <string name="logo">LOGO</string>
 
@@ -82,16 +53,16 @@
   <string name="effect1">FX1</string>
   <string name="effect2">FX2</string>
   <string name="effect3">FX3</string>
-  <string name="effect4">FX4</string>
-  <string name="effect5">FX5</string>
-  <string name="effect6">FX6</string>
-  <string name="effect7">FX7</string>
 
   <string name="logo1">LOGO1</string>
   <string name="logo2">LOGO2</string>
   <string name="logo3">LOGO3</string>
   <string name="logo4">LOGO4</string>
   <string name="logo5">LOGO5</string>
+  <string name="logo6">LOGO6</string>
+  <string name="logo7">LOGO7</string>
+  <string name="logo8">LOGO8</string>
+  <string name="logo9">LOGO9</string>
 
   <!-- for MFT -->
   <!--
