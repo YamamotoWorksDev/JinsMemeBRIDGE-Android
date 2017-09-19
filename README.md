@@ -28,24 +28,3 @@ After that, please write them in strings.xml.
     <string name="meme_app_secret"></string>
 </resources>
 ```
-
-Also, it's editable through the app such as the following screen shot.
-
-<image src="https://github.com/jins-meme/JinsMemeBRIDGE-Android/blob/image/basic_setting.png" width="320px">
-
-### OSC(Open Sound Control)
-The default OSC Setting is as follows.
-* Remote IP: xxx.xxx.xxx.255(Destination IP / Local Network Broadcast Address)
-* Remote Port: 10316
-* Host Port: 11316
-
-These settings are editable on OSC SETTING.
-
-<image src="https://github.com/jins-meme/JinsMemeBRIDGE-Android/blob/image/osc_setting.png" width="320px">
-
-### Bluetooth SPP Test Program for Win/Mac
-The MemeBTSPPTester is developed on JetBrain IntelliJ and JDK 1.8.  
-[MemeBTSPPTester](https://github.com/tkrworks/MemeBTSPPTester)
-
-### MemeBRIDGE for AndroidWear
-The alpha version is released [here](https://github.com/tkrworks/MemeBRIDGE_for_AndroidWear).
