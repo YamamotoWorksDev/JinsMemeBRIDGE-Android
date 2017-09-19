@@ -171,7 +171,7 @@ public class RootMenuFragment extends MenuFragmentBase {
 
     @Override
     public int getCardId(int parent_id, int position) {
-      Log.d("DEBUG", "ROOT:: getCardId");
+      //Log.d("DEBUG", "ROOT:: getCardId");
 
       int id = NO_ID;
 
