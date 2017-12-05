@@ -341,7 +341,7 @@ public class HueConfigFragment extends ConfigFragmentBase {
       public void onClick(View view) {
         Log.d("HUE", "change color...");
 
-        hueController.changeColor(sbRed.getProgress(), sbGreen.getProgress(), sbBlue.getProgress(), sbBrightness.getProgress(), sbTransactionTime.getProgress());
+        hueController.changeColor(sbRed.getProgress(), sbGreen.getProgress(), sbBlue.getProgress(), sbBrightness.getProgress(), sbTransactionTime.getProgress(), spLightPresetList.getSelectedItemPosition() + 1);
         //changeColor(sbRed.getProgress(), sbGreen.getProgress(), sbBlue.getProgress(), sbBrightness.getProgress(), sbTransactionTime.getProgress());
       }
     });

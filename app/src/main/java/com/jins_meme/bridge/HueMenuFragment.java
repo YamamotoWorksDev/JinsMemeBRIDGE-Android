@@ -133,35 +133,56 @@ public class HueMenuFragment extends MenuFragmentBase {
     switch (id) {
       case R.string.random:
         Random rand = new Random();
-        mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256), rand.nextInt(255), 10);
+        if (mHue.isOn(0)) {
+          mHue.changeColor(0, 0, 0, 0, 10, 0);
+        } else {
+          mHue.changeColor(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256),
+              rand.nextInt(255), 10, 0);
+        }
         break;
       case R.string.light1:
-        mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L1_G", 0),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L1_B", 0),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L1_BRI", 127),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L1_TTIME", 10));
+        if (mHue.isOn(1)) {
+          mHue.changeColor(0, 0, 0, 0, ((MainActivity) getActivity()).getSavedValue("HUE_L1_TTIME", 10), 1);
+        } else {
+          mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L1_R", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_G", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_B", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L1_TTIME", 10), 1);
+        }
         break;
       case R.string.light2:
-        mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L2_R", 0),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L2_G", 255),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L2_B", 0),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L2_BRI", 127),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L2_TTIME", 10));
+        if (mHue.isOn(2)) {
+          mHue.changeColor(0, 0, 0, 0, ((MainActivity) getActivity()).getSavedValue("HUE_L2_TTIME", 10), 2);
+        } else {
+          mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L2_R", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_G", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_B", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L2_TTIME", 10), 2);
+        }
         break;
       case R.string.light3:
-        mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L3_R", 0),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L3_G", 0),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L3_B", 255),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L3_BRI", 127),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L3_TTIME", 10));
+        if (mHue.isOn(3)) {
+          mHue.changeColor(0, 0, 0, 0, ((MainActivity) getActivity()).getSavedValue("HUE_L3_TTIME", 10), 3);
+        } else {
+          mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L3_R", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_G", 0),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_B", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L3_TTIME", 10), 3);
+        }
         break;
       case R.string.light4:
-        mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L4_R", 255),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L4_G", 255),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L4_B", 255),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L4_BRI", 127),
-            ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10));
+        if (mHue.isOn(4)) {
+          mHue.changeColor(0, 0, 0, 0, ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10), 4);
+        } else {
+          mHue.changeColor(((MainActivity) getActivity()).getSavedValue("HUE_L4_R", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_G", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_B", 255),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_BRI", 127),
+              ((MainActivity) getActivity()).getSavedValue("HUE_L4_TTIME", 10), 4);
+        }
         break;
     }
     mych.setText(getString(R.string.selected), 300);

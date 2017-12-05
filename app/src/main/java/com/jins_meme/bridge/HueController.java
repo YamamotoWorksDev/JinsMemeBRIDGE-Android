@@ -53,6 +53,7 @@ public class HueController implements PHSDKListener {
   ProgressDialogFragment hueConnectProgressDialog;
   private AlertDialog.Builder alert;
 
+  private boolean[] isTurnOn = {false, false, false, false, false};
   private boolean isAuthRequired = true;
   static int connectionState = 0;
 
@@ -375,7 +376,7 @@ public class HueController implements PHSDKListener {
     }
   }
 
-  void changeColor(int r, int g, int b) {
+  void changeColor(int r, int g, int b, int pid) {
     Log.d("HUE", "change light color...");
 
     PHBridge bridge = hueSDK.getSelectedBridge();
@@ -393,9 +394,11 @@ public class HueController implements PHSDKListener {
 
       bridge.updateLightState(light, lightState, lightListener);
     }
+
+    isTurnOn[pid] = b > 0;
   }
 
-  void changeColor(int r, int g, int b, int brightness, int time) {
+  void changeColor(int r, int g, int b, int brightness, int time, int pid) {
     Log.d("HUE", "change light color...");
 
     PHBridge bridge = hueSDK.getSelectedBridge();
@@ -419,5 +422,11 @@ public class HueController implements PHSDKListener {
         }
       }
     }
+
+    isTurnOn[pid] = brightness > 0;
+  }
+
+  boolean isOn(int pid) {
+    return isTurnOn[pid];
   }
 }
