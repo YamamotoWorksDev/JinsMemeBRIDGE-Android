@@ -35,9 +35,12 @@
   <string name="track">TRACK</string>
   <string name="track13">SOLO 1&#8211;3</string>
   <string name="track45">SOLO 4&#8211;5</string>
+  <string name="track67">SOLO 6&#8211;7</string>
+  <!--
   <string name="guiterist">GUITERIST SESSION</string>
   <string name="rapper">RAPPER SESSION</string>
   <string name="session">SESSION</string>
+  -->
   <string name="effect">FX</string>
   <string name="logo">LOGO</string>
 

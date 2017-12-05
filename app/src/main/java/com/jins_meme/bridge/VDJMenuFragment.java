@@ -418,6 +418,10 @@ public class VDJMenuFragment extends MenuFragmentBase {
         case R.string.track45:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
           break;
+        case R.string.track67:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          break;
+        /*
         case R.string.guiterist:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.guiter);
           break;
@@ -427,6 +431,7 @@ public class VDJMenuFragment extends MenuFragmentBase {
         case R.string.session:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.session);
           break;
+          */
         case R.string.track1:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track1);
           break;
@@ -536,15 +541,16 @@ public class VDJMenuFragment extends MenuFragmentBase {
         */
         case R.string.track13:
         case R.string.track45:
+        case R.string.track67:
           /*
         case R.string.guiterist:
         case R.string.rapper:
-        */
         case R.string.session:
+        */
         case R.string.effect:
         case R.string.logo: // MFT comment out
-        case R.string.guiterist:
-        case R.string.rapper:
+        //case R.string.guiterist:
+        //case R.string.rapper:
           return CardFunction.ENTER_MENU;
         default:
           return CardFunction.END;
@@ -580,9 +586,12 @@ public class VDJMenuFragment extends MenuFragmentBase {
               id = R.string.track45;
               break;
             case 2:
+              id = R.string.track67;
+              break;
+              /*
+            case 2:
               id = R.string.session;
               break;
-            /*
             case 3:
               id = R.string.rapper;
               break;
@@ -723,6 +732,17 @@ public class VDJMenuFragment extends MenuFragmentBase {
               break;
           }
           break;
+        case R.string.track67:
+          switch (position) {
+            case 0:
+              id = R.string.track6;
+              break;
+            case 1:
+              id = R.string.track7;
+              break;
+          }
+          break;
+        /*
         case R.string.session:
           switch (position) {
             case 0:
@@ -792,6 +812,7 @@ public class VDJMenuFragment extends MenuFragmentBase {
               break;
           }
           break;
+          */
       }
       return id;
     }
@@ -806,17 +827,19 @@ public class VDJMenuFragment extends MenuFragmentBase {
           return 3;
         case R.string.track45:
           return 2;
-        case R.string.session:
-          return 3;
+        case R.string.track67:
+          return 2;
+        //case R.string.session:
+        //  return 3;
         case R.string.logo: // MFT comment out
           return 5;
         case R.string.effect:
           return 3;
         //return 4;// MFT
-        case R.string.guiterist:
-          return 8;
-        case R.string.rapper:
-          return 8;
+        //case R.string.guiterist:
+        //  return 8;
+        //case R.string.rapper:
+        //  return 8;
       }
       return 0;
     }
