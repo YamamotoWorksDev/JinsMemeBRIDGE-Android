@@ -383,7 +383,12 @@ public class HueController implements PHSDKListener {
 
     for (PHLight light : allLights) {
       PHLightState lightState = new PHLightState();
-      lightState.setOn(true);
+
+      if (r > 0 || g > 0 || b > 0) {
+        lightState.setOn(true);
+      } else {
+        lightState.setOn(false);
+      }
 
       float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, light.getModelNumber());
 
@@ -406,7 +411,12 @@ public class HueController implements PHSDKListener {
     if (allLights != null) {
       for (PHLight light : allLights) {
         PHLightState lightState = new PHLightState();
-        lightState.setOn(true);
+
+        if (brightness > 0) {
+          lightState.setOn(true);
+        } else {
+          lightState.setOn(false);
+        }
 
         if (light != null) {
           float[] xy = PHUtilities.calculateXYFromRGB(r, g, b, light.getModelNumber());
