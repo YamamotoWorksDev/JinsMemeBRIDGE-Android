@@ -68,6 +68,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
   private Switch remoEnableSwitch;
   private Switch hueEnableSwitch;
   private Switch eyevdjEnableSwitch;
+  private Switch darkEnableSwitch;
 
   ProgressDialogFragment memeScanProgressDialog;
 
@@ -125,6 +126,7 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     remoEnableSwitch = null;
     hueEnableSwitch = null;
     eyevdjEnableSwitch = null;
+    darkEnableSwitch = null;
   }
 
   @Override
@@ -144,7 +146,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     scrollView.setOnScrollChangeListener(new OnScrollChangeListener() {
       @Override
       public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-        Log.d("DEBUG", "view scroll " + scrollX + " " + scrollY + " " + oldScrollX + " " + oldScrollY);
+        Log.d("DEBUG",
+            "view scroll " + scrollX + " " + scrollY + " " + oldScrollX + " " + oldScrollY);
 
         if (scrollY - oldScrollY > 3000) {
           handler.post(new Runnable() {
@@ -447,7 +450,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
         ((MainActivity) getActivity()).getSavedValue("PAUSE_TIME", 2.5f)));
 
     sbPauseTime = (SeekBar) view.findViewById(R.id.pause_time);
-    sbPauseTime.setProgress((int) (((MainActivity) getActivity()).getSavedValue("PAUSE_TIME", 2.5f) * 10) - 10);
+    sbPauseTime.setProgress(
+        (int) (((MainActivity) getActivity()).getSavedValue("PAUSE_TIME", 2.5f) * 10) - 10);
     sbPauseTime.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -482,7 +486,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     */
 
     swDirection = (Switch) view.findViewById(R.id.card_slide_direction);
-    swDirection.setChecked(((MainActivity) getActivity()).getSavedValue("MENU_SLIDE_DIRECTION", false));
+    swDirection
+        .setChecked(((MainActivity) getActivity()).getSavedValue("MENU_SLIDE_DIRECTION", false));
     swDirection.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -503,7 +508,8 @@ public class BasicConfigFragment extends ConfigFragmentBase {
     });
 
     cameraEnableSwitch = (Switch) view.findViewById(R.id.enable_camera);
-    cameraEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_CAMERA", true));
+    cameraEnableSwitch
+        .setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_CAMERA", true));
     cameraEnableSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -513,58 +519,90 @@ public class BasicConfigFragment extends ConfigFragmentBase {
       }
     });
 
-    spotifyEnableSwitch =(Switch)view.findViewById(R.id.enable_spotify);
-    spotifyEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_SPOTIFY",true));
+    spotifyEnableSwitch = (Switch) view.findViewById(R.id.enable_spotify);
+    spotifyEnableSwitch
+        .setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_SPOTIFY", true));
     spotifyEnableSwitch.setOnCheckedChangeListener(new
 
-  OnCheckedChangeListener() {
-    @Override
-    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
-      ((MainActivity) getActivity()).autoSaveValue("ENABLE_SPOTIFY", isChecked);
+                                                       OnCheckedChangeListener() {
+                                                         @Override
+                                                         public void onCheckedChanged(
+                                                             CompoundButton buttonView,
+                                                             boolean isChecked) {
+                                                           ((MainActivity) getActivity())
+                                                               .autoSaveValue("ENABLE_SPOTIFY",
+                                                                   isChecked);
 
-      setSwitchOnAtLeastOne();
-      }
-  });
+                                                           setSwitchOnAtLeastOne();
+                                                         }
+                                                       });
 
-    remoEnableSwitch =(Switch)view.findViewById(R.id.enable_remo);
-    remoEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_REMO",true));
+    remoEnableSwitch = (Switch) view.findViewById(R.id.enable_remo);
+    remoEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_REMO", true));
     remoEnableSwitch.setOnCheckedChangeListener(new
 
-  OnCheckedChangeListener() {
-    @Override
-    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
-      ((MainActivity) getActivity()).autoSaveValue("ENABLE_REMO", isChecked);
+                                                    OnCheckedChangeListener() {
+                                                      @Override
+                                                      public void onCheckedChanged(
+                                                          CompoundButton buttonView,
+                                                          boolean isChecked) {
+                                                        ((MainActivity) getActivity())
+                                                            .autoSaveValue("ENABLE_REMO",
+                                                                isChecked);
 
-      setSwitchOnAtLeastOne();
-      }
-  });
+                                                        setSwitchOnAtLeastOne();
+                                                      }
+                                                    });
 
-  hueEnableSwitch =(Switch)view.findViewById(R.id.enable_hue);
-  hueEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_HUE",true));
+    hueEnableSwitch = (Switch) view.findViewById(R.id.enable_hue);
+    hueEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_HUE", true));
     hueEnableSwitch.setOnCheckedChangeListener(new
 
-  OnCheckedChangeListener() {
-    @Override
-    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
-      ((MainActivity) getActivity()).autoSaveValue("ENABLE_HUE", isChecked);
+                                                   OnCheckedChangeListener() {
+                                                     @Override
+                                                     public void onCheckedChanged(
+                                                         CompoundButton buttonView,
+                                                         boolean isChecked) {
+                                                       ((MainActivity) getActivity())
+                                                           .autoSaveValue("ENABLE_HUE", isChecked);
 
-      setSwitchOnAtLeastOne();
-    }
-  });
+                                                       setSwitchOnAtLeastOne();
+                                                     }
+                                                   });
 
-  eyevdjEnableSwitch =(Switch)view.findViewById(R.id.enable_eyevdj);
-  eyevdjEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_EYEVDJ",true));
+    eyevdjEnableSwitch = (Switch) view.findViewById(R.id.enable_eyevdj);
+    eyevdjEnableSwitch
+        .setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_EYEVDJ", true));
     eyevdjEnableSwitch.setOnCheckedChangeListener(new
 
-  OnCheckedChangeListener() {
-    @Override
-    public void onCheckedChanged (CompoundButton buttonView,boolean isChecked){
-      ((MainActivity) getActivity()).autoSaveValue("ENABLE_EYEVDJ", isChecked);
+                                                      OnCheckedChangeListener() {
+                                                        @Override
+                                                        public void onCheckedChanged(
+                                                            CompoundButton buttonView,
+                                                            boolean isChecked) {
+                                                          ((MainActivity) getActivity())
+                                                              .autoSaveValue("ENABLE_EYEVDJ",
+                                                                  isChecked);
 
-      setSwitchOnAtLeastOne();
-    }
-  });
-}
+                                                          setSwitchOnAtLeastOne();
+                                                        }
+                                                      });
+
+    darkEnableSwitch = (Switch) view.findViewById(R.id.enable_dark_mode);
+    darkEnableSwitch.setChecked(((MainActivity) getActivity()).getSavedValue("ENABLE_DARK", true));
+    darkEnableSwitch.setOnCheckedChangeListener(new
+
+                                                    OnCheckedChangeListener() {
+                                                      @Override
+                                                      public void onCheckedChanged(
+                                                          CompoundButton buttonView,
+                                                          boolean isChecked) {
+                                                        ((MainActivity) getActivity())
+                                                            .autoSaveValue("ENABLE_DARK",
+                                                                isChecked);
+                                                      }
+                                                    });
+  }
 
   @Override
   public void onDestroyView() {
