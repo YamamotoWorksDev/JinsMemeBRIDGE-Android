@@ -11,11 +11,11 @@
     <color name="no4">#FFFFFF</color>
     <color name="no5">#161F38</color>
 
-    <color name="camera">#00ADC3</color>
+    <color name="camera">#00b8cf</color>
     <color name="spotify">#1DB954</color>
-    <color name="remo">#1373FF</color>
-    <color name="hue">#FF8200</color>
-    <color name="eyevdj">#231815</color>
+    <color name="remo">#469aff</color>
+    <color name="hue">#e47c10</color>
+    <color name="eyevdj">#bb84ff</color>
 
     <!--
     <color name="colorActionBarBackground">#171E37</color>
