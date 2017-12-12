@@ -222,7 +222,11 @@ public class RemoMenuFragment extends MenuFragmentBase {
           break;
       }
 
-      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
+      if (((MainActivity) getActivity()).getSavedValue("ENABLE_DARK", true)) {
+        ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no5));
+      } else {
+        ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no4));
+      }
       ((MyCardHolder) cardHolder).mTitle.setText(title);
       ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.remo));
       ((MyCardHolder) cardHolder).mSubtitle.setText(subTitle);

@@ -118,37 +118,38 @@ public class RootMenuFragment extends MenuFragmentBase {
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
+      if (((MainActivity) getActivity()).getSavedValue("ENABLE_DARK", true)) {
+        ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no5));
+      } else {
+        ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no4));
+      }
+
       switch (id) {
         case R.string.camera:
-          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
           ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.no3));
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_camera);
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.spotify:
-          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
           ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.spotify));
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_spotify);
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.remo:
-          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
           ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.remo));
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_remo);
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.hue:
-          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
           ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.hue));
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_hue);
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
           ((MyCardHolder) cardHolder).mSubtitle.setText("");
           break;
         case R.string.vdj:
-          ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
           ((MyCardHolder) cardHolder).mTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.eyevdj));
           ((MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_eyevdj);
           ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));

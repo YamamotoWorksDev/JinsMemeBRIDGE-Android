@@ -206,7 +206,11 @@ public class HueMenuFragment extends MenuFragmentBase {
 
     @Override
     public void onBindCardHolder(CardHolder cardHolder, int id) {
-      ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(Color.WHITE);
+      if (((MainActivity) getActivity()).getSavedValue("ENABLE_DARK", true)) {
+        ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no5));
+      } else {
+        ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no4));
+      }
 
       switch (id) {
         case R.string.random:
