@@ -11,7 +11,6 @@ package com.jins_meme.bridge;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -312,11 +311,11 @@ public class HueMenuFragment extends MenuFragmentBase {
       MyCardHolder(View itemView) {
         super(itemView);
 
-        mCardView = (CardView) itemView.findViewById(R.id.card_view);
-        mImageView = (ImageView) itemView.findViewById(R.id.funcicon);
-        mTitle = (TextView) itemView.findViewById(R.id.card_text);
-        mSubtitle = (TextView) itemView.findViewById(R.id.card_subtext);
-        mValue = (TextView) itemView.findViewById(R.id.card_select);
+        mCardView = itemView.findViewById(R.id.card_view);
+        mImageView = itemView.findViewById(R.id.funcicon);
+        mTitle = itemView.findViewById(R.id.card_text);
+        mSubtitle = itemView.findViewById(R.id.card_subtext);
+        mValue = itemView.findViewById(R.id.card_select);
       }
 
       void setText(String text) {
