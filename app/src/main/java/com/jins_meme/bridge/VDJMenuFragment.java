@@ -398,127 +398,67 @@ public class VDJMenuFragment extends MenuFragmentBase {
         ((MyCardHolder) cardHolder).mCardView.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.no4));
       }
 
-      /*
-      if (isAdded()) {
-        ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
-      } else {
-        ((MyCardHolder) cardHolder).mTitle.setText("");
-      }
-
-      ((MyCardHolder) cardHolder).mSubtitle.setText("");
-      */
-
       switch (id) {
-        /*
-        case R.string.track14:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
-          break;
-        case R.string.track58:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
-          break;
-          */
         case R.string.track13:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
           break;
         case R.string.track45:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
           break;
         case R.string.track67:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
           break;
-        /*
-        case R.string.guiterist:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.guiter);
-          break;
-        case R.string.rapper:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.mic);
-          break;
-        case R.string.session:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.session);
-          break;
-          */
         case R.string.track1:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track1);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track1);
           break;
         case R.string.track2:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track2);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track2);
           break;
         case R.string.track3:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track3);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track3);
           break;
         case R.string.track4:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track4);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track4);
           break;
         case R.string.track5:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track5);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track5);
           break;
         case R.string.track6:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track6);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track6);
           break;
         case R.string.track7:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track7);
-          break;
-        case R.string.track8:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.track8);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track7);
           break;
         case R.string.effect:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect);
           break;
         case R.string.effect1:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect1);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect1);
           break;
         case R.string.effect2:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect2);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect2);
           break;
         case R.string.effect3:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect3);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect3);
           break;
-        /*
-        case R.string.effect4:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect4);
-          break;
-        case R.string.effect5:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect5);
-          break;
-        case R.string.effect6:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
-          break;
-        case R.string.effect7:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.effect6);
-          break;
-          */
-        ///* MFT
         case R.string.logo:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo);
           break;
         case R.string.logo1:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo1);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo1);
           break;
         case R.string.logo2:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo2);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo2);
           break;
         case R.string.logo3:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo3);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo3);
           break;
         case R.string.logo4:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo4);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo4);
           break;
         case R.string.logo5:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo5);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo5);
           break;
-        case R.string.logo6:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo6);
-          break;
-        case R.string.logo7:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo7);
-          break;
-        case R.string.logo8:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo8);
-          break;
-        case R.string.logo9:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.logo9);
-          break;
-        //*/
       }
 
       if (isAdded()) {
