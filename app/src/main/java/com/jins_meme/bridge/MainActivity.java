@@ -67,7 +67,12 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.jins_meme.bridge.BridgeUIView.Adapter.NO_ID;
 
 public class MainActivity extends AppCompatActivity implements MemeConnectListener,
     MemeRealtimeListener, RootMenuFragment.OnFragmentInteractionListener,
@@ -117,9 +122,16 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private static final int BATTERY_CHECK_INTERVAL = 2000;
   private int batteryCheckCount = BATTERY_CHECK_INTERVAL;
 
-  private static int[] enableId = {R.string.camera, R.string.spotify, R.string.remo, R.string.hue,
-      R.string.vdj};
-
+  private static final Map<String, Integer> ROOT_CARD_IDS;
+  static {
+    Map<String, Integer> map = new LinkedHashMap<>();
+    map.put("ENABLE_CAMERA", R.string.camera);
+    map.put("ENABLE_SPOTIFY", R.string.spotify);
+    map.put("ENABLE_REMO", R.string.remo);
+    map.put("ENABLE_HUE", R.string.hue);
+    map.put("ENABLE_EYEVDJ", R.string.vdj);
+    ROOT_CARD_IDS = Collections.unmodifiableMap(map);
+  }
   private boolean isNetworkEnable = false;
 
   private Player mPlayer;
@@ -1362,79 +1374,15 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   int getRootCardId(int position) {
-    int id = 0;
-
-    switch (position) {
-      case 0:
-        if (getSavedValue("ENABLE_CAMERA", true)) {
-          id = R.string.camera;
-        } else {
-          if (getSavedValue("ENABLE_SPOTIFY", true)) {
-            id = R.string.spotify;
-          } else {
-            if (getSavedValue("ENABLE_REMO", true)) {
-              id = R.string.remo;
-            } else {
-              if (getSavedValue("ENABLE_HUE", true)) {
-                id = R.string.hue;
-              } else {
-                if (getSavedValue("ENABLE_EYEVDJ", true)) {
-                  id = R.string.vdj;
-                }
-              }
-            }
-          }
+    for(String key : ROOT_CARD_IDS.keySet()) {
+      if(getSavedValue(key, true)) {
+        if(--position<0) {
+          return ROOT_CARD_IDS.get(key);
         }
-        break;
-      case 1:
-        if (enableId[0] != R.string.spotify && getSavedValue("ENABLE_SPOTIFY", true)) {
-          id = R.string.spotify;
-        } else {
-          if (enableId[0] != R.string.remo && getSavedValue("ENABLE_REMO", true)) {
-            id = R.string.remo;
-          } else {
-            if (enableId[0] != R.string.hue && getSavedValue("ENABLE_HUE", true)) {
-              id = R.string.hue;
-            } else {
-              if (enableId[0] != R.string.vdj && getSavedValue("ENABLE_EYEVDJ", true)) {
-                id = R.string.vdj;
-              }
-            }
-          }
-        }
-        break;
-      case 2:
-        if (enableId[1] != R.string.remo && getSavedValue("ENABLE_REMO", true)) {
-          id = R.string.remo;
-        } else {
-          if (enableId[1] != R.string.hue && getSavedValue("ENABLE_HUE", true)) {
-            id = R.string.hue;
-          } else {
-            if (enableId[1] != R.string.vdj && getSavedValue("ENABLE_EYEVDJ", true)) {
-              id = R.string.vdj;
-            }
-          }
-        }
-        break;
-      case 3:
-        if (enableId[2] != R.string.hue && getSavedValue("ENABLE_HUE", true)) {
-          id = R.string.hue;
-        } else {
-          if (enableId[2] != R.string.vdj && getSavedValue("ENABLE_EYEVDJ", true)) {
-            id = R.string.vdj;
-          }
-        }
-        break;
-      case 4:
-        if (enableId[3] != R.string.vdj && getSavedValue("ENABLE_EYEVDJ", true)) {
-          id = R.string.vdj;
-        }
-        break;
+      }
     }
-
-    enableId[position] = id;
-
-    return id;
+    Log.d("ERROR", "unexpected operation. if new root cards were added, edit ROOT_CARD_IDS as well.");
+    return NO_ID;
   }
 
   int getEnabledCardNum() {
