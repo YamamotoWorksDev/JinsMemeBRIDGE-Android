@@ -1386,21 +1386,11 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   }
 
   int getEnabledCardNum() {
-    int num = 5;
-    if (!getSavedValue("ENABLE_CAMERA", true)) {
-      num--;
-    }
-    if (!getSavedValue("ENABLE_SPOTIFY", true)) {
-      num--;
-    }
-    if (!getSavedValue("ENABLE_REMO", true)) {
-      num--;
-    }
-    if (!getSavedValue("ENABLE_HUE", true)) {
-      num--;
-    }
-    if (!getSavedValue("ENABLE_EYEVDJ", true)) {
-      num--;
+    int num = 0;
+    for(String key : ROOT_CARD_IDS.keySet()) {
+      if(getSavedValue(key, true)) {
+          ++num;
+      }
     }
     return num;
   }
