@@ -999,6 +999,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     }
   }
 
+  public void pause() {
+    setUIPaused(!isUIPaused);
+  }
+
   @Override
   public void onPauseAction() {
     setUIPaused(!isUIPaused);

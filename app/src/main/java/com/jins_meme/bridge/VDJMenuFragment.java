@@ -34,7 +34,7 @@ import java.util.Random;
  * {@link VDJMenuFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class VDJMenuFragment extends MenuFragmentBase {
+public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveListener {
 
   private OnFragmentInteractionListener mListener;
   private Handler mHandler = new Handler();
@@ -71,6 +71,8 @@ public class VDJMenuFragment extends MenuFragmentBase {
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());
     memeMIDI.initPort();
+    memeMIDI.setListener(this);
+
     midiChannel = ((MainActivity) getActivity()).getSavedValue("MIDI_CH", 0) + 1;
 
     // Initialize OSC
@@ -84,6 +86,7 @@ public class VDJMenuFragment extends MenuFragmentBase {
 
   public void destroy() {
     if (memeMIDI != null) {
+      memeMIDI.removeListener();
       memeMIDI.closePort();
       memeMIDI = null;
     }
@@ -871,5 +874,33 @@ public class VDJMenuFragment extends MenuFragmentBase {
     }
 
     return y;
+  }
+
+  @Override
+  public void onReceiveMidiMessage() {
+    Log.d("MIDI", memeMIDI.getMidiType() + " " + memeMIDI.getMidiCh() + " " + memeMIDI.getMidiNum() + " " + memeMIDI.getMidiVal());
+
+    if (memeMIDI.getMidiType() == 0xB0 && memeMIDI.getMidiCh() == 15 && memeMIDI.getMidiNum() == 1 && memeMIDI.getMidiVal() > 0) {
+      mHandler.post(new Runnable() {
+        @Override
+        public void run() {
+          ((MainActivity)getActivity()).cancel(false);
+        }
+      });
+
+      Log.d("MIDI", "test0");
+    } else if (memeMIDI.getMidiType() == 0xB0 && memeMIDI.getMidiCh() == 15 && memeMIDI.getMidiNum() == 2 && memeMIDI.getMidiVal() > 0) {
+      mHandler.post(new Runnable() {
+        @Override
+        public void run() {
+          ((MainActivity)getActivity()).pause();
+        }
+      });
+
+      Log.d("MIDI", "test1");
+    }/* else if (memeMIDI.getMidiType() == 0xB0 && memeMIDI.getMidiCh() == 15 && memeMIDI.getMidiNum() == 3 && memeMIDI.getMidiVal() > 0) {
+      Log.d("MIDI", "test2");
+    }
+    */
   }
 }
