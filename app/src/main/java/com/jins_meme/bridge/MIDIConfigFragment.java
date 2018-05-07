@@ -11,6 +11,7 @@ package com.jins_meme.bridge;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,6 +42,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   private TextView tvReceiveMsg;
 
   MemeMIDI testMIDI;
+  Handler handler;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,8 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
+    handler = new Handler();
 
     Log.d("DEBUG", "flag = " + MemeMIDI.checkUsbMidi(getContext()));
     if (!MemeMIDI.checkUsbMidi(getContext())) {
@@ -308,6 +312,11 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   public void onReceiveMidiMessage() {
     Log.d("MIDI", "onReceiveMidiMessage...");
 
-    tvReceiveMsg.setText(String.format(Locale.ENGLISH, "MIDI RECEIVED MESSAGE--> [0x%02X: %d %d %d]", testMIDI.getMidiType(), testMIDI.getMidiCh(), testMIDI.getMidiNum(), testMIDI.getMidiVal()));
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        tvReceiveMsg.setText(String.format(Locale.ENGLISH, "MIDI RECEIVED MESSAGE--> [0x%02X: %d %d %d]", testMIDI.getMidiType(), testMIDI.getMidiCh(), testMIDI.getMidiNum(), testMIDI.getMidiVal()));
+      }
+    });
   }
 }
