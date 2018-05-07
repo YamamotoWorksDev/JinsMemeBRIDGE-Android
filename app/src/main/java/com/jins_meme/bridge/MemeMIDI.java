@@ -15,6 +15,7 @@ import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiInputPort;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
+import android.media.midi.MidiReceiver;
 import android.util.Log;
 
 import java.io.IOException;
@@ -29,11 +30,81 @@ public class MemeMIDI {
 
   private Context context;
 
+  private boolean initializedMidi = false;
+  private int midiType;
+  private int midiCh;
+  private int midiNum;
+  private int midiVal;
+
+  private MidiReceiveListener listener = null;
   private MidiManager midiManager;
   private MidiInputPort midiInputPort;
   private MidiOutputPort midiOutputPort;
+  private MidiReceiver midiReceiver = new MidiReceiver() {
+    @Override
+    public void onSend(byte[] msg, int offset, int count, long timestamp) throws IOException {
+      Log.d("MIDI", "receive midi... " + count);
 
-  private boolean initializedMidi = false;
+      for (int i = 0; i < count + 1; i++) {
+        int type = msg[i] & 0x00F0;
+        int ch = 0;
+        int number = 0;
+        int value = 0;
+        if (type == 0x80 || type == 0x90 || type == 0xB0) {
+          ch = msg[i] & 0x000F;
+          number = msg[i + 1];
+          value = msg[i + 2];
+
+          Log.d("MIDI", i + "* : " + (msg[i] & 0x00FF) + "(0x" + Integer.toHexString(msg[i] & 0x00FF) + ")" + " / " + ch + " / " + number + " / " + value);
+
+          if (listener != null) {
+            midiType = type;
+            midiCh = ch;
+            midiNum = number;
+            midiVal = value;
+
+            listener.onReceiveMidiMessage();
+          }
+
+          i += 2;
+        } else {
+          Log.d("MIDI", i + "  : " + (msg[i] & 0x00FF) + "(0x" + Integer.toHexString(msg[i] & 0x00FF) + ")");
+        }
+      }
+    }
+  };
+
+  public void setMidiType(int midiType) {
+    this.midiType = midiType;
+  }
+
+  public int getMidiType() {
+    return midiType;
+  }
+
+  public void setMidiCh(int midiCh) {
+    this.midiCh = midiCh;
+  }
+
+  public int getMidiCh() {
+    return midiCh;
+  }
+
+  public void setMidiNum(int midiNum) {
+    this.midiNum = midiNum;
+  }
+
+  public int getMidiNum() {
+    return midiNum;
+  }
+
+  public void setMidiVal(int midiVal) {
+    this.midiVal = midiVal;
+  }
+
+  public int getMidiVal() {
+    return midiVal;
+  }
 
   public MemeMIDI(Context context) {
     this.context = context;
@@ -58,7 +129,7 @@ public class MemeMIDI {
   }
 
   public void initPort() {
-    Log.d("DEBUG", "initPort...");
+    Log.d("MIDI", "initPort...");
 
     midiManager = (MidiManager) context.getSystemService(Context.MIDI_SERVICE);
     if (midiManager != null) {
@@ -71,12 +142,12 @@ public class MemeMIDI {
         if (numOutputs == 0)
           continue;
 
-        Log.d("DEBUG", "in port num = " + numInputs);
-        Log.d("DEBUG", "out port num = " + numOutputs);
+        Log.d("MIDI", "in port num = " + numInputs);
+        Log.d("MIDI", "out port num = " + numOutputs);
 
         int portIndex = 0;
         for (MidiDeviceInfo.PortInfo portInfo : info.getPorts()) {
-          Log.d("DEBUG", "name: " + portInfo.getName());
+          Log.d("MIDI", "name: " + portInfo.getName());
 
           String portName = portInfo.getName();
 
@@ -85,24 +156,26 @@ public class MemeMIDI {
             @Override
             public void onDeviceOpened(MidiDevice device) {
               if (device == null) {
-                Log.d("DEBUG", "could not open device " + info);
+                Log.d("MIDI", "could not open device " + info);
               } else {
-                Log.d("DEBUG", "a onDeviceOpend...");
+                Log.d("MIDI", "a onDeviceOpend... " + pi);
 
                 switch (pi) {
                   case 0:
                     midiInputPort = device.openInputPort(numInputs - 1);
 
                     if (midiInputPort == null) {
-                      Log.d("DEBUG", "midi input port is null...");
+                      Log.d("MIDI", "midi input port is null...");
                     }
                     break;
                   case 1:
                     midiOutputPort = device.openOutputPort(numOutputs - 1);
 
                     if (midiOutputPort == null) {
-                      Log.d("DEBUG", "midi output port is null...");
+                      Log.d("MIDI", "midi output port is null...");
                     }
+
+                    midiOutputPort.onConnect(midiReceiver);
                     break;
                 }
                 initializedMidi = true;
@@ -125,8 +198,10 @@ public class MemeMIDI {
       }
 
       if (midiOutputPort != null) {
+        midiOutputPort.onDisconnect(midiReceiver);
         midiOutputPort.close();
         midiOutputPort = null;
+        midiReceiver = null;
       }
 
       midiManager = null;
@@ -203,5 +278,13 @@ public class MemeMIDI {
     } catch (IOException ioe) {
       ioe.printStackTrace();
     }
+  }
+
+  public void setListener(MidiReceiveListener listener) {
+    this.listener = listener;
+  }
+
+  public void removeListener() {
+    this.listener = null;
   }
 }

@@ -23,8 +23,11 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-public class MIDIConfigFragment extends ConfigFragmentBase implements DialogListener {
+import java.util.Locale;
+
+public class MIDIConfigFragment extends ConfigFragmentBase implements DialogListener, MidiReceiveListener {
 
   private Spinner spMidiCh;
   private SeekBar sbCC72;
@@ -35,6 +38,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   private Button btnNote73;
   private Button btnNote74;
   private Button btnNote75;
+  private TextView tvReceiveMsg;
 
   MemeMIDI testMIDI;
 
@@ -69,8 +73,10 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
     btnNote73 = null;
     btnNote74 = null;
     btnNote75 = null;
+    tvReceiveMsg = null;
 
     if(testMIDI != null) {
+      testMIDI.removeListener();
       testMIDI.closePort();
       testMIDI = null;
     }
@@ -258,8 +264,11 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
       }
     });
 
+    tvReceiveMsg = (TextView) view.findViewById(R.id.midi_recv_text);
+
     testMIDI = new MemeMIDI(getContext());
     testMIDI.initPort();
+    testMIDI.setListener(this);
   }
 
   @Override
@@ -276,6 +285,7 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
     btnNote74 = null;
     btnNote75 = null;
 
+    testMIDI.removeListener();
     testMIDI.closePort();
     testMIDI = null;
   }
@@ -292,5 +302,12 @@ public class MIDIConfigFragment extends ConfigFragmentBase implements DialogList
   @Override
   public void doNegativeClick(String type) {
     getActivity().finishAndRemoveTask();
+  }
+
+  @Override
+  public void onReceiveMidiMessage() {
+    Log.d("MIDI", "onReceiveMidiMessage...");
+
+    tvReceiveMsg.setText(String.format(Locale.ENGLISH, "MIDI RECEIVED MESSAGE--> [0x%02X: %d %d %d]", testMIDI.getMidiType(), testMIDI.getMidiCh(), testMIDI.getMidiNum(), testMIDI.getMidiVal()));
   }
 }
