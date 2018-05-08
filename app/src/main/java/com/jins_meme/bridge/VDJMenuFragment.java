@@ -109,6 +109,55 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     rootMap.put("subgrpP", R.string.subgrpP);
     rootMap.put("subgrpQ", R.string.subgrpQ);
     rootMap.put("subgrpR", R.string.subgrpR);
+    rootMap.put("track1", R.string.track1);
+    rootMap.put("track2", R.string.track2);
+    rootMap.put("track3", R.string.track3);
+    rootMap.put("track4", R.string.track4);
+    rootMap.put("track5", R.string.track5);
+    rootMap.put("track6", R.string.track6);
+    rootMap.put("track7", R.string.track7);
+    rootMap.put("track8", R.string.track8);
+    rootMap.put("track9", R.string.track9);
+    rootMap.put("track10", R.string.track10);
+    rootMap.put("track11", R.string.track11);
+    rootMap.put("track12", R.string.track12);
+    rootMap.put("track13", R.string.track13);
+    rootMap.put("track14", R.string.track14);
+    rootMap.put("track15", R.string.track15);
+    rootMap.put("track16", R.string.track16);
+    rootMap.put("track17", R.string.track17);
+    rootMap.put("track18", R.string.track18);
+    rootMap.put("effect1", R.string.effect1);
+    rootMap.put("effect2", R.string.effect2);
+    rootMap.put("effect3", R.string.effect3);
+    rootMap.put("effect4", R.string.effect4);
+    rootMap.put("effect5", R.string.effect5);
+    rootMap.put("effect6", R.string.effect6);
+    rootMap.put("effect7", R.string.effect7);
+    rootMap.put("effect8", R.string.effect8);
+    rootMap.put("effect9", R.string.effect9);
+    rootMap.put("effect10", R.string.effect10);
+    rootMap.put("effect11", R.string.effect11);
+    rootMap.put("effect12", R.string.effect12);
+    rootMap.put("effect13", R.string.effect13);
+    rootMap.put("effect14", R.string.effect14);
+    rootMap.put("effect15", R.string.effect15);
+    rootMap.put("effect16", R.string.effect16);
+    rootMap.put("logo1", R.string.logo1);
+    rootMap.put("logo2", R.string.logo2);
+    rootMap.put("logo3", R.string.logo3);
+    rootMap.put("logo4", R.string.logo4);
+    rootMap.put("logo5", R.string.logo5);
+    rootMap.put("logo6", R.string.logo6);
+    rootMap.put("logo7", R.string.logo7);
+    rootMap.put("logo8", R.string.logo8);
+    rootMap.put("logo9", R.string.logo9);
+    rootMap.put("logo10", R.string.logo10);
+    rootMap.put("logo11", R.string.logo11);
+    rootMap.put("logo12", R.string.logo12);
+    rootMap.put("logo13", R.string.logo13);
+    rootMap.put("logo14", R.string.logo14);
+    rootMap.put("logo15", R.string.logo15);
     bidiMap = new DualHashBidiMap<>(rootMap);
 
     trackArray.append(0, R.string.track1);
@@ -180,24 +229,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     subgrpArray.append(14, R.string.subgrpP);
     subgrpArray.append(15, R.string.subgrpQ);
     subgrpArray.append(16, R.string.subgrpR);
-
-    /*
-    //String testJSON = "{\"size\":5, \"item\":[{\"name\":\"trackA\", \"type\":\"track\", \"offset\":0, \"subsize\":3}, {\"name\":\"trackB\", \"type\":\"track\", \"offset\":3, \"subsize\":2}, {\"name\":\"trackC\", \"type\":\"track\", \"offset\":5, \"subsize\":2}, {\"name\":\"effectA\", \"type\":\"effect\", \"offset\":0, \"subsize\":3}, {\"name\":\"logoA\", \"type\":\"logo\", \"offset\":0, \"subsize\":5}]}";
-    ObjectMapper mapper = new ObjectMapper();
-    InputStream is;
-    try {
-      //AssetManager assetManager = ((MainActivity)getActivity()).getApplicationContext().getResources().getAssets();
-      is = ((MainActivity)getActivity()).getAssetManager().open("eye_vdj_structure.json");
-
-      vdjRoot = mapper.readTree(is);
-      //vdjRoot = mapper.readTree(testJSON);
-
-      Log.d("MIDI", "size = " + vdjRoot.get("size"));
-      Log.d("MIDI", "A = " + vdjRoot.get("item").get(0).get("name") + " " + vdjRoot.get("item").get(0).get("type") + " " + vdjRoot.get("item").get(0).get("subsize"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    */
   }
 
   @Override
@@ -221,8 +252,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       vdjRoot = mapper.readTree(is);
       is.close();
 
-      Log.d("MIDI", "size = " + vdjRoot.get("size"));
-      Log.d("MIDI", "A = " + vdjRoot.get("item").get(0).get("name") + " " + vdjRoot.get("item").get(0).get("type") + " " + vdjRoot.get("item").get(0).get("subsize"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -777,22 +806,17 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       String parent_name = bidiMap.getKey(parent_id);
 
       int foundIndex = -1;
-      for (int i = 0; i < vdjRoot.get("item").size(); i++) {
-        if (parent_name != null && parent_name.equals(vdjRoot.get("item").get(i).get("name").asText())) {
+      for (int i = 0; i < vdjRoot.get("main").size(); i++) {
+        if (parent_name != null && parent_name.equals(vdjRoot.get("main").get(i).get("group").asText())) {
           foundIndex = i;
           break;
         }
       }
 
-      int offset = 0;
-      if (foundIndex >= 0) {
-        offset = vdjRoot.get("item").get(foundIndex).get("offset").asInt();
-      }
-
       switch (parent_id) {
         case NO_ID:
-          if (bidiMap.get(vdjRoot.get("item").get(position).get("name").asText()) != null) {
-            id = bidiMap.get(vdjRoot.get("item").get(position).get("name").asText());
+          if (bidiMap.get(vdjRoot.get("main").get(position).get("group").asText()) != null) {
+            id = bidiMap.get(vdjRoot.get("main").get(position).get("group").asText());
           }
           break;
         case R.string.trackA:
@@ -801,24 +825,18 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.trackD:
         case R.string.trackE:
         case R.string.trackF:
-          id = trackArray.get(position + offset);
-          break;
         case R.string.effectA:
         case R.string.effectB:
         case R.string.effectC:
         case R.string.effectD:
         case R.string.effectE:
         case R.string.effectF:
-          id = effectArray.get(position + offset);
-          break;
         case R.string.logoA:
         case R.string.logoB:
         case R.string.logoC:
         case R.string.logoD:
         case R.string.logoE:
         case R.string.logoF:
-          id = logoArray.get(position + offset);
-          break;
         case R.string.subgrpA:
         case R.string.subgrpB:
         case R.string.subgrpC:
@@ -837,7 +855,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.subgrpP:
         case R.string.subgrpQ:
         case R.string.subgrpR:
-          id = subgrpArray.get(position + offset);
+          id = bidiMap.get(vdjRoot.get("main").get(foundIndex).get("item").get(position).asText());
           break;
       }
       return id;
@@ -848,17 +866,17 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       String parent_name = bidiMap.getKey(parent_id);
 
       int foundIndex = -1;
-      for (int i = 0; i < vdjRoot.get("item").size(); i++) {
-        if (parent_name != null && parent_name.equals(vdjRoot.get("item").get(i).get("name").asText())) {
+      for (int i = 0; i < vdjRoot.get("main").size(); i++) {
+        if (parent_name != null && parent_name.equals(vdjRoot.get("main").get(i).get("group").asText())) {
           foundIndex = i;
           break;
         }
       }
 
       if (foundIndex >= 0) {
-        return vdjRoot.get("item").get(foundIndex).get("subsize").asInt();
+        return vdjRoot.get("main").get(foundIndex).get("item").size();
       } else if (parent_id == NO_ID) {
-        return vdjRoot.get("size").asInt();
+        return vdjRoot.get("main").size();
       } else {
         return 0;
       }
