@@ -1,10 +1,9 @@
 {
-  "size": 5,
-  "item": [
-    {"name":"trackA",  "type":"track",  "offset":0, "subsize":3},
-    {"name":"trackB",  "type":"track",  "offset":3, "subsize":2},
-    {"name":"trackC",  "type":"track",  "offset":5, "subsize":2},
-    {"name":"effectA", "type":"effect", "offset":0, "subsize":3},
-    {"name":"logoA",   "type":"logo",   "offset":0, "subsize":5}
+  "main": [
+    {"group":"trackA",  "item": ["track1", "track2", "track3"]},
+    {"group":"trackB",  "item": ["track4", "track5"]},
+    {"group":"trackC",  "item": ["track6", "track7"]},
+    {"group":"effectA", "item": ["effect1", "effect2", "effect3"]},
+    {"group":"logoA",   "item": ["logo1", "logo2", "logo3", "logo4", "logo5"]}
   ]
 }
