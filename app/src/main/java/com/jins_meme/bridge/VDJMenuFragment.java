@@ -64,11 +64,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
   private int rSameCount = 0;
 
   private BidiMap<String, Integer> bidiMap;
-  private SparseIntArray trackArray = new SparseIntArray();
-  private SparseIntArray effectArray = new SparseIntArray();
-  private SparseIntArray logoArray = new SparseIntArray();
-  private SparseIntArray subgrpArray = new SparseIntArray();
-
   private JsonNode vdjRoot;
 
   public VDJMenuFragment() {
@@ -159,76 +154,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     rootMap.put("logo14", R.string.logo14);
     rootMap.put("logo15", R.string.logo15);
     bidiMap = new DualHashBidiMap<>(rootMap);
-
-    trackArray.append(0, R.string.track1);
-    trackArray.append(1, R.string.track2);
-    trackArray.append(2, R.string.track3);
-    trackArray.append(3, R.string.track4);
-    trackArray.append(4, R.string.track5);
-    trackArray.append(5, R.string.track6);
-    trackArray.append(6, R.string.track7);
-    trackArray.append(7, R.string.track8);
-    trackArray.append(8, R.string.track9);
-    trackArray.append(9, R.string.track10);
-    trackArray.append(10, R.string.track11);
-    trackArray.append(11, R.string.track12);
-    trackArray.append(12, R.string.track13);
-    trackArray.append(13, R.string.track14);
-    trackArray.append(14, R.string.track15);
-    trackArray.append(15, R.string.track16);
-    trackArray.append(16, R.string.track17);
-    trackArray.append(17, R.string.track18);
-
-    effectArray.append(0, R.string.effect1);
-    effectArray.append(1, R.string.effect2);
-    effectArray.append(2, R.string.effect3);
-    effectArray.append(3, R.string.effect4);
-    effectArray.append(4, R.string.effect5);
-    effectArray.append(5, R.string.effect6);
-    effectArray.append(6, R.string.effect7);
-    effectArray.append(7, R.string.effect8);
-    effectArray.append(8, R.string.effect9);
-    effectArray.append(9, R.string.effect10);
-    effectArray.append(10, R.string.effect11);
-    effectArray.append(11, R.string.effect12);
-    effectArray.append(12, R.string.effect13);
-    effectArray.append(13, R.string.effect14);
-    effectArray.append(14, R.string.effect15);
-    effectArray.append(15, R.string.effect16);
-
-    logoArray.append(0, R.string.logo1);
-    logoArray.append(1, R.string.logo2);
-    logoArray.append(2, R.string.logo3);
-    logoArray.append(3, R.string.logo4);
-    logoArray.append(4, R.string.logo5);
-    logoArray.append(5, R.string.logo6);
-    logoArray.append(6, R.string.logo7);
-    logoArray.append(7, R.string.logo8);
-    logoArray.append(8, R.string.logo9);
-    logoArray.append(9, R.string.logo10);
-    logoArray.append(10, R.string.logo11);
-    logoArray.append(11, R.string.logo12);
-    logoArray.append(12, R.string.logo13);
-    logoArray.append(13, R.string.logo14);
-    logoArray.append(14, R.string.logo15);
-
-    subgrpArray.append(0, R.string.subgrpA);
-    subgrpArray.append(1, R.string.subgrpB);
-    subgrpArray.append(2, R.string.subgrpC);
-    subgrpArray.append(3, R.string.subgrpD);
-    subgrpArray.append(4, R.string.subgrpE);
-    subgrpArray.append(5, R.string.subgrpF);
-    subgrpArray.append(6, R.string.subgrpG);
-    subgrpArray.append(7, R.string.subgrpH);
-    subgrpArray.append(8, R.string.subgrpJ);
-    subgrpArray.append(9, R.string.subgrpK);
-    subgrpArray.append(10, R.string.subgrpL);
-    subgrpArray.append(11, R.string.subgrpM);
-    subgrpArray.append(12, R.string.subgrpN);
-    subgrpArray.append(13, R.string.subgrpO);
-    subgrpArray.append(14, R.string.subgrpP);
-    subgrpArray.append(15, R.string.subgrpQ);
-    subgrpArray.append(16, R.string.subgrpR);
   }
 
   @Override
