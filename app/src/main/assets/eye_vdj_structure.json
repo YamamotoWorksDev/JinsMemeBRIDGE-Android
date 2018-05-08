@@ -1,0 +1,10 @@
+{
+  "size": 5,
+  "item": [
+    {"name":"trackA",  "type":"track",  "offset":0, "subsize":3},
+    {"name":"trackB",  "type":"track",  "offset":3, "subsize":2},
+    {"name":"trackC",  "type":"track",  "offset":5, "subsize":2},
+    {"name":"effectA", "type":"effect", "offset":0, "subsize":3},
+    {"name":"logoA",   "type":"logo",   "offset":0, "subsize":5}
+  ]
+}

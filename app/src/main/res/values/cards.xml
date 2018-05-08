@@ -32,17 +32,45 @@
 
   <!-- for EYE VDJ -->
   <string name="vdj">EYE VDJ</string>
-  <string name="track">TRACK</string>
-  <string name="track13">SOLO 1&#8211;3</string>
-  <string name="track45">SOLO 4&#8211;5</string>
-  <string name="track67">SOLO 6&#8211;7</string>
-  <!--
-  <string name="guiterist">GUITERIST SESSION</string>
-  <string name="rapper">RAPPER SESSION</string>
-  <string name="session">SESSION</string>
-  -->
-  <string name="effect">FX</string>
-  <string name="logo">LOGO</string>
+  <string name="trackA">SOLO GRP.A</string>
+  <string name="trackB">SOLO GRP.B</string>
+  <string name="trackC">SOLO GRP.C</string>
+  <string name="trackD">SOLO GRP.D</string>
+  <string name="trackE">SOLO GRP.E</string>
+  <string name="trackF">SOLO GRP.F</string>
+
+  <string name="effectA">FX GRP.A</string>
+  <string name="effectB">FX GRP.B</string>
+  <string name="effectC">FX GRP.C</string>
+  <string name="effectD">FX GRP.D</string>
+  <string name="effectE">FX GRP.E</string>
+  <string name="effectF">FX GRP.F</string>
+
+  <string name="logoA">LOGO GRP.A</string>
+  <string name="logoB">LOGO GRP.B</string>
+  <string name="logoC">LOGO GRP.C</string>
+  <string name="logoD">LOGO GRP.D</string>
+  <string name="logoE">LOGO GRP.E</string>
+  <string name="logoF">LOGO GRP.F</string>
+
+  <string name="subgrpA">SUB GRP.A</string>
+  <string name="subgrpB">SUB GRP.B</string>
+  <string name="subgrpC">SUB GRP.C</string>
+  <string name="subgrpD">SUB GRP.D</string>
+  <string name="subgrpE">SUB GRP.E</string>
+  <string name="subgrpF">SUB GRP.F</string>
+  <string name="subgrpG">SUB GRP.G</string>
+  <string name="subgrpH">SUB GRP.H</string>
+  <string name="subgrpI">SUB GRP.I</string>
+  <string name="subgrpJ">SUB GRP.J</string>
+  <string name="subgrpK">SUB GRP.K</string>
+  <string name="subgrpL">SUB GRP.L</string>
+  <string name="subgrpM">SUB GRP.M</string>
+  <string name="subgrpN">SUB GRP.N</string>
+  <string name="subgrpO">SUB GRP.O</string>
+  <string name="subgrpP">SUB GRP.P</string>
+  <string name="subgrpQ">SUB GRP.Q</string>
+  <string name="subgrpR">SUB GRP.R</string>
 
   <string name="track1">TRACK1</string>
   <string name="track2">TRACK2</string>
@@ -52,10 +80,33 @@
   <string name="track6">TRACK6</string>
   <string name="track7">TRACK7</string>
   <string name="track8">TRACK8</string>
+  <string name="track9">TRACK9</string>
+  <string name="track10">TRACK10</string>
+  <string name="track11">TRACK11</string>
+  <string name="track12">TRACK12</string>
+  <string name="track13">TRACK13</string>
+  <string name="track14">TRACK14</string>
+  <string name="track15">TRACK15</string>
+  <string name="track16">TRACK16</string>
+  <string name="track17">TRACK17</string>
+  <string name="track18">TRACK18</string>
 
   <string name="effect1">FX1</string>
   <string name="effect2">FX2</string>
   <string name="effect3">FX3</string>
+  <string name="effect4">FX4</string>
+  <string name="effect5">FX5</string>
+  <string name="effect6">FX6</string>
+  <string name="effect7">FX7</string>
+  <string name="effect8">FX8</string>
+  <string name="effect9">FX9</string>
+  <string name="effect10">FX10</string>
+  <string name="effect11">FX11</string>
+  <string name="effect12">FX12</string>
+  <string name="effect13">FX13</string>
+  <string name="effect14">FX14</string>
+  <string name="effect15">FX15</string>
+  <string name="effect16">FX16</string>
 
   <string name="logo1">LOGO1</string>
   <string name="logo2">LOGO2</string>
@@ -66,31 +117,10 @@
   <string name="logo7">LOGO7</string>
   <string name="logo8">LOGO8</string>
   <string name="logo9">LOGO9</string>
-
-  <!-- for MFT -->
-  <!--
-  <string name="vdj">EYE X PORTABLISM</string>
-  <string name="track">TRACK</string>
-
-  <string name="track14">SCENE</string>
-  <string name="track58">SHOT</string>
-  <string name="effect">FX</string>
-
-  <string name="track1">SCENE A</string>
-  <string name="track2">SCENE B</string>
-  <string name="track3">SCENE C</string>
-  <string name="track4">SCNENE D</string>
-  <string name="track5">SNARE</string>
-  <string name="track6">LOOPER 1</string>
-  <string name="track7">SE</string>
-  <string name="track8">LOOPER 2</string>
-
-  <string name="effect1">BEAT REPEAT</string>
-  <string name="effect2">REVERB</string>
-  <string name="effect3">DELAY</string>
-  <string name="effect4">GLITCH</string>
-  <string name="effect5">REVERB &amp; DELAY</string>
-  <string name="effect6">REVERB &amp; GLITCH</string>
-  -->
-
+  <string name="logo10">LOGO10</string>
+  <string name="logo11">LOGO11</string>
+  <string name="logo12">LOGO12</string>
+  <string name="logo13">LOGO13</string>
+  <string name="logo14">LOGO14</string>
+  <string name="logo15">LOGO15</string>
 </resources>

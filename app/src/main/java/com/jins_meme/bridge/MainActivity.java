@@ -66,6 +66,12 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import io.fabric.sdk.android.Fabric;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -190,6 +196,40 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
    *
    */
   // private ***ConfigFragment ***ConfigFragment;
+
+
+  public InputStream openLocalorAssets(String fileName) {
+    InputStream is = null;
+
+    Log.d("DEBUG", "external dir. = " + getExternalFilesDir(null).toString());
+
+    File file = new File(getExternalFilesDir(null), fileName);
+    if (file.exists()) {
+      try {
+        is = new FileInputStream(file);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+    } else {
+      try {
+        is = getResources().getAssets().open(fileName);
+        FileOutputStream fos = new FileOutputStream(new File(getExternalFilesDir(null), fileName));
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = is.read(buffer)) > 0) {
+          fos.write(buffer, 0, len);
+        }
+        fos.close();
+        is.close();
+
+        is = getResources().getAssets().open(fileName);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+    return is;
+  }
 
   public int getBlinkThreshold() {
     return blinkThreshold;

@@ -9,23 +9,37 @@
 
 package com.jins_meme.bridge;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jins_meme.bridge.BridgeUIView.Adapter;
 import com.jins_meme.bridge.BridgeUIView.CardHolder;
 import com.jins_meme.bridge.BridgeUIView.IResultListener;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -49,8 +63,141 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
   private int rPrev = -1;
   private int rSameCount = 0;
 
+  private BidiMap<String, Integer> bidiMap;
+  private SparseIntArray trackArray = new SparseIntArray();
+  private SparseIntArray effectArray = new SparseIntArray();
+  private SparseIntArray logoArray = new SparseIntArray();
+  private SparseIntArray subgrpArray = new SparseIntArray();
+
+  private JsonNode vdjRoot;
+
   public VDJMenuFragment() {
-    // Required empty public constructor
+    HashMap<String, Integer> rootMap = new HashMap<>();
+    rootMap.put("trackA",  R.string.trackA);
+    rootMap.put("trackB",  R.string.trackB);
+    rootMap.put("trackC",  R.string.trackC);
+    rootMap.put("trackD",  R.string.trackD);
+    rootMap.put("trackE",  R.string.trackE);
+    rootMap.put("trackF",  R.string.trackF);
+    rootMap.put("effectA", R.string.effectA);
+    rootMap.put("effectB", R.string.effectB);
+    rootMap.put("effectC", R.string.effectC);
+    rootMap.put("effectD", R.string.effectD);
+    rootMap.put("effectE", R.string.effectE);
+    rootMap.put("effectF", R.string.effectF);
+    rootMap.put("logoA",   R.string.logoA);
+    rootMap.put("logoB",   R.string.logoB);
+    rootMap.put("logoC",   R.string.logoC);
+    rootMap.put("logoD",   R.string.logoD);
+    rootMap.put("logoE",   R.string.logoE);
+    rootMap.put("logoF",   R.string.logoF);
+    rootMap.put("subgrpA", R.string.subgrpA);
+    rootMap.put("subgrpB", R.string.subgrpB);
+    rootMap.put("subgrpC", R.string.subgrpC);
+    rootMap.put("subgrpD", R.string.subgrpD);
+    rootMap.put("subgrpE", R.string.subgrpE);
+    rootMap.put("subgrpF", R.string.subgrpF);
+    rootMap.put("subgrpG", R.string.subgrpG);
+    rootMap.put("subgrpH", R.string.subgrpH);
+    rootMap.put("subgrpI", R.string.subgrpI);
+    rootMap.put("subgrpJ", R.string.subgrpJ);
+    rootMap.put("subgrpK", R.string.subgrpK);
+    rootMap.put("subgrpL", R.string.subgrpL);
+    rootMap.put("subgrpM", R.string.subgrpM);
+    rootMap.put("subgrpN", R.string.subgrpN);
+    rootMap.put("subgrpO", R.string.subgrpO);
+    rootMap.put("subgrpP", R.string.subgrpP);
+    rootMap.put("subgrpQ", R.string.subgrpQ);
+    rootMap.put("subgrpR", R.string.subgrpR);
+    bidiMap = new DualHashBidiMap<>(rootMap);
+
+    trackArray.append(0, R.string.track1);
+    trackArray.append(1, R.string.track2);
+    trackArray.append(2, R.string.track3);
+    trackArray.append(3, R.string.track4);
+    trackArray.append(4, R.string.track5);
+    trackArray.append(5, R.string.track6);
+    trackArray.append(6, R.string.track7);
+    trackArray.append(7, R.string.track8);
+    trackArray.append(8, R.string.track9);
+    trackArray.append(9, R.string.track10);
+    trackArray.append(10, R.string.track11);
+    trackArray.append(11, R.string.track12);
+    trackArray.append(12, R.string.track13);
+    trackArray.append(13, R.string.track14);
+    trackArray.append(14, R.string.track15);
+    trackArray.append(15, R.string.track16);
+    trackArray.append(16, R.string.track17);
+    trackArray.append(17, R.string.track18);
+
+    effectArray.append(0, R.string.effect1);
+    effectArray.append(1, R.string.effect2);
+    effectArray.append(2, R.string.effect3);
+    effectArray.append(3, R.string.effect4);
+    effectArray.append(4, R.string.effect5);
+    effectArray.append(5, R.string.effect6);
+    effectArray.append(6, R.string.effect7);
+    effectArray.append(7, R.string.effect8);
+    effectArray.append(8, R.string.effect9);
+    effectArray.append(9, R.string.effect10);
+    effectArray.append(10, R.string.effect11);
+    effectArray.append(11, R.string.effect12);
+    effectArray.append(12, R.string.effect13);
+    effectArray.append(13, R.string.effect14);
+    effectArray.append(14, R.string.effect15);
+    effectArray.append(15, R.string.effect16);
+
+    logoArray.append(0, R.string.logo1);
+    logoArray.append(1, R.string.logo2);
+    logoArray.append(2, R.string.logo3);
+    logoArray.append(3, R.string.logo4);
+    logoArray.append(4, R.string.logo5);
+    logoArray.append(5, R.string.logo6);
+    logoArray.append(6, R.string.logo7);
+    logoArray.append(7, R.string.logo8);
+    logoArray.append(8, R.string.logo9);
+    logoArray.append(9, R.string.logo10);
+    logoArray.append(10, R.string.logo11);
+    logoArray.append(11, R.string.logo12);
+    logoArray.append(12, R.string.logo13);
+    logoArray.append(13, R.string.logo14);
+    logoArray.append(14, R.string.logo15);
+
+    subgrpArray.append(0, R.string.subgrpA);
+    subgrpArray.append(1, R.string.subgrpB);
+    subgrpArray.append(2, R.string.subgrpC);
+    subgrpArray.append(3, R.string.subgrpD);
+    subgrpArray.append(4, R.string.subgrpE);
+    subgrpArray.append(5, R.string.subgrpF);
+    subgrpArray.append(6, R.string.subgrpG);
+    subgrpArray.append(7, R.string.subgrpH);
+    subgrpArray.append(8, R.string.subgrpJ);
+    subgrpArray.append(9, R.string.subgrpK);
+    subgrpArray.append(10, R.string.subgrpL);
+    subgrpArray.append(11, R.string.subgrpM);
+    subgrpArray.append(12, R.string.subgrpN);
+    subgrpArray.append(13, R.string.subgrpO);
+    subgrpArray.append(14, R.string.subgrpP);
+    subgrpArray.append(15, R.string.subgrpQ);
+    subgrpArray.append(16, R.string.subgrpR);
+
+    /*
+    //String testJSON = "{\"size\":5, \"item\":[{\"name\":\"trackA\", \"type\":\"track\", \"offset\":0, \"subsize\":3}, {\"name\":\"trackB\", \"type\":\"track\", \"offset\":3, \"subsize\":2}, {\"name\":\"trackC\", \"type\":\"track\", \"offset\":5, \"subsize\":2}, {\"name\":\"effectA\", \"type\":\"effect\", \"offset\":0, \"subsize\":3}, {\"name\":\"logoA\", \"type\":\"logo\", \"offset\":0, \"subsize\":5}]}";
+    ObjectMapper mapper = new ObjectMapper();
+    InputStream is;
+    try {
+      //AssetManager assetManager = ((MainActivity)getActivity()).getApplicationContext().getResources().getAssets();
+      is = ((MainActivity)getActivity()).getAssetManager().open("eye_vdj_structure.json");
+
+      vdjRoot = mapper.readTree(is);
+      //vdjRoot = mapper.readTree(testJSON);
+
+      Log.d("MIDI", "size = " + vdjRoot.get("size"));
+      Log.d("MIDI", "A = " + vdjRoot.get("item").get(0).get("name") + " " + vdjRoot.get("item").get(0).get("type") + " " + vdjRoot.get("item").get(0).get("subsize"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    */
   }
 
   @Override
@@ -67,6 +214,18 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     ((MainActivity) getActivity()).changeMainBackgroud(R.color.no4);
     ((MainActivity) getActivity()).updateActionBar(getString(R.string.actionbar_title), false);
     ((MainActivity) getActivity()).changeSettingButton(false);
+
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      InputStream is = ((MainActivity)getActivity()).openLocalorAssets("eye_vdj_structure.json");
+      vdjRoot = mapper.readTree(is);
+      is.close();
+
+      Log.d("MIDI", "size = " + vdjRoot.get("size"));
+      Log.d("MIDI", "A = " + vdjRoot.get("item").get(0).get("name") + " " + vdjRoot.get("item").get(0).get("type") + " " + vdjRoot.get("item").get(0).get("subsize"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
     // Initialize MIDI
     memeMIDI = new MemeMIDI(getContext());
@@ -136,7 +295,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
 
   @Override
   protected SharedPreferences getPreferences() {
-    return getContext().getSharedPreferences("vdj_menu", Context.MODE_PRIVATE);
+    return getContext().getSharedPreferences("vdj_menu", MODE_PRIVATE);
   }
 
   @Override
@@ -159,6 +318,26 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
 
     int note = 24;
     switch (id) {
+      case R.string.track18:
+        ++note;
+      case R.string.track17:
+        ++note;
+      case R.string.track16:
+        ++note;
+      case R.string.track15:
+        ++note;
+      case R.string.track14:
+        ++note;
+      case R.string.track13:
+        ++note;
+      case R.string.track12:
+        ++note;
+      case R.string.track11:
+        ++note;
+      case R.string.track10:
+        ++note;
+      case R.string.track9:
+        ++note;
       case R.string.track8:
         ++note;
       case R.string.track7:
@@ -220,7 +399,24 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     final CardAdapter.MyCardHolder mych_fx;
 
     switch (id) {
-      /*
+      case R.string.effect16:
+        ++noteFx;
+      case R.string.effect15:
+        ++noteFx;
+      case R.string.effect14:
+        ++noteFx;
+      case R.string.effect13:
+        ++noteFx;
+      case R.string.effect12:
+        ++noteFx;
+      case R.string.effect11:
+        ++noteFx;
+      case R.string.effect10:
+        ++noteFx;
+      case R.string.effect9:
+        ++noteFx;
+      case R.string.effect8:
+        ++noteFx;
       case R.string.effect7:
         ++noteFx;
       case R.string.effect6:
@@ -229,12 +425,13 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         ++noteFx;
       case R.string.effect4:
         ++noteFx;
-        */
       case R.string.effect3:
-        //++noteFx;
+        ++noteFx;
       case R.string.effect2:
-        //++noteFx;
+        ++noteFx;
       case R.string.effect1:
+        ++noteFx;
+        /*
         Random rand = new Random();
         double rnd = rand.nextDouble();
         double rnd1 = 0;
@@ -281,7 +478,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
             noteFx = r + 54;
             break;
         }
-
+        */
         finalNoteFx = noteFx;
 
         mych_fx = (CardAdapter.MyCardHolder) mView.findViewHolderForItemId(id);
@@ -318,9 +515,20 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         break;
     }
 
-    ///* MFT
     note = 60;
     switch (id) {
+      case R.string.logo15:
+        ++note;
+      case R.string.logo14:
+        ++note;
+      case R.string.logo13:
+        ++note;
+      case R.string.logo12:
+        ++note;
+      case R.string.logo11:
+        ++note;
+      case R.string.logo10:
+        ++note;
       case R.string.logo9:
         ++note;
       case R.string.logo8:
@@ -374,7 +582,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         }).start();
         break;
     }
-    //*/
   }
 
   private class CardAdapter extends BridgeUIView.Adapter<BridgeUIView.CardHolder> {
@@ -402,65 +609,104 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       }
 
       switch (id) {
-        case R.string.track13:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
-          break;
-        case R.string.track45:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
-          break;
-        case R.string.track67:
+        case R.string.trackA:
+        case R.string.trackB:
+        case R.string.trackC:
+        case R.string.trackD:
+        case R.string.trackE:
+        case R.string.trackF:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
           break;
         case R.string.track1:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track1);
-          break;
         case R.string.track2:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track2);
-          break;
         case R.string.track3:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track3);
-          break;
         case R.string.track4:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track4);
-          break;
         case R.string.track5:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track5);
-          break;
         case R.string.track6:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track6);
-          break;
         case R.string.track7:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track7);
+        case R.string.track8:
+        case R.string.track9:
+        case R.string.track10:
+        case R.string.track11:
+        case R.string.track12:
+        case R.string.track13:
+        case R.string.track14:
+        case R.string.track15:
+        case R.string.track16:
+        case R.string.track17:
+        case R.string.track18:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
           break;
-        case R.string.effect:
+        case R.string.effectA:
+        case R.string.effectB:
+        case R.string.effectC:
+        case R.string.effectD:
+        case R.string.effectE:
+        case R.string.effectF:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect);
           break;
         case R.string.effect1:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect1);
-          break;
         case R.string.effect2:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect2);
-          break;
         case R.string.effect3:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect3);
+        case R.string.effect4:
+        case R.string.effect5:
+        case R.string.effect6:
+        case R.string.effect7:
+        case R.string.effect8:
+        case R.string.effect9:
+        case R.string.effect10:
+        case R.string.effect11:
+        case R.string.effect12:
+        case R.string.effect13:
+        case R.string.effect14:
+        case R.string.effect15:
+        case R.string.effect16:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect);
           break;
-        case R.string.logo:
+        case R.string.logoA:
+        case R.string.logoB:
+        case R.string.logoC:
+        case R.string.logoD:
+        case R.string.logoE:
+        case R.string.logoF:
           ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo);
           break;
         case R.string.logo1:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo1);
-          break;
         case R.string.logo2:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo2);
-          break;
         case R.string.logo3:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo3);
-          break;
         case R.string.logo4:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo4);
-          break;
         case R.string.logo5:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo5);
+        case R.string.logo6:
+        case R.string.logo7:
+        case R.string.logo8:
+        case R.string.logo9:
+        case R.string.logo10:
+        case R.string.logo11:
+        case R.string.logo12:
+        case R.string.logo13:
+        case R.string.logo14:
+        case R.string.logo15:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo);
+          break;
+        case R.string.subgrpA:
+        case R.string.subgrpB:
+        case R.string.subgrpC:
+        case R.string.subgrpD:
+        case R.string.subgrpE:
+        case R.string.subgrpF:
+        case R.string.subgrpG:
+        case R.string.subgrpH:
+        case R.string.subgrpI:
+        case R.string.subgrpJ:
+        case R.string.subgrpK:
+        case R.string.subgrpL:
+        case R.string.subgrpM:
+        case R.string.subgrpN:
+        case R.string.subgrpO:
+        case R.string.subgrpP:
+        case R.string.subgrpQ:
+        case R.string.subgrpR:
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_default);
           break;
       }
 
@@ -483,22 +729,42 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       switch (id) {
         case R.string.back:
           return CardFunction.BACK;
-        /*
-        case R.string.track14:
-        case R.string.track58:
-        */
-        case R.string.track13:
-        case R.string.track45:
-        case R.string.track67:
-          /*
-        case R.string.guiterist:
-        case R.string.rapper:
-        case R.string.session:
-        */
-        case R.string.effect:
-        case R.string.logo: // MFT comment out
-        //case R.string.guiterist:
-        //case R.string.rapper:
+        case R.string.trackA:
+        case R.string.trackB:
+        case R.string.trackC:
+        case R.string.trackD:
+        case R.string.trackE:
+        case R.string.trackF:
+        case R.string.effectA:
+        case R.string.effectB:
+        case R.string.effectC:
+        case R.string.effectD:
+        case R.string.effectE:
+        case R.string.effectF:
+        case R.string.logoA:
+        case R.string.logoB:
+        case R.string.logoC:
+        case R.string.logoD:
+        case R.string.logoE:
+        case R.string.logoF:
+        case R.string.subgrpA:
+        case R.string.subgrpB:
+        case R.string.subgrpC:
+        case R.string.subgrpD:
+        case R.string.subgrpE:
+        case R.string.subgrpF:
+        case R.string.subgrpG:
+        case R.string.subgrpH:
+        case R.string.subgrpI:
+        case R.string.subgrpJ:
+        case R.string.subgrpK:
+        case R.string.subgrpL:
+        case R.string.subgrpM:
+        case R.string.subgrpN:
+        case R.string.subgrpO:
+        case R.string.subgrpP:
+        case R.string.subgrpQ:
+        case R.string.subgrpR:
           return CardFunction.ENTER_MENU;
         default:
           return CardFunction.END;
@@ -508,288 +774,94 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     @Override
     public int getCardId(int parent_id, int position) {
       int id = NO_ID;
+      String parent_name = bidiMap.getKey(parent_id);
+
+      int foundIndex = -1;
+      for (int i = 0; i < vdjRoot.get("item").size(); i++) {
+        if (parent_name != null && parent_name.equals(vdjRoot.get("item").get(i).get("name").asText())) {
+          foundIndex = i;
+          break;
+        }
+      }
+
+      int offset = 0;
+      if (foundIndex >= 0) {
+        offset = vdjRoot.get("item").get(foundIndex).get("offset").asInt();
+      }
+
       switch (parent_id) {
         case NO_ID:
-          switch (position) {
-            // default
-            /*
-            case 0:
-              id = R.string.track14;
-              break;
-            case 1:
-              id = R.string.track58;
-              break;
-            case 2:
-              id = R.string.effect;
-              break;
-            case 3:
-              id = R.string.logo;
-              break;
-            */
-            // for MOVE FES 9/9
-            case 0:
-              id = R.string.track13;
-              break;
-            case 1:
-              id = R.string.track45;
-              break;
-            case 2:
-              id = R.string.track67;
-              break;
-              /*
-            case 2:
-              id = R.string.session;
-              break;
-            case 3:
-              id = R.string.rapper;
-              break;
-              */
-            case 3:
-              id = R.string.effect;
-              break;
-            case 4:
-              id = R.string.logo;
-              break;
+          if (bidiMap.get(vdjRoot.get("item").get(position).get("name").asText()) != null) {
+            id = bidiMap.get(vdjRoot.get("item").get(position).get("name").asText());
           }
           break;
-        case R.string.effect:
-          switch (position) {
-            /*
-            case 3:
-              id = R.string.effect1;
-              break;
-            case 4:
-              id = R.string.effect2;
-              break;
-            case 5:
-              id = R.string.effect3;
-              break;
-            case 6:
-              id = R.string.effect4;
-              break;
-            case 0:
-              id = R.string.effect5;
-              break;
-            case 1:
-              id = R.string.effect6;
-              break;
-            case 2:
-              id = R.string.effect7;
-              break;
-              */
-            case 0:
-              id = R.string.effect1;
-              break;
-            case 1:
-              id = R.string.effect2;
-              break;
-            case 2:
-              id = R.string.effect3;
-              break;
-          }
+        case R.string.trackA:
+        case R.string.trackB:
+        case R.string.trackC:
+        case R.string.trackD:
+        case R.string.trackE:
+        case R.string.trackF:
+          id = trackArray.get(position + offset);
           break;
-        ///* MFT
-        case R.string.logo:
-          switch (position) {
-            /*
-            case 4:
-              id = R.string.logo6;
-              break;
-            case 5:
-              id = R.string.logo7;
-              break;
-            case 6:
-              id = R.string.logo8;
-              break;
-            case 7:
-              id = R.string.logo9;
-              break;
-              */
-            case 4:
-              id = R.string.logo1;
-              break;
-            case 0:
-              id = R.string.logo2;
-              break;
-            case 1:
-              id = R.string.logo3;
-              break;
-            case 2:
-              id = R.string.logo4;
-              break;
-            case 3:
-              id = R.string.logo5;
-              break;
-          }
+        case R.string.effectA:
+        case R.string.effectB:
+        case R.string.effectC:
+        case R.string.effectD:
+        case R.string.effectE:
+        case R.string.effectF:
+          id = effectArray.get(position + offset);
           break;
-        //*/
-        /*
-        case R.string.track14:
-          switch (position) {
-            case 0:
-              id = R.string.track1;
-              break;
-            case 1:
-              id = R.string.track2;
-              break;
-            case 2:
-              id = R.string.track3;
-              break;
-            case 3:
-              id = R.string.track4;
-              break;
-          }
+        case R.string.logoA:
+        case R.string.logoB:
+        case R.string.logoC:
+        case R.string.logoD:
+        case R.string.logoE:
+        case R.string.logoF:
+          id = logoArray.get(position + offset);
           break;
-        case R.string.track58:
-          switch (position) {
-            case 1:
-              id = R.string.track5;
-              break;
-            case 2:
-              id = R.string.track6;
-              break;
-            case 3:
-              id = R.string.track7;
-              break;
-            case 0:
-              id = R.string.track8;
-              break;
-          }
+        case R.string.subgrpA:
+        case R.string.subgrpB:
+        case R.string.subgrpC:
+        case R.string.subgrpD:
+        case R.string.subgrpE:
+        case R.string.subgrpF:
+        case R.string.subgrpG:
+        case R.string.subgrpH:
+        case R.string.subgrpI:
+        case R.string.subgrpJ:
+        case R.string.subgrpK:
+        case R.string.subgrpL:
+        case R.string.subgrpM:
+        case R.string.subgrpN:
+        case R.string.subgrpO:
+        case R.string.subgrpP:
+        case R.string.subgrpQ:
+        case R.string.subgrpR:
+          id = subgrpArray.get(position + offset);
           break;
-        */
-        case R.string.track13:
-          switch (position) {
-            case 0:
-              id = R.string.track1;
-              break;
-            case 1:
-              id = R.string.track2;
-              break;
-            case 2:
-              id = R.string.track3;
-              break;
-          }
-          break;
-        case R.string.track45:
-          switch (position) {
-            case 0:
-              id = R.string.track4;
-              break;
-            case 1:
-              id = R.string.track5;
-              break;
-          }
-          break;
-        case R.string.track67:
-          switch (position) {
-            case 0:
-              id = R.string.track6;
-              break;
-            case 1:
-              id = R.string.track7;
-              break;
-          }
-          break;
-        /*
-        case R.string.session:
-          switch (position) {
-            case 0:
-              id = R.string.track6;
-              break;
-            case 1:
-              id = R.string.guiterist;
-              break;
-            case 2:
-              id = R.string.rapper;
-              break;
-          }
-          break;
-        case R.string.guiterist:
-          switch (position) {
-            case 0:
-              id = R.string.logo1;
-              break;
-            case 1:
-              id = R.string.logo2;
-              break;
-            case 2:
-              id = R.string.logo3;
-              break;
-            case 3:
-              id = R.string.logo4;
-              break;
-            case 4:
-              id = R.string.logo5;
-              break;
-            case 5:
-              id = R.string.logo6;
-              break;
-            case 6:
-              id = R.string.logo7;
-              break;
-            case 7:
-              id = R.string.effect3;
-              break;
-          }
-          break;
-        case R.string.rapper:
-          switch (position) {
-            case 0:
-              id = R.string.logo1;
-              break;
-            case 1:
-              id = R.string.logo2;
-              break;
-            case 2:
-              id = R.string.logo3;
-              break;
-            case 3:
-              id = R.string.logo4;
-              break;
-            case 4:
-              id = R.string.logo5;
-              break;
-            case 5:
-              id = R.string.logo6;
-              break;
-            case 6:
-              id = R.string.logo8;
-              break;
-            case 7:
-              id = R.string.logo9;
-              break;
-          }
-          break;
-          */
       }
       return id;
     }
 
     @Override
     public int getChildCardCount(int parent_id) {
-      switch (parent_id) {
-        case NO_ID:
-          //return 3;// MFT
-          return 5;// MOVE FES 9/9
-        case R.string.track13:
-          return 3;
-        case R.string.track45:
-          return 2;
-        case R.string.track67:
-          return 2;
-        //case R.string.session:
-        //  return 3;
-        case R.string.logo: // MFT comment out
-          return 5;
-        case R.string.effect:
-          return 3;
-        //return 4;// MFT
-        //case R.string.guiterist:
-        //  return 8;
-        //case R.string.rapper:
-        //  return 8;
+      String parent_name = bidiMap.getKey(parent_id);
+
+      int foundIndex = -1;
+      for (int i = 0; i < vdjRoot.get("item").size(); i++) {
+        if (parent_name != null && parent_name.equals(vdjRoot.get("item").get(i).get("name").asText())) {
+          foundIndex = i;
+          break;
+        }
       }
-      return 0;
+
+      if (foundIndex >= 0) {
+        return vdjRoot.get("item").get(foundIndex).get("subsize").asInt();
+      } else if (parent_id == NO_ID) {
+        return vdjRoot.get("size").asInt();
+      } else {
+        return 0;
+      }
     }
 
     @Override
