@@ -193,7 +193,6 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
     memeOSC.setRemoteIP(
         ((MainActivity) getActivity()).getSavedValue("REMOTE_IP", MemeOSC.getRemoteIPv4Address()));
     memeOSC.setRemotePort(((MainActivity) getActivity()).getSavedValue("REMOTE_PORT", 10316));
-    //memeOSC.setHostPort(((MainActivity) getActivity()).getSavedValue("HOST_PORT", 11316));
     memeOSC.initSocket();
   }
 
@@ -589,7 +588,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.track16:
         case R.string.track17:
         case R.string.track18:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_track_leveldown);
           break;
         case R.string.effectA:
         case R.string.effectB:
@@ -615,7 +614,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.effect14:
         case R.string.effect15:
         case R.string.effect16:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_effect);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_fx_leveldown);
           break;
         case R.string.logoA:
         case R.string.logoB:
@@ -640,7 +639,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.logo13:
         case R.string.logo14:
         case R.string.logo15:
-          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo);
+          ((CardAdapter.MyCardHolder) cardHolder).mImageView.setImageResource(R.drawable.card_logo_leveldown);
           break;
         case R.string.subgrpA:
         case R.string.subgrpB:
@@ -665,7 +664,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       }
 
       if (isAdded()) {
-        ((MyCardHolder) cardHolder).mTitle.setText(getResources().getString(id));
+        ((MyCardHolder) cardHolder).mTitle.setText(vdjRoot.get("title").get(bidiMap.getKey(id)).asText());
       } else {
         ((MyCardHolder) cardHolder).mTitle.setText("");
       }
