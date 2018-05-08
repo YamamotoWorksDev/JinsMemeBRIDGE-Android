@@ -1,9 +1,13 @@
 {
   "main": [
-    {"group":"trackA",  "item": ["track1", "track2", "track3"]},
-    {"group":"trackB",  "item": ["track4", "track5"]},
-    {"group":"trackC",  "item": ["track6", "track7"]},
-    {"group":"effectA", "item": ["effect1", "effect2", "effect3"]},
-    {"group":"logoA",   "item": ["logo1", "logo2", "logo3", "logo4", "logo5"]}
+    {"group":"trackA",  "item":["track1", "track2", "subgrpA"]},
+    {"group":"trackB",  "item":["track4", "track5"]},
+    {"group":"trackC",  "item":["track6", "track7"]},
+    {"group":"effectA", "item":["effect1", "effect2", "effect3"]},
+    {"group":"logoA",   "item":["logo1", "logo2", "logo3", "logo4", "logo5"]}
+  ],
+  "subgrp": [
+    {"group":"subgrpA", "item":["track1", "effect1", "logo1"]},
+    {"group":"subgrpB", "item":["track2", "effect2", "logo2"]}
   ]
 }

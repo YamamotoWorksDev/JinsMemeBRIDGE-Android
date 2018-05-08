@@ -806,10 +806,19 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       String parent_name = bidiMap.getKey(parent_id);
 
       int foundIndex = -1;
-      for (int i = 0; i < vdjRoot.get("main").size(); i++) {
-        if (parent_name != null && parent_name.equals(vdjRoot.get("main").get(i).get("group").asText())) {
-          foundIndex = i;
-          break;
+      if (parent_name != null && parent_name.contains("subgrp")) {
+        for (int i = 0; i < vdjRoot.get("subgrp").size(); i++) {
+          if (parent_name != null && parent_name.equals(vdjRoot.get("subgrp").get(i).get("group").asText())) {
+            foundIndex = i;
+            break;
+          }
+        }
+      } else {
+        for (int i = 0; i < vdjRoot.get("main").size(); i++) {
+          if (parent_name != null && parent_name.equals(vdjRoot.get("main").get(i).get("group").asText())) {
+            foundIndex = i;
+            break;
+          }
         }
       }
 
@@ -837,6 +846,8 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.logoD:
         case R.string.logoE:
         case R.string.logoF:
+          id = bidiMap.get(vdjRoot.get("main").get(foundIndex).get("item").get(position).asText());
+          break;
         case R.string.subgrpA:
         case R.string.subgrpB:
         case R.string.subgrpC:
@@ -855,7 +866,7 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
         case R.string.subgrpP:
         case R.string.subgrpQ:
         case R.string.subgrpR:
-          id = bidiMap.get(vdjRoot.get("main").get(foundIndex).get("item").get(position).asText());
+          id = bidiMap.get(vdjRoot.get("subgrp").get(foundIndex).get("item").get(position).asText());
           break;
       }
       return id;
@@ -866,19 +877,32 @@ public class VDJMenuFragment extends MenuFragmentBase implements MidiReceiveList
       String parent_name = bidiMap.getKey(parent_id);
 
       int foundIndex = -1;
-      for (int i = 0; i < vdjRoot.get("main").size(); i++) {
-        if (parent_name != null && parent_name.equals(vdjRoot.get("main").get(i).get("group").asText())) {
-          foundIndex = i;
-          break;
+      if (parent_name != null && parent_name.contains("subgrp")) {
+        for (int i = 0; i < vdjRoot.get("subgrp").size(); i++) {
+          if (parent_name.equals(vdjRoot.get("subgrp").get(i).get("group").asText())) {
+            foundIndex = i;
+            break;
+          }
         }
-      }
-
-      if (foundIndex >= 0) {
-        return vdjRoot.get("main").get(foundIndex).get("item").size();
-      } else if (parent_id == NO_ID) {
-        return vdjRoot.get("main").size();
+        if (foundIndex >= 0) {
+          return vdjRoot.get("subgrp").get(foundIndex).get("item").size();
+        } else {
+          return 0;
+        }
       } else {
-        return 0;
+        for (int i = 0; i < vdjRoot.get("main").size(); i++) {
+          if (parent_name != null && parent_name.equals(vdjRoot.get("main").get(i).get("group").asText())) {
+            foundIndex = i;
+            break;
+          }
+        }
+        if (foundIndex >= 0) {
+          return vdjRoot.get("main").get(foundIndex).get("item").size();
+        } else if (parent_id == NO_ID) {
+          return vdjRoot.get("main").size();
+        } else {
+          return 0;
+        }
       }
     }
 
