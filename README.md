@@ -7,7 +7,7 @@ The repositorty for meme BRIDGE.
 [Taiki Niimi](https://github.com/niimi)
 
 ### DESIGNER
-Tsuyoshi Otabe([Invisible Designs Lab.](http://invisi.jp))
+[Tsuyoshi Otabe](https://github.com/TsuyoshiOtabe)([Invisible Designs Lab.](http://invisi.jp))
 
 ### LICENSE
 This software's source codes are released under the MIT License, see [LICENSE.txt](https://github.com/jins-meme/MemeBRIDGE_for_Android/blob/master/LICENSE.txt).  
