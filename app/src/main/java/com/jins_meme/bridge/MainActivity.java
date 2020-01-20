@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
     RemoMenuFragment.OnFragmentInteractionListener, DialogListener,
     SpotifyPlayer.NotificationCallback,
     ConnectionStateCallback, SimpleTimer.OnResultListener,
-    PauseActionDetector.OnPauseActionListener {
+    PauseActionDetector.OnPauseActionListener, MidiReceiveListener {
 
   private static final int REQUEST_CODE = 1337;
 
@@ -109,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   private ProgressDialogFragment memeConnectProgressDialog;
   private Handler handler;
   private FrameLayout mainLayout;
+
+  private MemeMIDI memeMIDI;
+  private MemeOSC memeOSC;
 
   private MemeLib memeLib = null;
   private List<String> scannedMemeList = new ArrayList<>();
@@ -332,6 +335,18 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
         }
       }
     };
+
+    // Initialize MIDI
+    memeMIDI = new MemeMIDI(this);
+    memeMIDI.initPort();
+    memeMIDI.setListener(this);
+
+    // Initialize OSC
+    memeOSC = new MemeOSC();
+    //memeOSC.setRemoteIP(((MainActivity) getActivity()).getSavedValue("REMOTE_IP", MemeOSC.getRemoteIPv4Address()));
+    memeOSC.setRemoteIP(getSavedValue("REMOTE_IP", MemeOSC.getRemoteIPv4Address()));
+    memeOSC.setRemotePort(getSavedValue("REMOTE_PORT_2", 20316));
+    memeOSC.initSocket();
   }
 
   @Override
@@ -508,6 +523,17 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   protected void onDestroy() {
     super.onDestroy();
+
+    if (memeMIDI != null) {
+      memeMIDI.removeListener();
+      memeMIDI.closePort();
+      memeMIDI = null;
+    }
+
+    if ((memeOSC != null)) {
+      memeOSC.closeSocket();
+      memeOSC = null;
+    }
 
     if (memeLib != null && memeLib.isConnected()) {
       memeLib.disconnect();
@@ -921,6 +947,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
               final MemeRealtimeDataFilter.MemeFilteredDataCallback accepter = (MemeRealtimeDataFilter.MemeFilteredDataCallback) active;
               if (mMemeDataFilter.isBlink()) {
                 Log.d("EYE", "blink = " + eyeBlinkStrength + " " + eyeBlinkSpeed);
+                memeMIDI.sendControlChange(1, 1, 127);
+
                 handler.post(new Runnable() {
                   @Override
                   public void run() {
@@ -929,10 +957,14 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 });
               } else if (mMemeDataFilter.isUp()) {
                 Log.d("EYE", "up = " + eyeUp);
+                memeMIDI.sendControlChange(1, 2, 127);
               } else if (mMemeDataFilter.isDown()) {
                 Log.d("EYE", "down = " + eyeDown);
+                memeMIDI.sendControlChange(1, 3, 127);
               } else if (mMemeDataFilter.isLeft()) {
                 Log.d("EYE", "left = " + eyeLeft);
+                memeMIDI.sendControlChange(1, 4, 127);
+
                 if (getSavedValue("MENU_SLIDE_DIRECTION", false)) {
                   handler.post(new Runnable() {
                     @Override
@@ -950,6 +982,8 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
                 }
               } else if (mMemeDataFilter.isRight()) {
                 Log.d("EYE", "right = " + eyeRight);
+                memeMIDI.sendControlChange(1, 5, 127);
+
                 if (getSavedValue("MENU_SLIDE_DIRECTION", false)) {
                   handler.post(new Runnable() {
                     @Override
@@ -1615,5 +1649,10 @@ public class MainActivity extends AppCompatActivity implements MemeConnectListen
   @Override
   public void onTemporaryError() {
     Log.d("DEBUG", "SPOTIFY:: Temporary error occurred.");
+  }
+
+  @Override
+  public void onReceiveMidiMessage() {
+
   }
 }

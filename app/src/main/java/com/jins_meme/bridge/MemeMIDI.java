@@ -31,16 +31,16 @@ public class MemeMIDI {
   private Context context;
 
   private boolean initializedMidi = false;
-  private int midiType;
-  private int midiCh;
-  private int midiNum;
-  private int midiVal;
+  private static int midiType;
+  private static int midiCh;
+  private static int midiNum;
+  private static int midiVal;
 
-  private MidiReceiveListener listener = null;
-  private MidiManager midiManager;
-  private MidiInputPort midiInputPort;
-  private MidiOutputPort midiOutputPort;
-  private MidiReceiver midiReceiver = new MidiReceiver() {
+  private static MidiReceiveListener listener = null;
+  private static MidiManager midiManager;
+  private static MidiInputPort midiInputPort = null;
+  private static MidiOutputPort midiOutputPort = null;
+  private static MidiReceiver midiReceiver = new MidiReceiver() {
     @Override
     public void onSend(byte[] msg, int offset, int count, long timestamp) throws IOException {
       Log.d("MIDI", "receive midi... " + count);
@@ -162,14 +162,18 @@ public class MemeMIDI {
 
                 switch (pi) {
                   case 0:
-                    midiInputPort = device.openInputPort(numInputs - 1);
+                    if (midiInputPort == null) {
+                      midiInputPort = device.openInputPort(numInputs - 1);
+                    }
 
                     if (midiInputPort == null) {
                       Log.d("MIDI", "midi input port is null...");
                     }
                     break;
                   case 1:
-                    midiOutputPort = device.openOutputPort(numOutputs - 1);
+                    if (midiOutputPort == null) {
+                      midiOutputPort = device.openOutputPort(numOutputs - 1);
+                    }
 
                     if (midiOutputPort == null) {
                       Log.d("MIDI", "midi output port is null...");
@@ -198,10 +202,12 @@ public class MemeMIDI {
       }
 
       if (midiOutputPort != null) {
+        /*
         midiOutputPort.onDisconnect(midiReceiver);
         midiOutputPort.close();
         midiOutputPort = null;
         midiReceiver = null;
+        */
       }
 
       midiManager = null;
@@ -281,7 +287,9 @@ public class MemeMIDI {
   }
 
   public void setListener(MidiReceiveListener listener) {
-    this.listener = listener;
+    if (this.listener == null) {
+      this.listener = listener;
+    }
   }
 
   public void removeListener() {
