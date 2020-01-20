@@ -1,0 +1,15 @@
+
+app/build/
+
+build/
+
+.idea/caches/
+.idea/libraries/
+.idea/*.xml
+
+.gradle/
+
+
+local.properties
+
+tkrworks_key.jks
